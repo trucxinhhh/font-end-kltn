@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
+import {url_api,url_local} from "../Provider.jsx";
 
 import {
   Chart as ChartJS,
@@ -27,7 +28,7 @@ const LOCK_DURATION = 60 * 1000;
 const DOUBLE_CLICK_THRESHOLD = 300;
 const GetDataTime = 0.2 * 60;
 const Control = () => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(localStorage.getItem("isChecked"));
   const [Display, setDisplay] = useState("1");
   const [selector, setSelector] = useState("motor1");
   const [valueMotor1, setValueMotor1] = useState(false);
@@ -63,7 +64,7 @@ const Control = () => {
   const handleSaveClick = async () => {
     console.log("Pump Start threshold saved:", startThreshold);
     console.log("Pump Stop threshold saved:", stopThreshold);
-    const url = `http://34.87.151.244:1506/threshold/humi`;
+    const url = url_api+`threshold/humi`;
     try {
       console.log("before send", url);
       const response = await axios.post(
@@ -170,7 +171,7 @@ const Control = () => {
     //gửi control lên api
     const controlPanel = async () => {
       try {
-        const url = `http://34.87.151.244:1506/control/motor/${Flag}`;
+        const url = url_api+`control/motor/${Flag}`;
         console.log("before send", url);
         const response = await axios.post(
           url,
@@ -198,17 +199,11 @@ const Control = () => {
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
+  const dataMotor = localStorage.getItem("dataMotor");
+  const dt1 =JSON.parse(dataMotor);
 
   async function loadData() {
-    const response = await axios.get("http://34.87.151.244:1506/api/motor/0", {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-
-    const dt1 = response.data;
+    
     // console.log(dt1);
     setData(dt1);
     setValueMotor1(dt1.slice(-1)[0]["motor1"]);
@@ -310,7 +305,7 @@ const Control = () => {
     localStorage.setItem("isChecked", e.target.checked);
     try {
       const response = await axios.post(
-        "http://34.87.151.244:1506/control_mode",
+        url_api+"control_mode",
         { mode: isChecked },
         {
           headers: {

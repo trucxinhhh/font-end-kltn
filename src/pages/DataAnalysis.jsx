@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
-
+import {url_api,url_local} from "../Provider.jsx";
 import { Button } from "@material-tailwind/react";
 
 const DataAnalysis = () => {
@@ -17,7 +17,7 @@ const DataAnalysis = () => {
 
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
-    if (a === "http://34.87.151.244:5173/src/pages/undefined") {
+    if (a === url_local+"src/pages/undefined") {
       return new URL(`/src/assets/user/user.jpg`, import.meta.url).href;
     }
     return a;
@@ -27,7 +27,7 @@ const DataAnalysis = () => {
     async function loadData() {
       console.log("get history");
       const response = await axios.get(
-        "http://34.87.151.244:1506/history/" + `${DataList}`,
+        url_api+"history/" + `${DataList}`,
         {
           headers: {
             Authorization: access_token,
@@ -51,7 +51,7 @@ const DataAnalysis = () => {
       username,
       password,
     }).toString();
-    const address_toSend = `http://34.87.151.244:1506/send-file/${DataList}?${Account}`;
+    const address_toSend = url_api+`send-file/${DataList}?${Account}`;
     console.log("address_toSend", address_toSend);
     try {
       await fetch(address_toSend, {

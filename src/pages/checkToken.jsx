@@ -2,9 +2,9 @@
 
 import axios from "axios";
 // import useNavigate from "react-router-dom";
-
+import {url_local,url_api} from "../Provider.jsx";
 const instance = axios.create({
-  baseURL: "http://34.87.151.244:1506", // Đổi thành URL của API của bạn
+  baseURL: url_api, 
 });
 
 // Add a response interceptor
@@ -15,9 +15,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.clear();
-      console.log("token:", localStorage.getItem("token"));
-      // Redirect to http://localhost:7000/ for 401 responses
-      window.location.href = "http://34.87.151.244:5173/";
+      window.location.href = url_local;
       // const navigate = useNavigate('/');
     }
     return Promise.reject(error);

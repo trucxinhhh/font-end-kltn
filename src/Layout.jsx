@@ -1,13 +1,16 @@
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTree } from "@fortawesome/free-solid-svg-icons";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import axios from "axios";
-import {url_api, url_local} from "./Provider.jsx";
-import * as Thresh from "./pages/include/DefaultData";
+import axios from "./pages/checkToken.jsx";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+import {url_data,url_api, url_local} from "./Provider.jsx";
+import {DataMap} from "./pages/include/DefaultData.jsx";
 const GetDataTime = 0.5 * 60 *1000;
 const Layout = () => {
   const location = useLocation();
@@ -36,8 +39,8 @@ const Layout = () => {
 
 // sensor data
 const [valueCO2, setValueCO2] = useState(0);
-const [valueTemp, setValueTemp] = useState(0);
-const [valueHumi, setValueHumi] = useState(0);
+const [valueTEMP, setValueTemp] = useState(0);
+const [valueHUMI, setValueHumi] = useState(0);
 const [valueEC, setValueEC] = useState(0);
 const [valuePressure, setValuePressure] = useState(0);
 const [valueFlowmeters, setValueFlowmeters] = useState(0);
@@ -50,7 +53,29 @@ const [valueEmptyTank, setValueEmptyTank] = useState(false);
 const [data1, setData] = useState([]);
 const [data2, setData2] = useState([]);
 
+//warning report
+const [errorValue, setError] = useState(null);
+const notify = (message) => {
+      console.log("notify");
+      toast.error(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
+var listSensorData =["CO2","Humi","Temp"];
+for (var i = 0; i < listSensorData.lenght; i++){
 
+    var val = "value"+listSensorData[i];
+    const checkMAX = listSensorData[i] + "_MAX";
+    const checkMIN = listSensorData[i] + "_MIN";
+    console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN); 
+    if(!(DataMap[checkMIN]<val<DataMap[checkMAX])){
+    	setError("warning sensor");
+	notify("warning sensor");
+    }
+};
+
+//console.log("CIUSPE:",DataMap["CO2_MAX"]);
 
 // get local inf
   localStorage.setItem("role", Role);
@@ -65,25 +90,26 @@ const [data2, setData2] = useState([]);
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
 
-  console.log("aaaaaaaaaaaaaaa",url_api);
+  //console.log("aaaaaaaaaaaaaaa",url_api);
   // logout account
   const goOut = async () => {
     //console.log("link: ",url_api);
     localStorage.clear();
-    window.location.href = "http://54.169.207.83:5173/";
+    window.location.href = url_local;
   };
 
   //set status navigate bar
   const ToggleListSettings = async () => {
-    console.log("gio mat ha con pe nay");
+    //console.log("gio mat ha con pe nay");
     setDisplay((prevDisplay) => (prevDisplay === "1" ? "0" : "1"));
-    console.log("link api: ",url_api);
-    console.log("link local: ", url_local);
+    //console.log("link api: ",url_api);
+    //console.log("link local: ", url_local);
   };
 
   // get user information
   const getInf = async () => {
-    const response = await axios.get("http://47.130.3.12:1506/users/me", {
+    const url = url_api + "users/me"; 
+    const response = await axios.get(url, {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -97,7 +123,7 @@ const [data2, setData2] = useState([]);
 
   // get project information
   const getIn4 = async () => {
-    const respone = await axios.get("http://47.130.3.12:1506/crop", {
+    const respone = await axios.get(url_data+"crop", {
       headers: {
         Authorization: access_token,
       },
@@ -122,8 +148,8 @@ const [data2, setData2] = useState([]);
 // get data sensor 
 async function loadData() {
 
-  console.log("start get data");
-  const response = await axios.get("http://47.130.3.12:1506/api/data/0", {
+ // console.log("start get data");
+  const response = await axios.get(url_data+"api/data/0", {
     headers: {
       Authorization: access_token,
       accept: "application/json",
@@ -132,11 +158,9 @@ async function loadData() {
   });
   const dt1 = response.data;
   setData(dt1);
-  localStorage.setItem("dataSensor",  JSON.stringify(dt1));
-
-
+  localStorage.setItem("dataSensor",  JSON.stringify(dt1)); 
   const responseMotor = await axios.get(
-    "http://34.87.151.244:1506/api/motor/0",
+    url_data+"api/motor/0",
     {
       headers: {
 	Authorization: access_token,
@@ -148,10 +172,20 @@ async function loadData() {
   const dt2 = responseMotor.data;
   setData2(dt2);
   localStorage.setItem("dataMotor",JSON.stringify(dt2));
- 
-  console.log("get data successful");
-
-}
+  var listSensorData =["CO2","Humi","Temp"];
+  //console.log(dt1.slice(-1)[0]);
+  for (var i = 0; i < listSensorData.length; i++){
+	  var val = dt1.slice(-1)[0][listSensorData[i]];
+    	const checkMAX = listSensorData[i] + "_MAX";
+    	const checkMIN = listSensorData[i] + "_MIN";
+	//valSensor = data1.slice(-1)[0][val];
+	  //	console.log(data1.slice(-1));
+ 	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
+    	if((DataMap[checkMIN]>val)||(val>DataMap[checkMAX])){
+        	setError("warning sensor");
+        	notify(`Warning ${listSensorData[i]} over threshold`);}
+	}
+};
 
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
@@ -175,7 +209,7 @@ async function loadData() {
     formData.append("username", localStorage.getItem("username"));
 
     try {
-      const response = await fetch("http://47.130.3.12:1506/upload-img", {
+      const response = await fetch(url_api+"upload-img", {
         method: "POST",
         body: formData,
       });
@@ -195,7 +229,7 @@ async function loadData() {
   };
   const sendChange = async () => {
     const response = axios.post(
-      "http://47.130.3.12:1506/crop",
+      url_api+"crop",
       {
         usr: {
           masterusr: localStorage.getItem("username"),
@@ -234,15 +268,22 @@ async function loadData() {
   useEffect(() => {
     getInf();
     getIn4();
-  
+    loadData();
   },[]); // Chỉ chạy một lần khi component mount
+  useEffect(() => {
+    // Thiết lập interval để gọi loadData mỗi giây
+    const intervalId = setInterval(() => {
+      loadData();
+	    
+    }, 5000);
 
+    // Cleanup function để xóa interval khi component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 // spamdata and check warning
-setInterval(()=>{
- 
-  
-  loadData();
- }, GetDataTime);
+//setInterval(()=>{
+//    loadData();
+// }, 3000);
 
 
   return (
@@ -371,6 +412,7 @@ setInterval(()=>{
               </div>
             )}
           </Dialog>
+	       {errorValue && <ToastContainer />}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">

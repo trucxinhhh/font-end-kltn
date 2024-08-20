@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import axios from "./checkToken";
+import {url_api,url_local} from "../Provider.jsx";
 
 const Decentralization = () => {
   const [CRfullname, setFullname] = useState("");
@@ -33,7 +34,7 @@ const Decentralization = () => {
   };
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
-    if (a === "http://34.87.151.244:5173/src/pages/undefined") {
+    if (a === url_local+"src/pages/undefined") {
       return new URL(`/src/assets/user/user.jpg`, import.meta.url).href;
     } else {
       return a;
@@ -79,12 +80,23 @@ const Decentralization = () => {
   };
   const closeDialog = async () => {
     try {
+      const registerform = {
+        full_name: CRfullname,
+        username: CRusername,
+        password: CRpassword,
+        role: CRrole,
+        email: CRemail,
+        phone: CRphone,
+        masterusr: username,
+        masterpwd: PassToCheck,
+      };
+      console.log(registerform);
       const response = await axios.post(
-        `http://34.87.151.244:1506/signup?${registerform}`
-      );
+        url_api+`signup`,
+	registerform);
 
       navigate("/user-management");
-      loadData();
+      
     } catch (e) {
       console.error("Error logging in:", e);
     } finally {
@@ -92,7 +104,7 @@ const Decentralization = () => {
     }
   };
   const ChangeData = async () => {
-    const url = `http://34.87.151.244:1506/users/${mode}/${userID}?updated_data=${dataChange}`;
+    const url = url_api+`users/${mode}/${userID}?updated_data=${dataChange}`;
 
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
@@ -108,12 +120,11 @@ const Decentralization = () => {
         },
       });
     } finally {
-      loadData();
       setIsDialogOpen(false);
     }
   };
   async function loadData() {
-    const response = await axios.get("http://34.87.151.244:1506/history/user", {
+    const response = await axios.get(url_api+"api/user/0", {
       headers: {
         Authorization: access_token,
         accept: "application/json",

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import {url_api,url_local} from "../Provider.jsx";
 function App() {
   const [errorValue, setError] = useState(null);
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function App() {
   const postusr = async () => {
     try {
       const response = await axios.post(
-        "http://47.130.3.12:1506/token",
+        url_api+"token",
         new URLSearchParams({
           username: localStorage.getItem("username"),
           password: localStorage.getItem("password"),
@@ -45,7 +45,7 @@ function App() {
     } catch (error) {
       console.error("Login error:", error);
       setError("Failed to log in. Please try again.");
-      notify("Failed to log in. Please try again.");
+      notify("Failed to log in");
     }
   };
 

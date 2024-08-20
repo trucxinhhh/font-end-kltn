@@ -79,11 +79,11 @@ function App() {
     setValueAlkalinity(dt1.slice(-1)[0]["pH"]);
     setValueFullTank(dt1.slice(-1)[0]["WaterlevelSensor1"]);
     setValueEmptyTank(dt1.slice(-1)[0]["WaterlevelSensor2"]);
-    //setValueMotor1(dt2.slice(-1)[0]["motor1"]);
-    //setValueMotor2(dt2.slice(-1)[0]["motor2"]);
-    //setValueMotor3(dt2.slice(-1)[0]["motor3"]);
+    setValueMotor1(dt2.slice(-1)[0]["motor1"]);
+    setValueMotor2(dt2.slice(-1)[0]["motor2"]);
+    setValueMotor3(dt2.slice(-1)[0]["motor3"]);
     setRecentData(dt1.slice(-30));
-    console.log("dtSensor:",dt1);
+    //console.log("dtSensor:",dt1);
     //console.log("dtMotor:",dt2);
   }
   const statusColorBool = (value) => {
@@ -107,22 +107,10 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
-    
-      setCountTime((prevCountTime) => {
-        const newCountTime = prevCountTime + 1;
-
-        if (newCountTime == 1) {
-          loadData();
-        } else if (newCountTime >= GetDataTime) {
-          return 0;
-        }
-
-        return newCountTime;
-      });
-    }, 1000);
-
+      loadData();
+      },1000);
     return () => clearInterval(interval); // Clear interval on component unmount
-  }, [GetDataTime]);
+  });
 
   // draw chart Sensor
   const chartData = (lineColor, data_to_draw) => {
@@ -356,7 +344,7 @@ function App() {
                 </div>
                 <div
                   className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
-                    "HUMI",
+                  "Humi",
                     valueHumi
                   )}`}
                 >
@@ -367,7 +355,7 @@ function App() {
                 </div>
                 <div
                   className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
-                    "TEMP",
+                    "Temp",
                     valueTemp
                   )}`}
                 >
@@ -733,7 +721,7 @@ function App() {
               </div>
               <div
                 className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
-                  "HUMI",
+                  "Humi",
                   valueHumi
                 )}`}
               >
@@ -742,7 +730,7 @@ function App() {
               </div>
               <div
                 className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
-                  "TEMP",
+                  "Temp",
                   valueTemp
                 )}`}
               >
