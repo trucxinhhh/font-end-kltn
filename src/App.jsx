@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import Layout from "./Layout";
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";
-import Test from "./draft";
+//import Test from "./draft";
 
 const App = () => {
   return (
@@ -49,7 +49,7 @@ const App = () => {
             }
           />
         </Route>
-        <Route path="/test" element={<Test />} />
+	  {/* <Route path="/test" element={<Test />} />*/}
       </Routes>
     </BrowserRouter>
   );
