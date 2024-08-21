@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Layout from "./Layout";
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";
+import Settings from "./pages/Settings";
+
 //import Test from "./draft";
 
 const App = () => {
@@ -48,10 +50,20 @@ const App = () => {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            }
+          />
         </Route>
-	  {/* <Route path="/test" element={<Test />} />*/}
+
+        {/* <Route path="/test" element={<Test />} />*/}
       </Routes>
     </BrowserRouter>
   );
 };
 export default App;
+

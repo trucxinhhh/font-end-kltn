@@ -42,7 +42,7 @@ function App() {
   const [valueMotor3, setValueMotor3] = useState(false);
   const [valueFullTank, setValueFullTank] = useState(false);
   const [valueEmptyTank, setValueEmptyTank] = useState(false);
-  const [recentData,setRecentData] = useState([]);
+  const [recentData, setRecentData] = useState([]);
 
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
@@ -59,21 +59,21 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-  const { dataSensor,dataMotor } ={
-    dataMotor :localStorage.getItem("dataMotor"),
-    dataSensor: localStorage.getItem("dataSensor")
-  }
-  const dt1 =JSON.parse(dataSensor);
-  const dt2 =JSON.parse(dataMotor);
+  const { dataSensor, dataMotor } = {
+    dataMotor: localStorage.getItem("dataMotor"),
+    dataSensor: localStorage.getItem("dataSensor"),
+  };
+  const dt1 = JSON.parse(dataSensor);
+  const dt2 = JSON.parse(dataMotor);
 
   //console.log("dtSensor:",dt1);
   //console.log("dtMotor:",dt2);
 
   async function loadData() {
     setValueCO2(dt1.slice(-1)[0]["CO2"]);
-    setValueTemp(dt1.slice(-1)[0]["Temp"].toFixed(2));
-    setValueHumi(dt1.slice(-1)[0]["Humi"].toFixed(2));
-    setValueEC(dt1.slice(-1)[0]["EC"].toFixed(2));
+    setValueTemp(dt1.slice(-1)[0]["Temp"].toFixed(1));
+    setValueHumi(dt1.slice(-1)[0]["Humi"].toFixed(1));
+    setValueEC(dt1.slice(-1)[0]["EC"].toFixed(1));
     setValuePressure(dt1.slice(-1)[0]["Pressure"]);
     setValueFlowmeters(dt1.slice(-1)[0]["Flowmeters"]);
     setValueAlkalinity(dt1.slice(-1)[0]["pH"]);
@@ -97,7 +97,10 @@ function App() {
     const checkMIN = name + "_MIN";
     // console.log(checkMAX);
     // console.log(Thresh.DataMap[checkMAX]);
-    if (value >= Thresh.DataMap[checkMIN] && value <= Thresh.DataMap[checkMAX]) {
+    if (
+      value >= Thresh.DataMap[checkMIN] &&
+      value <= Thresh.DataMap[checkMAX]
+    ) {
       return "bg-[#54B435]";
     } else {
       return "bg-red-500";
@@ -108,7 +111,7 @@ function App() {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
       loadData();
-      },1000);
+    }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
 
@@ -344,7 +347,7 @@ function App() {
                 </div>
                 <div
                   className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
-                  "Humi",
+                    "Humi",
                     valueHumi
                   )}`}
                 >
@@ -919,3 +922,4 @@ function App() {
 }
 
 export default App;
+

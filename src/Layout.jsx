@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
@@ -9,27 +8,27 @@ import axios from "./pages/checkToken.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import {url_data,url_api, url_local} from "./Provider.jsx";
-import {DataMap} from "./pages/include/DefaultData.jsx";
-const GetDataTime = 0.5 * 60 *1000;
+import { url_data, url_api, url_local } from "./Provider.jsx";
+import { DataMap } from "./pages/include/DefaultData.jsx";
+const GetDataTime = 0.5 * 60 * 1000;
 const Layout = () => {
   const location = useLocation();
   // user information
-  const [displayNavigateBar, setDisplay] = useState("0");
+  const [displayNavigateBar, setDisplay] = useState(false);
   const [fullName, setFullname] = useState("");
   const [Role, setRole] = useState("");
   const [imageSrc, setImageSrc] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [mode, setMode] = useState(false);
   const [PassToCheck, SetPassCheck] = useState("");
-  
-// project information now
+
+  // project information now
   const [NameProject, setNameProject] = useState([]);
   const [startDay, setstartDay] = useState([]);
   const [Area, setArea] = useState([]);
   const [Quantity, setQuantity] = useState([]);
 
-//create new project information
+  //create new project information
   const [newNameProject, setnewNameProject] = useState([]);
   const [newstartDay, setnewstartDay] = useState([]);
   const [newArea, setnewArea] = useState([]);
@@ -37,51 +36,50 @@ const Layout = () => {
   const [newHarvestDate, setnewHarvestDate] = useState([]);
   const [newStage, setnewnewStage] = useState([]);
 
-// sensor data
-const [valueCO2, setValueCO2] = useState(0);
-const [valueTEMP, setValueTemp] = useState(0);
-const [valueHUMI, setValueHumi] = useState(0);
-const [valueEC, setValueEC] = useState(0);
-const [valuePressure, setValuePressure] = useState(0);
-const [valueFlowmeters, setValueFlowmeters] = useState(0);
-const [valueAlkalinity, setValueAlkalinity] = useState(0);
-const [valueMotor1, setValueMotor1] = useState(false);
-const [valueMotor2, setValueMotor2] = useState(false);
-const [valueMotor3, setValueMotor3] = useState(false);
-const [valueFullTank, setValueFullTank] = useState(false);
-const [valueEmptyTank, setValueEmptyTank] = useState(false);
-const [data1, setData] = useState([]);
-const [data2, setData2] = useState([]);
+  // sensor data
+  const [valueCO2, setValueCO2] = useState(0);
+  const [valueTEMP, setValueTemp] = useState(0);
+  const [valueHUMI, setValueHumi] = useState(0);
+  const [valueEC, setValueEC] = useState(0);
+  const [valuePressure, setValuePressure] = useState(0);
+  const [valueFlowmeters, setValueFlowmeters] = useState(0);
+  const [valueAlkalinity, setValueAlkalinity] = useState(0);
+  const [valueMotor1, setValueMotor1] = useState(false);
+  const [valueMotor2, setValueMotor2] = useState(false);
+  const [valueMotor3, setValueMotor3] = useState(false);
+  const [valueFullTank, setValueFullTank] = useState(false);
+  const [valueEmptyTank, setValueEmptyTank] = useState(false);
+  const [data1, setData] = useState([]);
+  const [data2, setData2] = useState([]);
 
-//warning report
-const [errorValue, setError] = useState(null);
-const notify = (message) => {
-     // console.log("notify");
-      toast.error(message, {
+  //warning report
+  const [errorValue, setError] = useState(null);
+  const notify = (message) => {
+    // console.log("notify");
+    toast.error(message, {
       position: "top-center", // Position at the top
       autoClose: 3000, // Auto close after 3 seconds
     });
   };
-var listSensorData =["CO2","Humi","Temp"];
-for (var i = 0; i < listSensorData.lenght; i++){
-
-    var val = "value"+listSensorData[i];
+  var listSensorData = ["CO2", "Humi", "Temp"];
+  for (var i = 0; i < listSensorData.lenght; i++) {
+    var val = "value" + listSensorData[i];
     const checkMAX = listSensorData[i] + "_MAX";
     const checkMIN = listSensorData[i] + "_MIN";
-    //console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN); 
-    if(!(DataMap[checkMIN]<val<DataMap[checkMAX])){
-    	setError("warning sensor");
-	notify("warning sensor");
+    //console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN);
+    if (!(DataMap[checkMIN] < val < DataMap[checkMAX])) {
+      setError("warning sensor");
+      notify("warning sensor");
     }
-};
+  }
 
-//console.log("CIUSPE:",DataMap["CO2_MAX"]);
+  //console.log("CIUSPE:",DataMap["CO2_MAX"]);
 
-// get local inf
+  // get local inf
   localStorage.setItem("role", Role);
   localStorage.setItem("full_name", fullName);
 
-// open Dialog to change information project
+  // open Dialog to change information project
   const openDialog = (mode) => {
     setMode(mode);
     setIsDialogOpen(true);
@@ -108,7 +106,7 @@ for (var i = 0; i < listSensorData.lenght; i++){
 
   // get user information
   const getInf = async () => {
-    const url = url_api + "users/me"; 
+    const url = url_api + "users/me";
     const response = await axios.get(url, {
       headers: {
         Authorization: access_token,
@@ -123,7 +121,7 @@ for (var i = 0; i < listSensorData.lenght; i++){
 
   //i get project information
   const getIn4 = async () => {
-    const respone = await axios.get(url_api+"crop", {
+    const respone = await axios.get(url_api + "crop", {
       headers: {
         Authorization: access_token,
       },
@@ -145,47 +143,44 @@ for (var i = 0; i < listSensorData.lenght; i++){
     import.meta.url
   ).href;
 
-// get data sensor 
-async function loadData() {
-
- // console.log("start get data");
-  const response = await axios.get(url_data+"api/data/0", {
-    headers: {
-      Authorization: access_token,
-      accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
-  const dt1 = response.data;
-  setData(dt1);
-  localStorage.setItem("dataSensor",  JSON.stringify(dt1)); 
-  const responseMotor = await axios.get(
-    url_data+"api/motor/0",
-    {
+  // get data sensor
+  async function loadData() {
+    // console.log("start get data");
+    const response = await axios.get(url_data + "api/data/0", {
       headers: {
-	Authorization: access_token,
+        Authorization: access_token,
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
+    });
+    const dt1 = response.data;
+    setData(dt1);
+    localStorage.setItem("dataSensor", JSON.stringify(dt1));
+    const responseMotor = await axios.get(url_data + "api/motor/0", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    const dt2 = responseMotor.data;
+    setData2(dt2);
+    localStorage.setItem("dataMotor", JSON.stringify(dt2));
+    var listSensorData = ["CO2", "Humi", "Temp"];
+    //console.log(dt1.slice(-1)[0]);
+    for (var i = 0; i < listSensorData.length; i++) {
+      var val = dt1.slice(-1)[0][listSensorData[i]];
+      const checkMAX = listSensorData[i] + "_MAX";
+      const checkMIN = listSensorData[i] + "_MIN";
+      //valSensor = data1.slice(-1)[0][val];
+      //	console.log(data1.slice(-1));
+      //	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
+      if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
+        setError("warning sensor");
+        notify(`Warning ${listSensorData[i]} over threshold`);
+      }
     }
-  );
-  const dt2 = responseMotor.data;
-  setData2(dt2);
-  localStorage.setItem("dataMotor",JSON.stringify(dt2));
-  var listSensorData =["CO2","Humi","Temp"];
-  //console.log(dt1.slice(-1)[0]);
-  for (var i = 0; i < listSensorData.length; i++){
-	  var val = dt1.slice(-1)[0][listSensorData[i]];
-    	const checkMAX = listSensorData[i] + "_MAX";
-    	const checkMIN = listSensorData[i] + "_MIN";
-	//valSensor = data1.slice(-1)[0][val];
-	  //	console.log(data1.slice(-1));
- //	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
-    	if((DataMap[checkMIN]>val)||(val>DataMap[checkMAX])){
-        	setError("warning sensor");
-        	notify(`Warning ${listSensorData[i]} over threshold`);}
-	}
-};
+  }
 
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
@@ -209,7 +204,7 @@ async function loadData() {
     formData.append("username", localStorage.getItem("username"));
 
     try {
-      const response = await fetch(url_api+"upload-img", {
+      const response = await fetch(url_api + "upload-img", {
         method: "POST",
         body: formData,
       });
@@ -229,7 +224,7 @@ async function loadData() {
   };
   const sendChange = async () => {
     const response = axios.post(
-      url_api+"crop",
+      url_api + "crop",
       {
         usr: {
           masterusr: localStorage.getItem("username"),
@@ -251,14 +246,14 @@ async function loadData() {
       }
     );
     console.log({
-          masterusr: localStorage.getItem("username"),
-          masterpwd: PassToCheck,
-          project: NameProject,
-          startdate: startDay,
-          quantity: Quantity,
-          area: Area,
-        });
-    console.log("dayne:",response.data);
+      masterusr: localStorage.getItem("username"),
+      masterpwd: PassToCheck,
+      project: NameProject,
+      startdate: startDay,
+      quantity: Quantity,
+      area: Area,
+    });
+    console.log("dayne:", response.data);
     setIsDialogOpen(false);
 
     getIn4();
@@ -269,22 +264,20 @@ async function loadData() {
     getInf();
     getIn4();
     loadData();
-  },[]); // Chỉ chạy một lần khi component mount
+  }, []); // Chỉ chạy một lần khi component mount
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
-	    
     }, 5000);
 
     // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);
   }, []);
-// spamdata and check warning
-//setInterval(()=>{
-//    loadData();
-// }, 3000);
-
+  // spamdata and check warning
+  //setInterval(()=>{
+  //    loadData();
+  // }, 3000);
 
   return (
     <>
@@ -412,7 +405,7 @@ async function loadData() {
               </div>
             )}
           </Dialog>
-	       {errorValue && <ToastContainer />}
+          {errorValue && <ToastContainer />}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
@@ -469,7 +462,7 @@ async function loadData() {
                           <span
                             className="ml-4"
                             onClick={() => {
-                              setDisplay("0");
+                              setDisplay(false);
                             }}
                           >
                             Dashboard
@@ -504,7 +497,7 @@ async function loadData() {
                             <span
                               className="ml-4"
                               onClick={() => {
-                                setDisplay("0");
+                                setDisplay(false);
                               }}
                             >
                               Users
@@ -543,7 +536,7 @@ async function loadData() {
                           <span
                             className="ml-4"
                             onClick={() => {
-                              setDisplay("0");
+                              setDisplay(false);
                             }}
                           >
                             Control Panel
@@ -577,11 +570,36 @@ async function loadData() {
                           <span
                             className="ml-4"
                             onClick={() => {
-                              setDisplay("0");
+                              setDisplay(false);
                             }}
                           >
                             History
                           </span>
+                        </Link>
+                      </a>
+                      <a
+                        className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                        href=""
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="34"
+                          height="34"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="icon icon-tabler icons-tabler-outline icon-tabler-settings"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                          <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                        </svg>
+
+                        <Link to="/settings">
+                          <span className="ml-4">Settings</span>
                         </Link>
                       </a>
                       <a
@@ -726,181 +744,16 @@ async function loadData() {
             </div>
             {/* End Inf box*/}
             {/* List Box */}
-            {/* {displayNavigateBar === "1" && (
-              <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#0A6847]">
-                <ul className="fmt-6 leading-10 flex flex-col space-y-4">
-                  <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                    href=""
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="icon icon-tabler icons-tabler-outline icon-tabler-home"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                      <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                      <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                    </svg>
-                    <Link to="/home">
-                      <span
-                        className="ml-4"
-                        onClick={() => {
-                          setDisplay("0");
-                        }}
-                      >
-                        Dashboard
-                      </span>
-                    </Link>
-                  </a>
-                  {Role === "admin" && (
-                    <a
-                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                      href=""
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="34"
-                        height="34"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-users"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                      </svg>
-                      <Link to="/user-management">
-                        <span
-                          className="ml-4"
-                          onClick={() => {
-                            setDisplay("0");
-                          }}
-                        >
-                          Users
-                        </span>
-                      </Link>
-                    </a>
-                  )}
-                  <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                    href=""
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-adjustments-horizontal"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M14 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                      <path d="M4 6l8 0" />
-                      <path d="M16 6l4 0" />
-                      <path d="M8 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                      <path d="M4 12l2 0" />
-                      <path d="M10 12l10 0" />
-                      <path d="M17 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                      <path d="M4 18l11 0" />
-                      <path d="M19 18l1 0" />
-                    </svg>
-                    <Link to="/control">
-                      <span
-                        className="ml-4"
-                        onClick={() => {
-                          setDisplay("0");
-                        }}
-                      >
-                        Control Panel
-                      </span>
-                    </Link>
-                  </a>
-                  <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                    href=""
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-file-description"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                      <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                      <path d="M9 17h6" />
-                      <path d="M9 13h6" />
-                    </svg>
-                    <Link to="/Data-Analysis">
-                      <span
-                        className="ml-4"
-                        onClick={() => {
-                          setDisplay("0");
-                        }}
-                      >
-                        History
-                      </span>
-                    </Link>
-                  </a>
-                  <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                    href=""
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="icon icon-tabler icons-tabler-outline icon-tabler-logout"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
-                      <path d="M9 12h12l-3 -3" />
-                      <path d="M18 15l3 -3" />
-                    </svg>
-                    <span className="ml-4" onClick={() => goOut()}>
-                      Logout
-                    </span>
-                  </a>
-                </ul>
-              </aside>
-            )} */}
+
             {displayNavigateBar === "1" && (
               <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#0A6847]">
                 <ul className="fmt-6 leading-10 flex flex-col space-y-4">
                   <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
                     to="/home"
+                    onClick={() => {
+                      setDisplay(false);
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -919,19 +772,15 @@ async function loadData() {
                       <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
                       <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                     </svg>
-                    <span
-                      className="ml-4"
-                      onClick={() => {
-                        setDisplay("0");
-                      }}
-                    >
-                      Dashboard
-                    </span>
+                    <span className="ml-4">Dashboard</span>
                   </Link>
                   {Role === "admin" && (
                     <Link
                       className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
                       to="/user-management"
+                      onClick={() => {
+                        setDisplay(false);
+                      }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -951,19 +800,16 @@ async function loadData() {
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                       </svg>
-                      <span
-                        className="ml-4"
-                        onClick={() => {
-                          setDisplay("0");
-                        }}
-                      >
-                        Users
-                      </span>
+                      <span className="ml-4">Users</span>
                     </Link>
                   )}
+                  {/* Control */}
                   <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
                     to="/control"
+                    onClick={() => {
+                      setDisplay(false);
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -988,18 +834,15 @@ async function loadData() {
                       <path d="M4 18l11 0" />
                       <path d="M19 18l1 0" />
                     </svg>
-                    <span
-                      className="ml-4"
-                      onClick={() => {
-                        setDisplay("0");
-                      }}
-                    >
-                      Control Panel
-                    </span>
+                    <span className="ml-4">Control Panel</span>
                   </Link>
+                  {/* History */}
                   <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
                     to="/Data-Analysis"
+                    onClick={() => {
+                      setDisplay(false);
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1019,15 +862,36 @@ async function loadData() {
                       <path d="M9 17h6" />
                       <path d="M9 13h6" />
                     </svg>
-                    <span
-                      className="ml-4"
-                      onClick={() => {
-                        setDisplay("0");
-                      }}
-                    >
-                      History
-                    </span>
+                    <span className="ml-4">History</span>
                   </Link>
+
+                  <Link
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    to="/settings"
+                    onClick={() => {
+                      setDisplay(false);
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="34"
+                      height="34"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-settings"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                      <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                    </svg>
+                    <span className="ml-4">Settings</span>
+                  </Link>
+                  {/* Logout */}
+
                   <a
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
                     onClick={goOut}
@@ -1072,3 +936,4 @@ async function loadData() {
 };
 
 export default Layout;
+
