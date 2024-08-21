@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
-import {url_api,url_local} from "../Provider.jsx";
+import { url_api, url_local } from "../Provider.jsx";
 
 import {
   Chart as ChartJS,
@@ -52,6 +52,7 @@ const Control = () => {
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
+console.log(localStorage.getItem("isChecked"));
 
   const handleStartThresholdChange = (event) => {
     setStartThreshold(event.target.value);
@@ -64,7 +65,7 @@ const Control = () => {
   const handleSaveClick = async () => {
     console.log("Pump Start threshold saved:", startThreshold);
     console.log("Pump Stop threshold saved:", stopThreshold);
-    const url = url_api+`threshold/humi`;
+    const url = url_api + `threshold/humi`;
     try {
       console.log("before send", url);
       const response = await axios.post(
@@ -171,7 +172,7 @@ const Control = () => {
     //gửi control lên api
     const controlPanel = async () => {
       try {
-        const url = url_api+`control/motor/${Flag}`;
+        const url = url_api + `control/motor/${Flag}`;
         console.log("before send", url);
         const response = await axios.post(
           url,
@@ -200,10 +201,9 @@ const Control = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
   const dataMotor = localStorage.getItem("dataMotor");
-  const dt1 =JSON.parse(dataMotor);
+  const dt1 = JSON.parse(dataMotor);
 
   async function loadData() {
-    
     // console.log(dt1);
     setData(dt1);
     setValueMotor1(dt1.slice(-1)[0]["motor1"]);
@@ -240,7 +240,7 @@ const Control = () => {
       ],
     };
   };
-
+//console.log(localStorage.getItem("isChecked"));
   const options = (title) => ({
     responsive: true,
     plugins: {
@@ -254,7 +254,7 @@ const Control = () => {
     },
   });
   // ve total pump
-
+ 
   const labels = ["Pump 1", "Pump 2", "Pump 3"];
   const data2 = {
     labels: labels,
@@ -305,7 +305,7 @@ const Control = () => {
     localStorage.setItem("isChecked", e.target.checked);
     try {
       const response = await axios.post(
-        url_api+"control_mode",
+        url_api + "control_mode",
         { mode: isChecked },
         {
           headers: {
@@ -552,69 +552,6 @@ const Control = () => {
                     </div>
 
                     <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      {/* <div className="mb-4">
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Start
-                        </h2>
-                        <p className="text-gray-600 mb-2">
-                          Humidity less than{" "}
-                          <span className="font-bold">{startThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={startThreshold}
-                            onChange={handleStartThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
-                            }}
-                          />
-                          <span className="text-md font-medium">
-                            {startThreshold}%
-                          </span>
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Stop
-                        </h2>
-                        <p className="text-gray-600 mb-2">
-                          Humidity greater than{" "}
-                          <span className="font-bold">{stopThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={stopThreshold}
-                            onChange={handleStopThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
-                            }}
-                          />
-                          <span className="text-md font-medium">
-                            {stopThreshold}%
-                          </span>
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div> */}
                       <div className="mb-4">
                         <h2 className="text-md font-semibold mb-2">
                           Pump Start
@@ -635,9 +572,15 @@ const Control = () => {
                               background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
                             }}
                           />
-                          <span className="text-md font-medium">
-                            {startThreshold}%
-                          </span>
+                          <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={startThreshold}
+                            onChange={handleStartThresholdChange}
+                            className="text-right w-1/5"
+                          />
+                          %
                           <button
                             onClick={handleSaveClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -667,9 +610,15 @@ const Control = () => {
                               background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
                             }}
                           />
-                          <span className="text-md font-medium">
-                            {stopThreshold}%
-                          </span>
+                          <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={stopThreshold}
+                            onChange={handleStopThresholdChange}
+                            className="text-right w-1/5"
+                          />
+                          %
                           <button
                             onClick={handleSaveClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -935,7 +884,7 @@ const Control = () => {
                       </div>
                     </div>
 
-                    <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                    {/* <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
                         <h2 className="text-md font-semibold mb-2">
                           Pump Start
@@ -999,6 +948,83 @@ const Control = () => {
                           </button>
                         </div>
                       </div>
+                    </div> */}
+                    <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className="mb-4">
+                        <h2 className="text-md font-semibold mb-2">
+                          Pump Start
+                        </h2>
+                        <p className="text-gray-600 mb-2">
+                          Humidity less than{" "}
+                          <span className="font-bold">{startThreshold}%</span>
+[O                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={startThreshold}
+                            onChange={handleStartThresholdChange}
+                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={startThreshold}
+                            onChange={handleStartThresholdChange}
+                            className="text-right w-1/5"
+                          />
+                          %
+                          <button
+                            onClick={handleSaveClick}
+                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h2 className="text-md font-semibold mb-2">
+                          Pump Stop
+                        </h2>
+                        <p className="text-gray-600 mb-2">
+[I                          Humidity greater than{" "}
+                          <span className="font-bold">{stopThreshold}%</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={stopThreshold}
+                            onChange={handleStopThresholdChange}
+                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={stopThreshold}
+                            onChange={handleStopThresholdChange}
+                            className="text-right w-1/5"
+                          />
+                          %
+                          <button
+                            onClick={handleSaveClick}
+                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1012,3 +1038,4 @@ const Control = () => {
 };
 
 export default Control;
+

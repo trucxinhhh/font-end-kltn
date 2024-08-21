@@ -136,7 +136,7 @@ const Decentralization = () => {
   }
   useEffect(() => {
     loadData();
-  }, [Display]);
+  }, [Display,ChangeData]);
   return (
     <div className="flex  h-full w-full ">
       {/* Dialog*/}
@@ -306,7 +306,7 @@ const Decentralization = () => {
             </div>
           </div>
         )}
-        {mode === "email" && (
+        {mode === "mail" && (
           <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
             <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
               <div className="text-lg font-bold text-gray-900">

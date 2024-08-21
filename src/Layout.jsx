@@ -56,7 +56,7 @@ const [data2, setData2] = useState([]);
 //warning report
 const [errorValue, setError] = useState(null);
 const notify = (message) => {
-      console.log("notify");
+     // console.log("notify");
       toast.error(message, {
       position: "top-center", // Position at the top
       autoClose: 3000, // Auto close after 3 seconds
@@ -68,7 +68,7 @@ for (var i = 0; i < listSensorData.lenght; i++){
     var val = "value"+listSensorData[i];
     const checkMAX = listSensorData[i] + "_MAX";
     const checkMIN = listSensorData[i] + "_MIN";
-    console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN); 
+    //console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN); 
     if(!(DataMap[checkMIN]<val<DataMap[checkMAX])){
     	setError("warning sensor");
 	notify("warning sensor");
@@ -121,9 +121,9 @@ for (var i = 0; i < listSensorData.lenght; i++){
     setFullname(response.data["full_name"]);
   };
 
-  // get project information
+  //i get project information
   const getIn4 = async () => {
-    const respone = await axios.get(url_data+"crop", {
+    const respone = await axios.get(url_api+"crop", {
       headers: {
         Authorization: access_token,
       },
@@ -180,7 +180,7 @@ async function loadData() {
     	const checkMIN = listSensorData[i] + "_MIN";
 	//valSensor = data1.slice(-1)[0][val];
 	  //	console.log(data1.slice(-1));
- 	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
+ //	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
     	if((DataMap[checkMIN]>val)||(val>DataMap[checkMAX])){
         	setError("warning sensor");
         	notify(`Warning ${listSensorData[i]} over threshold`);}
