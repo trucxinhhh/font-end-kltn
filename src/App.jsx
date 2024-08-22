@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import Layout from "./Layout";
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";
-import Settings from "./pages/Settings";
+import AboutUs from "./pages/AboutUs.jsx";
 
 //import Test from "./draft";
 
@@ -51,10 +51,10 @@ const App = () => {
             }
           />
           <Route
-            path="/settings"
+            path="/about-us"
             element={
               <PrivateRoute>
-                <Settings />
+                <AboutUs />
               </PrivateRoute>
             }
           />
