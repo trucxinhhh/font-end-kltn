@@ -181,18 +181,18 @@ function App() {
     <div className="flex  h-full  w-full  ">
       {/* PC View */}
 
-      <div className="hidden w-full sm:block  ">
+      <div className="hidden  w-full sm:block min-w-full ">
         <div className="flex  h-full w-full ">
           {/*------------------------------Status Box------------------------------*/}
           <div className="p-4 w-full md:w-1/2">
             {/*----------Status Project ----------*/}
             <div className="flex left-1">
               <div className=" flex flex-col  items-center h- w-4/6 p-2 shadow-xl bg-cyan-900 text-white rounded-md mr-2 ">
-                <h3 className="mt-2 text-2xl font-bold">{today}</h3>
-                <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
+                <p className="mt-2 text-2xl font-bold">{today}</p>
+                <p className="mt-2 text-2xl font-bold">{currentTime}</p>
               </div>
               <div className="flex flex-col items-center  w-4/6 p-2  shadow-xl bg-cyan-900 text-white rounded-md mr-2">
-                <h3 className="mt-2 text-2xl font-bold">Status Project</h3>
+                <p className="mt-2 text-2xl font-bold">Status Project</p>
                 <div className="flex flex-nowrap">
                   {isHappy ? (
                     <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-green-400 ">
@@ -476,9 +476,31 @@ function App() {
           </div>
           {/*--------------------------End Status Box--------------------------*/}
           {/*--------------------------------Chart + Time ---------------------------------*/}
-          <div className=" p-4 w-1/2  rounded-r-3xl hidden md:block ">
+
+          <div className=" p-4 w-1/2 m rounded-r-3xl hidden md:block ">
+            <div class="bg-white h-1/5 w-full rounded-3xl p-4 flex flex-row justify-center items-center space-x-4">
+              <img
+                src="src/assets/logo/iuh.jpg"
+                alt="Logo IUH"
+                class="h-auto w-1/4 object-contain"
+              />
+              <img
+                src="src/assets/logo/fet.jpg"
+                alt="Logo FET"
+                class="h-auto w-1/4 object-contain"
+              />
+              <img
+                src="src/assets/logo/dai-viet.jpg"
+                alt="Logo Đại Việt"
+                class="h-auto w-1/4 object-contain"
+              />
+            </div>
+
             <div className="">
-              <div class="bg-white h-1/2 rounded-3xl p-4 flex flex-col justify-center  ">
+              <div
+                class="bg-white h-1/2 rounded-3xl p-4 flex flex-col justify-center mt-2 "
+                style={{ width: "550px", height: "330px" }}
+              >
                 <ul className=" flex justify-center">
                   <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
                     <i class="fa-solid fa-house"></i>
@@ -550,9 +572,6 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="flex h-1/2 w-full mx-auto my-2">
-              <img src="https://i.gifer.com/XOsX.gif"></img>
-            </div>
           </div>
 
           {/*--------------------------------End ChartTime ---------------------------------*/}
@@ -563,11 +582,11 @@ function App() {
         <div className="p-4 w-full h-1/2 md:w-1/2">
           {/*----------Status Project ----------*/}
           <div className="flex left-1">
-            <div className=" flex flex-col  items-center h-1/5 w-4/6 p-2 shadow-xl bg-[#54B435] text-white rounded-md mr-2 ">
+            <div className=" flex flex-col  items-center h-1/5 w-4/6 p-2 shadow-xl bg-[#65B741] text-white rounded-md mr-2 ">
               <h3 className="mt-2 text-2xl font-bold">{today}</h3>
               <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
             </div>
-            <div className="flex flex-col items-center h-1/5  w-4/6 p-2  shadow-xl bg-[#54B435] text-white rounded-md mr-2">
+            <div className="flex flex-col items-center h-1/5  w-4/6 p-2  shadow-xl bg-[#65B741] text-white rounded-md mr-2">
               <h3 className="mt-2 text-xl font-bold">Status Project</h3>
               <div className="flex flex-nowrap">
                 {isHappy ? (

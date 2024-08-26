@@ -312,7 +312,7 @@ aside {
 }
 
 /* -----------------------------------Setting------------------------------ */
-h3 {
+h4 {
   --s: 0.1em;
   /* the thickness of the line */
   --c: #D7C3F1;
@@ -328,7 +328,7 @@ h3 {
   transition: 0.5s;
 }
 
-h3:hover {
+h4:hover {
   --_p: 100%
 }
 
@@ -340,7 +340,7 @@ body {
   place-content: center;
 }
 
-h3 {
+h4 {
   font-family: system-ui, sans-serif;
   font-size: 15pt;
   cursor: pointer;
@@ -348,3 +348,9 @@ h3 {
 }
 /* -------------------------------------------test-------------------------------- */
 
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 16px;
+  /* khoảng cách giữa các phần tử */
+}
