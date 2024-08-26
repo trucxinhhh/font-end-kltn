@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { Line } from "react-chartjs-2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet, Link } from "react-router-dom";
 // import axios from "axios";
 import * as Thresh from "./include/DefaultData";
 import axios from "./checkToken";
@@ -27,6 +27,7 @@ ChartJS.register(
 );
 
 const GetDataTime = 0.2 * 60;
+
 function App() {
   // khai báo biến sử dụng
   const navigate = useNavigate();
@@ -50,11 +51,85 @@ function App() {
   const [countTime, setCountTime] = useState(0);
   const [selector, setSelector] = useState("CO2");
   // const [data1, setData] = useState([]);
+  // Mobile View
 
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
   // const recentData = data1.slice(-30);
+  const HappyColor = (value) => {
+    if (value < 35) {
+      return "text-green-400";
+    } else {
+      return "text-white";
+    }
+  };
+
+  const SadColor = (value) => {
+    if (35 < value && value < 80) {
+      return "text-yellow-500";
+    } else {
+      return "text-white";
+    }
+  };
+  const WarningColor = (value) => {
+    if (value > 80) {
+      // console.log("WarningColor:", value);
+      return "text-red-500";
+    } else {
+      return "text-white";
+    }
+  };
+  const statusColor = (name, value) => {
+    const checkMAX = name + "_MAX";
+    const checkMIN = name + "_MIN";
+    // console.log(checkMAX);
+    // console.log(Thresh.DataMap[checkMAX]);
+    if (
+      value >= Thresh.DataMap[checkMIN] &&
+      value <= Thresh.DataMap[checkMAX]
+    ) {
+      return "bg-[#54B435]";
+    } else {
+      return "bg-red-500";
+    }
+  };
+  const statusColorBool = (value) => {
+    // console.log(*name);
+    if (value) return "bg-[#54B435]";
+    // if (value > 0) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  const options = (title) => ({
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: title,
+      },
+    },
+  });
+  const chartData = (lineColor, data_to_draw) => {
+    const labels = recentData.map((item) => item.time);
+    const data = recentData.map((item) => item[data_to_draw]);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: "",
+          data: data, // Assuming data_CO2 has a co2 field
+          borderColor: lineColor,
+          backgroundColor: "rgba(75,192,192,0.2)",
+          fill: true,
+        },
+      ],
+    };
+  };
 
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
@@ -83,30 +158,10 @@ function App() {
     setValueMotor2(dt2.slice(-1)[0]["motor2"]);
     setValueMotor3(dt2.slice(-1)[0]["motor3"]);
     setRecentData(dt1.slice(-30));
-    //console.log("dtSensor:",dt1);
+	  //console.log("dtSensor:",dt1);
     //console.log("dtMotor:",dt2);
   }
-  const statusColorBool = (value) => {
-    // console.log(*name);
-    if (value) return "bg-[#54B435]";
-    // if (value > 0) return "bg-yellow-500";
-    return "bg-red-500";
-  };
-  const statusColor = (name, value) => {
-    const checkMAX = name + "_MAX";
-    const checkMIN = name + "_MIN";
-    // console.log(checkMAX);
-    // console.log(Thresh.DataMap[checkMAX]);
-    if (
-      value >= Thresh.DataMap[checkMIN] &&
-      value <= Thresh.DataMap[checkMAX]
-    ) {
-      return "bg-[#54B435]";
-    } else {
-      return "bg-red-500";
-    }
-  };
-  const getValueByName = (name, value) => {};
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
@@ -116,42 +171,9 @@ function App() {
   });
 
   // draw chart Sensor
-  const chartData = (lineColor, data_to_draw) => {
-    const labels = recentData.map((item) => item.time);
-    const data = recentData.map((item) => item[data_to_draw]);
-
-    return {
-      labels: labels,
-      datasets: [
-        {
-          label: "",
-          data: data, // Assuming data_CO2 has a co2 field
-          borderColor: lineColor,
-          backgroundColor: "rgba(75,192,192,0.2)",
-          fill: true,
-        },
-      ],
-    };
-  };
-
-  const options = (title) => ({
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: title,
-      },
-    },
-  });
 
   //điều khiển icon status
   const stt_Project = Math.floor(Math.random() * 100);
-  const isHappy = stt_Project < 35;
-  const isSad = 35 < stt_Project && stt_Project < 80;
-  const isWarning = stt_Project > 80;
 
   // display đồ thị
   const toggleDisplay = (name) => {
@@ -186,6 +208,7 @@ function App() {
           {/*------------------------------Status Box------------------------------*/}
           <div className="p-4 w-full md:w-1/2">
             {/*----------Status Project ----------*/}
+
             <div className="flex left-1">
               <div className=" flex flex-col  items-center h- w-4/6 p-2 shadow-xl bg-cyan-900 text-white rounded-md mr-2 ">
                 <p className="mt-2 text-2xl font-bold">{today}</p>
@@ -194,145 +217,103 @@ function App() {
               <div className="flex flex-col items-center  w-4/6 p-2  shadow-xl bg-cyan-900 text-white rounded-md mr-2">
                 <p className="mt-2 text-2xl font-bold">Status Project</p>
                 <div className="flex flex-nowrap">
-                  {isHappy ? (
-                    <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-green-400 ">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                        <path d="M9 10h-.01" />
-                        <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                        <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <div className="flex relative px-2 py-1 w-14 text-sm font-semibold text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                        <path d="M9 10h-.01" />
-                        <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                        <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                      </svg>
-                    </div>
-                  )}
-                  {isSad ? (
-                    <div className="flex relative px-2 py-1 w-14 text-sm font-semibold text-yellow-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M9 10l.01 0" />
-                        <path d="M15 10l.01 0" />
-                        <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <div className="flex relative px-2 py-1 w-14 text-sm font-semibold text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M9 10l.01 0" />
-                        <path d="M15 10l.01 0" />
-                        <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                      </svg>
-                    </div>
-                  )}
-                  {isWarning ? (
-                    <div className="flex relative px-2 py-1 w-14 text-sm font-semibold text-red-500">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                        <path d="M8 9l2 2" />
-                        <path d="M10 9l-2 2" />
-                        <path d="M14 9l2 2" />
-                        <path d="M16 9l-2 2" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <div className="flex relative px-2 py-1 w-14 text-sm font-semibold text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                        <path d="M8 9l2 2" />
-                        <path d="M10 9l-2 2" />
-                        <path d="M14 9l2 2" />
-                        <path d="M16 9l-2 2" />
-                      </svg>
-                    </div>
-                  )}
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="54"
+                      height="54"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+                      <path d="M9 10h-.01" />
+                      <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
+                      <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
+                    </svg>
+                  </div>
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="54"
+                      height="54"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                      <path d="M9 10l.01 0" />
+                      <path d="M15 10l.01 0" />
+                      <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
+                    </svg>
+                  </div>
+
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="54"
+                      height="54"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                      <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
+                      <path d="M8 9l2 2" />
+                      <path d="M10 9l-2 2" />
+                      <path d="M14 9l2 2" />
+                      <path d="M16 9l-2 2" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
-
             {/*--------End Status Project --------*/}
-
+            {/*----------Recomment Box ----------*/}
+            <div className="mt-4 h-1/5 flex left-1">
+              <div className=" flex flex-col  items-center w-full p-2 shadow-xl bg-opacity-75 bg-white text-white rounded-md mr-2 ">
+                {/* <p className="text-black font-bold text-xl">
+                  {Thresh.title_1_US}
+                </p>
+                <p className="text-black font-bold text-xl">
+                  {Thresh.title_1_US}
+                </p>
+                <p className="text-black font-bold text-xl">
+                  {Thresh.title_1_US}
+                </p>
+                <p className="text-black font-bold text-xl">
+                  {Thresh.title_1_US}
+                </p> */}
+              </div>
+            </div>
+            {/*----------End Recomment Box ----------*/}
             {/* ---------- Sensor Table ----------*/}
             <div className="flex flex-col sensor_table h-3/4 w-full rounded-r-2xl rounded-l-2xl">
               <div class="grid grid-cols-4 gap-4">
@@ -475,6 +456,7 @@ function App() {
             {/*--------End Sensor Project --------*/}
           </div>
           {/*--------------------------End Status Box--------------------------*/}
+
           {/*--------------------------------Chart + Time ---------------------------------*/}
 
           <div className=" p-4 w-1/2 m rounded-r-3xl hidden md:block ">
@@ -589,139 +571,81 @@ function App() {
             <div className="flex flex-col items-center h-1/5  w-4/6 p-2  shadow-xl bg-[#65B741] text-white rounded-md mr-2">
               <h3 className="mt-2 text-xl font-bold">Status Project</h3>
               <div className="flex flex-nowrap">
-                {isHappy ? (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-green-400 ">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                      <path d="M9 10h-.01" />
-                      <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                      <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                      <path d="M9 10h-.01" />
-                      <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                      <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                    </svg>
-                  </div>
-                )}
-                {isSad ? (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-yellow-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M9 10l.01 0" />
-                      <path d="M15 10l.01 0" />
-                      <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M9 10l.01 0" />
-                      <path d="M15 10l.01 0" />
-                      <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                    </svg>
-                  </div>
-                )}
-                {isWarning ? (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-red-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                      <path d="M8 9l2 2" />
-                      <path d="M10 9l-2 2" />
-                      <path d="M14 9l2 2" />
-                      <path d="M16 9l-2 2" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="flex  px-2 py-1 w-14 text-sm font-semibold text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                      <path d="M8 9l2 2" />
-                      <path d="M10 9l-2 2" />
-                      <path d="M14 9l2 2" />
-                      <path d="M16 9l-2 2" />
-                    </svg>
-                  </div>
-                )}
+                <div
+                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
+                    stt_Project
+                  )}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="54"
+                    height="54"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+                    <path d="M9 10h-.01" />
+                    <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
+                    <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
+                  </svg>
+                </div>
+                <div
+                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
+                    stt_Project
+                  )}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="54"
+                    height="54"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                    <path d="M9 10l.01 0" />
+                    <path d="M15 10l.01 0" />
+                    <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
+                  </svg>
+                </div>
+
+                <div
+                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
+                    stt_Project
+                  )}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="54"
+                    height="54"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                    <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
+                    <path d="M8 9l2 2" />
+                    <path d="M10 9l-2 2" />
+                    <path d="M14 9l2 2" />
+                    <path d="M16 9l-2 2" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>

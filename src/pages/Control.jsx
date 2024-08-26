@@ -38,7 +38,7 @@ const Control = () => {
   const dataChart = data1.slice(-30);
   const [totalPump1, setTotalPump1] = useState();
   const [totalPump2, setTotalPump2] = useState();
-  const [totalPump3, setTotalPump3] = useState();
+  // const [totalPump3, setTotalPump3] = useState();
   const [startThreshold, setStartThreshold] = useState(50);
   const [stopThreshold, setStopThreshold] = useState(50);
 
@@ -49,10 +49,15 @@ const Control = () => {
 
   const lastClickTimeRef = useRef(0);
   const [Flag, setFlag] = useState();
+
+  const timeDayMotor1 = 12;
+  const VolumeDayMotor1 = 12;
+  const timeDayMotor2 = 12;
+  const VolumeDayMotor2 = 12;
+
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
-console.log(localStorage.getItem("isChecked"));
 
   const handleStartThresholdChange = (event) => {
     setStartThreshold(event.target.value);
@@ -213,7 +218,7 @@ console.log(localStorage.getItem("isChecked"));
   const generateRandomValues = () => {
     setTotalPump1(Math.floor(Math.random() * 100) + 1);
     setTotalPump2(Math.floor(Math.random() * 100) + 1);
-    setTotalPump3(Math.floor(Math.random() * 100) + 1);
+    // setTotalPump3(Math.floor(Math.random() * 100) + 1);
   };
   useEffect(() => {
     const ciupezoi = setInterval(() => {
@@ -240,7 +245,7 @@ console.log(localStorage.getItem("isChecked"));
       ],
     };
   };
-//console.log(localStorage.getItem("isChecked"));
+  //console.log(localStorage.getItem("isChecked"));
   const options = (title) => ({
     responsive: true,
     plugins: {
@@ -254,8 +259,8 @@ console.log(localStorage.getItem("isChecked"));
     },
   });
   // ve total pump
- 
-  const labels = ["Pump 1", "Pump 2", "Pump 3"];
+
+  const labels = ["Pump 1", "Pump 2"];
   const data2 = {
     labels: labels,
     datasets: [
@@ -263,7 +268,7 @@ console.log(localStorage.getItem("isChecked"));
         axis: "y",
         label: "Total in a Week",
 
-        data: [totalPump1, totalPump2, totalPump3],
+        data: [totalPump1, totalPump2],
         fill: false,
         backgroundColor: [
           "rgba(75, 192, 192, 0.2)",
@@ -360,8 +365,12 @@ console.log(localStorage.getItem("isChecked"));
                   <div class="mt-1 text-base text-gray-600">
                     Status : <span>{valueMotor1 ? "ON" : "Off"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">Time : </div>
-                  <div class="mt-1 text-base text-gray-600">Flow : </div>
+                  <div class="mt-1 text-base text-gray-600">
+                    Time : {timeDayMotor1}h
+                  </div>
+                  <div class="mt-1 text-base text-gray-600">
+                    Flow : {VolumeDayMotor1}l
+                  </div>
                 </div>
               </div>
               <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
@@ -394,11 +403,15 @@ console.log(localStorage.getItem("isChecked"));
                   <div class="mt-1 text-base text-gray-600">
                     Status : <span>{valueMotor2 ? "ON" : "Off"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">Time : </div>
-                  <div class="mt-1 text-base text-gray-600">Flow : </div>
+                  <div class="mt-1 text-base text-gray-600">
+                    Time : {timeDayMotor2}h
+                  </div>
+                  <div class="mt-1 text-base text-gray-600">
+                    Flow : {VolumeDayMotor2}l
+                  </div>
                 </div>
               </div>
-              <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
+              {/* <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
                 <div class="flex justify-between text-black">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -431,7 +444,7 @@ console.log(localStorage.getItem("isChecked"));
                   <div class="mt-1 text-base text-gray-600">Time : </div>
                   <div class="mt-1 text-base text-gray-600">Flow : </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className=" h-2/3 w-full p-4">
               <div className="bg-white h-full w-full rounded-3xl">
@@ -456,7 +469,7 @@ console.log(localStorage.getItem("isChecked"));
                       MOTOR 2
                     </span>
                   </li>
-                  <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  {/* <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
                     <span
                       class="ml-2 "
                       onClick={() => {
@@ -465,7 +478,7 @@ console.log(localStorage.getItem("isChecked"));
                     >
                       MOTOR 3
                     </span>
-                  </li>
+                  </li> */}
                 </ul>
                 <div id="chart_Sensor_1" className="p-2  ">
                   <Line
@@ -483,7 +496,7 @@ console.log(localStorage.getItem("isChecked"));
           <div className="p-4 h-full w-2/3 rounded-3xl bg-teal-100 ">
             <h1 className="ml-4 font-bold text-center mb-4"> Control Pump</h1>
             {/* Select mode */}
-            <div className="bg-white bg-opacity-50 p-2 items-center justify-center grid gap-4 grid-cols-2 rounded-xl">
+            <div className="bg-white bg-opacity-50 p-2 items-center justify-center rounded-xl">
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -491,7 +504,7 @@ console.log(localStorage.getItem("isChecked"));
                   checked={isChecked}
                   onChange={ModeControl}
                 />
-                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   {isChecked ? "Mode Manual" : "Mode Auto"}
                 </span>
@@ -957,7 +970,8 @@ console.log(localStorage.getItem("isChecked"));
                         <p className="text-gray-600 mb-2">
                           Humidity less than{" "}
                           <span className="font-bold">{startThreshold}%</span>
-[O                        </p>
+                          [O{" "}
+                        </p>
                         <div className="flex items-center gap-2">
                           <input
                             type="range"
@@ -993,7 +1007,7 @@ console.log(localStorage.getItem("isChecked"));
                           Pump Stop
                         </h2>
                         <p className="text-gray-600 mb-2">
-[I                          Humidity greater than{" "}
+                          [I Humidity greater than{" "}
                           <span className="font-bold">{stopThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
