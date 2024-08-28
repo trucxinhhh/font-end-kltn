@@ -173,7 +173,7 @@ const getPredict = async () => {
 
     setPredict(response.data);
   };
-  //console.log(Predict);
+  console.log(Predict["advices"]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -183,6 +183,8 @@ const getPredict = async () => {
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
+ console.log("cho koi min ik",Predict["advices"]); 
+ //const adviceSentences = Predict["advices"].split('.').filter(sentence => sentence.trim() !== '');
 
   // draw chart Sensor
 
@@ -214,7 +216,14 @@ const getPredict = async () => {
     }
   };
     console.log(Predict);
-    console.log("get day",Predict["days"]);
+    console.log("get advices",Predict["advices"]);
+    const ciuspe =Predict["advices"];
+   if (ciuspe) {
+    const adviceSentences = ciuspe
+      .split(".")
+      .filter((sentence) => sentence.trim() !== "");
+    localStorage.setItem("advices", JSON.stringify(adviceSentences));
+  }
   return (
     <div className="flex  h-full  w-full  ">
       {/* PC View */}
@@ -315,10 +324,15 @@ const getPredict = async () => {
             {/*----------Recomment Box ----------*/}
  <div className="mt-4 h-1/5 flex left-1">
               <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-md mr-2 ">
-          <p className="text-gray-600 font-bold justify-center items-center text-2xl">Quy trình chăm sóc</p>
+          <p className="text-gray-600 font-bold text-center text-2xl">Quy trình chăm sóc</p>
 	  <p className="text-red-600 font-bold text-lg text-left">DAY: {Predict["days"]}</p>
-	  {/*<p className="mt-2 text-red-600 font-bold text-4xl">{Predict["days"]}</p>*/}
-      	  <p className="text-gray-600  text-lg">{Predict["advices"]}</p>
+ {ciuspe
+                    ? JSON.parse(localStorage.getItem("advices")).map(
+                        (sentence, index) => (
+                          <p key={index}>{sentence.trim()}.</p>
+                        )
+                      )
+                    : null}
 	  </div>
             </div>
             {/*----------End Recomment Box ----------*/}
