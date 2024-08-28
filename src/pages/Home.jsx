@@ -4,7 +4,7 @@ import { useNavigate, Outlet, Link } from "react-router-dom";
 // import axios from "axios";
 import * as Thresh from "./include/DefaultData";
 import axios from "./checkToken";
-
+import {  url_api } from "../Provider.jsx";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,7 +44,7 @@ function App() {
   const [valueFullTank, setValueFullTank] = useState(false);
   const [valueEmptyTank, setValueEmptyTank] = useState(false);
   const [recentData, setRecentData] = useState([]);
-
+  const [Predict, setPredict] = useState("");
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
   );
@@ -161,11 +161,25 @@ function App() {
 	  //console.log("dtSensor:",dt1);
     //console.log("dtMotor:",dt2);
   }
+const getPredict = async () => {
+    const url = url_api + "predict";
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    setPredict(response.data);
+  };
+  //console.log(Predict);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
       loadData();
+      getPredict();
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
@@ -199,6 +213,8 @@ function App() {
       overviewDivs.style.display = "none";
     }
   };
+    console.log(Predict);
+    console.log("get day",Predict["days"]);
   return (
     <div className="flex  h-full  w-full  ">
       {/* PC View */}
@@ -297,21 +313,13 @@ function App() {
             </div>
             {/*--------End Status Project --------*/}
             {/*----------Recomment Box ----------*/}
-            <div className="mt-4 h-1/5 flex left-1">
-              <div className=" flex flex-col  items-center w-full p-2 shadow-xl bg-opacity-75 bg-white text-white rounded-md mr-2 ">
-                {/* <p className="text-black font-bold text-xl">
-                  {Thresh.title_1_US}
-                </p>
-                <p className="text-black font-bold text-xl">
-                  {Thresh.title_1_US}
-                </p>
-                <p className="text-black font-bold text-xl">
-                  {Thresh.title_1_US}
-                </p>
-                <p className="text-black font-bold text-xl">
-                  {Thresh.title_1_US}
-                </p> */}
-              </div>
+ <div className="mt-4 h-1/5 flex left-1">
+              <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-md mr-2 ">
+          <p className="text-gray-600 font-bold justify-center items-center text-2xl">Quy trình chăm sóc</p>
+	  <p className="text-red-600 font-bold text-lg text-left">DAY: {Predict["days"]}</p>
+	  {/*<p className="mt-2 text-red-600 font-bold text-4xl">{Predict["days"]}</p>*/}
+      	  <p className="text-gray-600  text-lg">{Predict["advices"]}</p>
+	  </div>
             </div>
             {/*----------End Recomment Box ----------*/}
             {/* ---------- Sensor Table ----------*/}
