@@ -55,7 +55,6 @@ const Layout = () => {
   //warning report
   const [errorValue, setError] = useState(null);
   const notify = (message) => {
-    // console.log("notify");
     toast.error(message, {
       position: "top-center", // Position at the top
       autoClose: 3000, // Auto close after 3 seconds
@@ -66,14 +65,11 @@ const Layout = () => {
     var val = "value" + listSensorData[i];
     const checkMAX = listSensorData[i] + "_MAX";
     const checkMIN = listSensorData[i] + "_MIN";
-    //console.log("val: ",val,"checkMAX: ",checkMAX,"checkMIN: ",checkMIN);
     if (!(DataMap[checkMIN] < val < DataMap[checkMAX])) {
       setError("warning sensor");
       notify("warning sensor");
     }
   }
-
-  //console.log("CIUSPE:",DataMap["CO2_MAX"]);
 
   // get local inf
   localStorage.setItem("role", Role);
@@ -88,20 +84,15 @@ const Layout = () => {
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
 
-  //console.log("aaaaaaaaaaaaaaa",url_api);
   // logout account
   const goOut = async () => {
-    //console.log("link: ",url_api);
     localStorage.clear();
     window.location.href = url_local;
   };
 
   //set status navigate bar
   const ToggleListSettings = async () => {
-    //console.log("gio mat ha con pe nay");
     setDisplay((prevDisplay) => (prevDisplay === "1" ? "0" : "1"));
-    //console.log("link api: ",url_api);
-    //console.log("link local: ", url_local);
   };
 
   // get user information
@@ -128,7 +119,6 @@ const Layout = () => {
     });
 
     const dt = respone.data;
-    //console.log("crop_get: ",dt[0]["area"]);
     setnewArea(dt[0]["area"]);
     setnewNameProject(dt[0]["project"]);
     setnewQuantity(dt[0]["quantity"]);
@@ -142,10 +132,16 @@ const Layout = () => {
     `/src/assets/user/${localStorage.getItem("username")}.jpg`,
     import.meta.url
   ).href;
-
+  const ImgUsr = (usr) => {
+    const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
+    if (a === url_local + "src/undefined") {
+      return new URL(`/src/assets/user/user.jpg`, import.meta.url).href;
+    } else {
+      return a;
+    }
+  };
   // get data sensor
   async function loadData() {
-    // console.log("start get data");
     const response = await axios.get(url_data + "api/data/0", {
       headers: {
         Authorization: access_token,
@@ -167,14 +163,11 @@ const Layout = () => {
     setData2(dt2);
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
-    //console.log(dt1.slice(-1)[0]);
     for (var i = 0; i < listSensorData.length; i++) {
       var val = dt1.slice(-1)[0][listSensorData[i]];
       const checkMAX = listSensorData[i] + "_MAX";
       const checkMIN = listSensorData[i] + "_MIN";
-      //valSensor = data1.slice(-1)[0][val];
-      //	console.log(data1.slice(-1));
-      //	console.log("val: ",val,"checkMAX: ",DataMap[checkMAX],"checkMIN: ",DataMap[checkMIN]);
+
       if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
         setError("warning sensor");
         notify(`Warning ${listSensorData[i]} over threshold`);
@@ -211,9 +204,6 @@ const Layout = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Image uploaded successfully:", data);
-      } else {
-        console.error("Image upload failed");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -245,17 +235,6 @@ const Layout = () => {
         },
       }
     );
-    console.log({
-      masterusr: localStorage.getItem("username"),
-      masterpwd: PassToCheck,
-      project: NameProject,
-      startdate: startDay,
-      quantity: Quantity,
-      area: Area,
-    });
-    console.log("dayne:", response.data);
-    setIsDialogOpen(false);
-
     getIn4();
   };
 
@@ -274,10 +253,6 @@ const Layout = () => {
     // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);
   }, []);
-  // spamdata and check warning
-  //setInterval(()=>{
-  //    loadData();
-  // }, 3000);
 
   return (
     <>
@@ -417,7 +392,7 @@ const Layout = () => {
                     <div className="flex items-center h-3/5 w-full">
                       <img
                         className="block mx-auto h-16 w-16 rounded-full sm:mx-0 sm:flex-shrink-0"
-                        src={imagePath}
+                        src={ImgUsr(localStorage.getItem("username"))}
                         alt={`${localStorage.getItem("role")}`}
                         onClick={handleImageClick}
                       />

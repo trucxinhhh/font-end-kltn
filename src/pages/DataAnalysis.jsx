@@ -36,9 +36,6 @@ const DataAnalysis = () => {
           },
         }
       );
-
-      // const dt1 = localStorage.getItem("dataSensor");
-      // setData(JSON.parse(dt1));
       const dt1 = response.data;
       console.log(dt1);
 
@@ -50,8 +47,6 @@ const DataAnalysis = () => {
 
   //Sent Mail
   const SentMail = async () => {
-    // const username = localStorage.getItem("username");
-    // const password = localStorage.getItem("password");
     const Account = {
       masterusr: localStorage.getItem("username"),
       masterpwd: localStorage.getItem("password"),
@@ -59,19 +54,6 @@ const DataAnalysis = () => {
     const address_toSend = url_api + `export-file/${DataList}`;
     console.log("address_toSend", address_toSend);
 
-    // try {
-    //   await fetch(address_toSend, {
-    //     method: "POST", // or 'PUT'
-    //     Account,
-    //     headers: {
-    //       Authorization: access_token,
-    //       accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
     const response = axios.post(address_toSend, Account, {
       headers: {
         Authorization: access_token,
@@ -184,9 +166,6 @@ const DataAnalysis = () => {
                       <td class="px-6 py-4 text-center">
                         {item.WaterlevelSensor2 ? "ON" : "OFF"}
                       </td>
-                      {/* <td class="px-6 py-4 text-center">
-                        {item.Motor ? "On" : "Off"}
-                      </td> */}
                     </tr>
                   ))}
                 </tbody>

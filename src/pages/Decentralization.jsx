@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import axios from "./checkToken";
-import {url_api,url_local} from "../Provider.jsx";
+import { url_api, url_local } from "../Provider.jsx";
 
 const Decentralization = () => {
   const [CRfullname, setFullname] = useState("");
@@ -34,7 +34,7 @@ const Decentralization = () => {
   };
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
-    if (a === url_local+"src/pages/undefined") {
+    if (a === url_local + "src/pages/undefined") {
       return new URL(`/src/assets/user/user.jpg`, import.meta.url).href;
     } else {
       return a;
@@ -90,13 +90,10 @@ const Decentralization = () => {
         masterusr: username,
         masterpwd: PassToCheck,
       };
-      console.log(registerform);
-      const response = await axios.post(
-        url_api+`signup`,
-	registerform);
+
+      const response = await axios.post(url_api + `signup`, registerform);
 
       navigate("/user-management");
-      
     } catch (e) {
       console.error("Error logging in:", e);
     } finally {
@@ -104,7 +101,7 @@ const Decentralization = () => {
     }
   };
   const ChangeData = async () => {
-    const url = url_api+`users/${mode}/${userID}?updated_data=${dataChange}`;
+    const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
 
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
@@ -124,7 +121,7 @@ const Decentralization = () => {
     }
   };
   async function loadData() {
-    const response = await axios.get(url_api+"api/user/0", {
+    const response = await axios.get(url_api + "api/user/0", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -136,7 +133,7 @@ const Decentralization = () => {
   }
   useEffect(() => {
     loadData();
-  }, [Display,ChangeData]);
+  }, [Display, ChangeData]);
   return (
     <div className="flex  h-full w-full ">
       {/* Dialog*/}
@@ -441,40 +438,6 @@ const Decentralization = () => {
                       </td>
                     </tr>
                   ))}
-                  {/* {data1.map((item) => (
-                    <tr className="bg-white dark:bg-gray-800" key={item._id}>
-                      <td className="px-6 py-4 text-center">
-                        <img
-                          className="block mx-auto h-16 w-16 rounded-full sm:mx-0 sm:flex-shrink-0"
-                          src={ImgUsr(item.username)}
-                          alt={`Profile of ${item.full_name}`}
-                        />
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {item.full_name}
-                      </td>
-                      <td className="px-6 py-4 text-center">{item.username}</td>
-                      <td className="px-6 py-4 text-center">{item.role}</td>
-                      <td className="px-6 py-4 text-center">
-                        <label className="inline-flex items-center text-sm font-semibold overflow-auto">
-                          <select
-                            className="text-gray-500 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                            name="data-list"
-                            id="data-list"
-                            onChange={(e) =>
-                              openDialog(e.target.value, item.username)
-                            }
-                          >
-                            <option value="admin">Edit</option>
-                            <option value="password">Change Password</option>
-                            <option value="role">Change Role</option>
-                            <option value="mail">Change Email</option>
-                            <option value="delete">Delete User</option>
-                          </select>
-                        </label>
-                      </td>
-                    </tr>
-                  ))} */}
                 </tbody>
               </table>
             </div>
@@ -846,3 +809,4 @@ const Decentralization = () => {
 };
 
 export default Decentralization;
+

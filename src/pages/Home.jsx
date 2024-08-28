@@ -4,7 +4,7 @@ import { useNavigate, Outlet, Link } from "react-router-dom";
 // import axios from "axios";
 import * as Thresh from "./include/DefaultData";
 import axios from "./checkToken";
-import {  url_api } from "../Provider.jsx";
+import { url_api } from "../Provider.jsx";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -74,7 +74,6 @@ function App() {
   };
   const WarningColor = (value) => {
     if (value > 80) {
-      // console.log("WarningColor:", value);
       return "text-red-500";
     } else {
       return "text-white";
@@ -83,8 +82,6 @@ function App() {
   const statusColor = (name, value) => {
     const checkMAX = name + "_MAX";
     const checkMIN = name + "_MIN";
-    // console.log(checkMAX);
-    // console.log(Thresh.DataMap[checkMAX]);
     if (
       value >= Thresh.DataMap[checkMIN] &&
       value <= Thresh.DataMap[checkMAX]
@@ -95,9 +92,7 @@ function App() {
     }
   };
   const statusColorBool = (value) => {
-    // console.log(*name);
     if (value) return "bg-[#54B435]";
-    // if (value > 0) return "bg-yellow-500";
     return "bg-red-500";
   };
 
@@ -141,9 +136,6 @@ function App() {
   const dt1 = JSON.parse(dataSensor);
   const dt2 = JSON.parse(dataMotor);
 
-  //console.log("dtSensor:",dt1);
-  //console.log("dtMotor:",dt2);
-
   async function loadData() {
     setValueCO2(dt1.slice(-1)[0]["CO2"]);
     setValueTemp(dt1.slice(-1)[0]["Temp"].toFixed(1));
@@ -158,10 +150,8 @@ function App() {
     setValueMotor2(dt2.slice(-1)[0]["motor2"]);
     setValueMotor3(dt2.slice(-1)[0]["motor3"]);
     setRecentData(dt1.slice(-30));
-	  //console.log("dtSensor:",dt1);
-    //console.log("dtMotor:",dt2);
   }
-const getPredict = async () => {
+  const getPredict = async () => {
     const url = url_api + "predict";
     const response = await axios.get(url, {
       headers: {
@@ -173,7 +163,6 @@ const getPredict = async () => {
 
     setPredict(response.data);
   };
-  console.log(Predict["advices"]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -183,10 +172,6 @@ const getPredict = async () => {
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
- console.log("cho koi min ik",Predict["advices"]); 
- //const adviceSentences = Predict["advices"].split('.').filter(sentence => sentence.trim() !== '');
-
-  // draw chart Sensor
 
   //điều khiển icon status
   const stt_Project = Math.floor(Math.random() * 100);
@@ -215,10 +200,9 @@ const getPredict = async () => {
       overviewDivs.style.display = "none";
     }
   };
-    console.log(Predict);
-    console.log("get advices",Predict["advices"]);
-    const ciuspe =Predict["advices"];
-   if (ciuspe) {
+
+  const ciuspe = Predict["advices"];
+  if (ciuspe) {
     const adviceSentences = ciuspe
       .split(".")
       .filter((sentence) => sentence.trim() !== "");
@@ -322,18 +306,20 @@ const getPredict = async () => {
             </div>
             {/*--------End Status Project --------*/}
             {/*----------Recomment Box ----------*/}
- <div className="mt-4 h-1/5 flex left-1">
+            <div className="mt-4 h-22/5 flex left-1">
               <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-md mr-2 ">
-          <p className="text-gray-600 font-bold text-center text-2xl">Quy trình chăm sóc</p>
-	  <p className="text-red-600 font-bold text-lg text-left">DAY: {Predict["days"]}</p>
- {ciuspe
-                    ? JSON.parse(localStorage.getItem("advices")).map(
-                        (sentence, index) => (
-                          <p key={index}>{sentence.trim()}.</p>
-                        )
-                      )
-                    : null}
-	  </div>
+                <p className="text-gray-600 font-bold text-center text-xl">
+                  Quy trình chăm sóc
+                </p>
+                <p className="text-red-600 font-bold text-lg text-left">
+                  DAY: {Predict["days"]}
+                </p>
+                {ciuspe
+                  ? JSON.parse(localStorage.getItem("advices")).map(
+                      (sentence, index) => <p key={index}>{sentence.trim()}.</p>
+                    )
+                  : null}
+              </div>
             </div>
             {/*----------End Recomment Box ----------*/}
             {/* ---------- Sensor Table ----------*/}
@@ -388,7 +374,9 @@ const getPredict = async () => {
                   </h3>
 
                   <h3 className="mt-2 text-base text-white">
-                    {valueFlowmeters} m<sup>3</sup>/s
+	  {/*  {valueFlowmeters} m<sup>3</sup>/s*/}
+	   {valueFlowmeters ? "Status: ON" : "Status: OFF"}
+
                   </h3>
                 </div>
                 <div

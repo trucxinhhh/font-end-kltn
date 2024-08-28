@@ -61,18 +61,18 @@ const Control = () => {
 
   const handleStartThresholdChange = (event) => {
     setStartThreshold(event.target.value);
+	  localStorage.setItem("HUMI_MIN",event.target.value);
   };
 
   const handleStopThresholdChange = (event) => {
-    setStopThreshold(event.target.value);
+   localStorage.setItem("HUMI_MAX",event.target.value);
+
+	  setStopThreshold(event.target.value);
   };
 
   const handleSaveClick = async () => {
-    console.log("Pump Start threshold saved:", startThreshold);
-    console.log("Pump Stop threshold saved:", stopThreshold);
     const url = url_api + `threshold/humi`;
     try {
-      console.log("before send", url);
       const response = await axios.post(
         url,
         {
@@ -88,8 +88,6 @@ const Control = () => {
           },
         }
       );
-
-      console.log("Success:", response);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -146,7 +144,6 @@ const Control = () => {
 
   const handleClick = async (index) => {
     if (isLocked) return;
-    console.log("before pump", pumps);
 
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTimeRef.current;
@@ -168,17 +165,13 @@ const Control = () => {
 
     setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
 
-    // console.log("pump", index, "data", pumps[index]);
     setFlag(index + 1);
   };
   if (Flag) {
-    console.log("after", pumps);
-
     //gửi control lên api
     const controlPanel = async () => {
       try {
-        const url = url_api + `control/motor/${Flag}`;
-        console.log("before send", url);
+        const url = url_api + `motor/${Flag}`;
         const response = await axios.post(
           url,
           {
@@ -191,8 +184,6 @@ const Control = () => {
             },
           }
         );
-
-        console.log("Success:", response);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -209,7 +200,6 @@ const Control = () => {
   const dt1 = JSON.parse(dataMotor);
 
   async function loadData() {
-    // console.log(dt1);
     setData(dt1);
     setValueMotor1(dt1.slice(-1)[0]["motor1"]);
     setValueMotor2(dt1.slice(-1)[0]["motor2"]);
@@ -245,7 +235,6 @@ const Control = () => {
       ],
     };
   };
-  //console.log(localStorage.getItem("isChecked"));
   const options = (title) => ({
     responsive: true,
     plugins: {
@@ -304,7 +293,6 @@ const Control = () => {
       },
     },
   };
-  console.log(localStorage.getItem("isChecked"));
   const ModeControl = async (e) => {
     setIsChecked(e.target.checked);
     localStorage.setItem("isChecked", e.target.checked);
@@ -411,40 +399,6 @@ const Control = () => {
                   </div>
                 </div>
               </div>
-              {/* <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
-                <div class="flex justify-between text-black">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-engine"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10v6" />
-                    <path d="M12 5v3" />
-                    <path d="M10 5h4" />
-                    <path d="M5 13h-2" />
-                    <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
-                  </svg>
-                  <p className="text-left">
-                    <b>Motor 3 </b>
-                  </p>
-                </div>
-
-                <div class="ml-2 w-full flex-1">
-                  <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor3 ? "ON" : "Off"}</span>
-                  </div>
-                  <div class="mt-1 text-base text-gray-600">Time : </div>
-                  <div class="mt-1 text-base text-gray-600">Flow : </div>
-                </div>
-              </div> */}
             </div>
             <div className=" h-2/3 w-full p-4">
               <div className="bg-white h-full w-full rounded-3xl">
@@ -469,16 +423,6 @@ const Control = () => {
                       MOTOR 2
                     </span>
                   </li>
-                  {/* <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                    <span
-                      class="ml-2 "
-                      onClick={() => {
-                        setSelector("motor3");
-                      }}
-                    >
-                      MOTOR 3
-                    </span>
-                  </li> */}
                 </ul>
                 <div id="chart_Sensor_1" className="p-2  ">
                   <Line
@@ -897,71 +841,6 @@ const Control = () => {
                       </div>
                     </div>
 
-                    {/* <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Start
-                        </h2>
-                        <p className="text-gray-600 mb-2">
-                          Humidity less than{" "}
-                          <span className="font-bold">{startThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={startThreshold}
-                            onChange={handleStartThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
-                            }}
-                          />
-                          <span className="text-md font-medium">
-                            {startThreshold}%
-                          </span>
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Stop
-                        </h2>
-                        <p className="text-gray-600 mb-2">
-                          Humidity greater than{" "}
-                          <span className="font-bold">{stopThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={stopThreshold}
-                            onChange={handleStopThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
-                            }}
-                          />
-                          <span className="text-md font-medium">
-                            {stopThreshold}%
-                          </span>
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    </div> */}
                     <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
                         <h2 className="text-md font-semibold mb-2">
@@ -969,8 +848,7 @@ const Control = () => {
                         </h2>
                         <p className="text-gray-600 mb-2">
                           Humidity less than{" "}
-                          <span className="font-bold">{startThreshold}%</span>
-                          [O{" "}
+                          <span className="font-bold">{startThreshold}%</span>{" "}
                         </p>
                         <div className="flex items-center gap-2">
                           <input
@@ -1007,7 +885,7 @@ const Control = () => {
                           Pump Stop
                         </h2>
                         <p className="text-gray-600 mb-2">
-                          [I Humidity greater than{" "}
+                          Humidity greater than{" "}
                           <span className="font-bold">{stopThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
