@@ -39,8 +39,12 @@ const Control = () => {
   const [totalPump1, setTotalPump1] = useState();
   const [totalPump2, setTotalPump2] = useState();
   // const [totalPump3, setTotalPump3] = useState();
-  const [startThreshold, setStartThreshold] = useState(50);
-  const [stopThreshold, setStopThreshold] = useState(50);
+  const [startThreshold, setStartThreshold] = useState(
+    localStorage.getItem("low")
+  );
+  const [stopThreshold, setStopThreshold] = useState(
+    localStorage.getItem("up")
+  );
 
   const [pumps, setPumps] = useState([false, false, false]);
   const [clickCount, setClickCount] = useState(0);
@@ -61,13 +65,13 @@ const Control = () => {
 
   const handleStartThresholdChange = (event) => {
     setStartThreshold(event.target.value);
-	  localStorage.setItem("HUMI_MIN",event.target.value);
+    localStorage.setItem("HUMI_MIN", event.target.value);
   };
 
   const handleStopThresholdChange = (event) => {
-   localStorage.setItem("HUMI_MAX",event.target.value);
+    localStorage.setItem("HUMI_MAX", event.target.value);
 
-	  setStopThreshold(event.target.value);
+    setStopThreshold(event.target.value);
   };
 
   const handleSaveClick = async () => {
@@ -91,6 +95,19 @@ const Control = () => {
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+
+  const getHumiThresh = async () => {
+    const response = await axios.get(url_api + "threshold/humi", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    // console.log(response);
+    localStorage.setItem("low", response.data["lower"]);
+    localStorage.setItem("up", response.data["upper"]);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -213,9 +230,10 @@ const Control = () => {
   useEffect(() => {
     const ciupezoi = setInterval(() => {
       loadData();
-      generateRandomValues();
-    }, 5000);
-  }, 30000);
+     // generateRandomValues();
+      getHumiThresh();
+    },6000);
+  },[] );
 
   const chartData = (lineColor, data_to_draw) => {
     const labels = dataChart.map((item) => item.time);

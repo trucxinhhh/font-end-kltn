@@ -374,9 +374,8 @@ function App() {
                   </h3>
 
                   <h3 className="mt-2 text-base text-white">
-	  {/*  {valueFlowmeters} m<sup>3</sup>/s*/}
-	   {valueFlowmeters ? "Status: ON" : "Status: OFF"}
-
+                    {/*  {valueFlowmeters} m<sup>3</sup>/s*/}
+                    {valueFlowmeters ? "Status: ON" : "Status: OFF"}
                   </h3>
                 </div>
                 <div
@@ -386,9 +385,7 @@ function App() {
                   )}`}
                 >
                   <h3 className="mt-2 text-xl font-bold text-white">EC</h3>
-                  <h3 className="mt-2 text-base text-white">
-                    {valueEC} uS/cm{" "}
-                  </h3>
+                  <h3 className="mt-2 text-base text-white">{valueEC}uS/cm </h3>
                 </div>
                 <div
                   className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
@@ -714,7 +711,7 @@ function App() {
                 )}`}
               >
                 <h3 className="mt-2 text-xl font-bold text-white">EC</h3>
-                <h3 className="mt-2 text-base text-white">{valueEC} uS/cm </h3>
+                <h3 className="mt-2 text-base text-white">{valueEC}uS/cm </h3>
               </div>
               <div
                 className={`flex flex-col  items-center  p-4   text-black rounded-md shadow-lg border border-gray-200 mx-2  ${statusColor(
