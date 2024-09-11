@@ -45,8 +45,11 @@ const Control = () => {
   const [stopThreshold, setStopThreshold] = useState(
     localStorage.getItem("up")
   );
+  const [frequencyPump, setFrequencyPumpd] = useState(
+    localStorage.getItem("frequencyPump")
+  );
 
-  const [pumps, setPumps] = useState([false, false, false]);
+  const [pumps, setPumps] = useState([false, false]);
   const [clickCount, setClickCount] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -70,8 +73,11 @@ const Control = () => {
 
   const handleStopThresholdChange = (event) => {
     localStorage.setItem("HUMI_MAX", event.target.value);
-
     setStopThreshold(event.target.value);
+  };
+  const handleFrequencyPump = (event) => {
+    localStorage.setItem("FREQUENCY_MAX", event.target.value);
+    setFrequencyPumpd(event.target.value);
   };
 
   const handleSaveClick = async () => {
@@ -96,7 +102,28 @@ const Control = () => {
       console.error("Error:", error);
     }
   };
-
+  const handleSaveFrequencyPumpClick = async () => {
+    const url = url_api + `threshold/humi`;
+    try {
+      const response = await axios.post(
+        url,
+        {
+          attribute: "humi",
+          upper: stopThreshold,
+          lower: startThreshold,
+        },
+        {
+          headers: {
+            accept: "application/json",
+            // "Content-Type": "application/json",
+            Authorization: access_token,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   const getHumiThresh = async () => {
     const response = await axios.get(url_api + "threshold/humi", {
       headers: {
@@ -108,6 +135,7 @@ const Control = () => {
     // console.log(response);
     localStorage.setItem("low", response.data["lower"]);
     localStorage.setItem("up", response.data["upper"]);
+    localStorage.setItem("frequencyPump", response.data["frequencyPump"]);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -216,12 +244,12 @@ const Control = () => {
   const dataMotor = localStorage.getItem("dataMotor");
   const dt1 = JSON.parse(dataMotor);
 
-  async function loadData() {
-    setData(dt1);
-    setValueMotor1(dt1.slice(-1)[0]["motor1"]);
-    setValueMotor2(dt1.slice(-1)[0]["motor2"]);
-    setValueMotor3(dt1.slice(-1)[0]["motor3"]);
-  }
+  // async function loadData() {
+  //   setData(dt1);
+  //   setValueMotor1(dt1.slice(-1)[0]["motor1"]);
+  //   setValueMotor2(dt1.slice(-1)[0]["motor2"]);
+  //   setValueMotor3(dt1.slice(-1)[0]["motor3"]);
+  // }
   const generateRandomValues = () => {
     setTotalPump1(Math.floor(Math.random() * 100) + 1);
     setTotalPump2(Math.floor(Math.random() * 100) + 1);
@@ -229,11 +257,11 @@ const Control = () => {
   };
   useEffect(() => {
     const ciupezoi = setInterval(() => {
-      loadData();
-     // generateRandomValues();
+      // loadData();
+      // generateRandomValues();
       getHumiThresh();
-    },6000);
-  },[] );
+    }, 6000);
+  }, []);
 
   const chartData = (lineColor, data_to_draw) => {
     const labels = dataChart.map((item) => item.time);
@@ -418,35 +446,10 @@ const Control = () => {
                 </div>
               </div>
             </div>
-            <div className=" h-2/3 w-full p-4">
-              <div className="bg-white h-full w-full rounded-3xl">
-                <ul className=" flex justify-center w-full overflow-x-auto ">
-                  <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                    <span
-                      class="ml-2 "
-                      onClick={() => {
-                        setSelector("motor1");
-                      }}
-                    >
-                      MOTOR 1
-                    </span>
-                  </li>
-                  <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                    <span
-                      class="ml-2 "
-                      onClick={() => {
-                        setSelector("motor2");
-                      }}
-                    >
-                      MOTOR 2
-                    </span>
-                  </li>
-                </ul>
-                <div id="chart_Sensor_1" className="p-2  ">
-                  <Line
-                    data={chartData("#f15bb5", selector)}
-                    options={options(selector)}
-                  />
+            <div className=" h-2/3 w-full p-4 mt-3">
+              <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
+                <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
+                  <Bar data={data2} options={optionsBar} />
                 </div>
               </div>
             </div>
@@ -513,6 +516,48 @@ const Control = () => {
                         </button>
                       </div>
                     ))}
+                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className="mb-4">
+                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                          SET FREQUENCY PUMP
+                        </div>
+
+                        <p className="text-gray-600 mb-2">
+                          Pump speed control{" "}
+                          <span className="font-bold">{frequencyPump}Hz</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="range"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, green, red ${
+                                frequencyPump * 2
+                              }%, #ccc ${frequencyPump * 2}%)`,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="text-right w-1/5"
+                          />
+                          Hz
+                          <button
+                            onClick={handleSaveClick}
+                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -520,19 +565,14 @@ const Control = () => {
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
                   <div class="flex flex-col gap-3">
-                    <div className="relative p-4 h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                      <div className="ml-5" style={{ maxWidth: "400px" }}>
-                        <Bar data={data2} options={optionsBar} />
-                      </div>
-                    </div>
-
                     <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Start
-                        </h2>
+                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                          SET RULE
+                        </div>
+
                         <p className="text-gray-600 mb-2">
-                          Humidity less than{" "}
+                          Pump START when Humidity less than{" "}
                           <span className="font-bold">{startThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
@@ -566,11 +606,8 @@ const Control = () => {
                       </div>
 
                       <div>
-                        <h2 className="text-md font-semibold mb-2">
-                          Pump Stop
-                        </h2>
                         <p className="text-gray-600 mb-2">
-                          Humidity greater than{" "}
+                          Pump STOP when Humidity greater than{" "}
                           <span className="font-bold">{stopThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
@@ -594,6 +631,48 @@ const Control = () => {
                             className="text-right w-1/5"
                           />
                           %
+                          <button
+                            onClick={handleSaveFrequencyPumpClick}
+                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className="mb-4">
+                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                          SET FREQUENCY PUMP
+                        </div>
+
+                        <p className="text-gray-600 mb-2">
+                          Pump speed control{" "}
+                          <span className="font-bold">{frequencyPump}Hz</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="range"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, green, red ${
+                                frequencyPump * 2
+                              }%, #ccc ${frequencyPump * 2}%)`,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="text-right w-1/5"
+                          />
+                          Hz
                           <button
                             onClick={handleSaveClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"

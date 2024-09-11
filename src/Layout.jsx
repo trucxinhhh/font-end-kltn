@@ -898,7 +898,7 @@ const Layout = () => {
             {/* End List Box */}
             <div className="flex  h-full w-screen flex-col md:flex-row ">
               {/* Outletx*/}
-              <div className=" w-full md:w-4/5  bg-green-100 bg-opacity-50">
+              <div className=" w-full md:w-4/5  bg-opacity-50">
                 <Outlet />
               </div>
 
