@@ -51,7 +51,7 @@ const Layout = () => {
   const [valueEmptyTank, setValueEmptyTank] = useState(false);
   const [data1, setData] = useState([]);
   const [data2, setData2] = useState([]);
-
+console.log("huhu ciu pe zoi");
   //warning report
   const [errorValue, setError] = useState(null);
   const notify = (message) => {

@@ -62,6 +62,7 @@ const dt2 = JSON.parse(dataMotor);
 function App() {
   //khai báo biến sử dụng
 
+  const [recentMotor, setRecentMotor] = useState([]);
   const [recentData, setRecentData] = useState([]);
   const [Predict, setPredict] = useState("");
   const [currentTime, setCurrentTime] = useState(
@@ -155,24 +156,45 @@ console.log(Unit["CO2"]);
       },
     },
   });
-  const chartData = (lineColor, data_to_draw) => {
-    const labels = recentData.map((item) => item.time);
-    const data = recentData.map((item) => item[data_to_draw]);
+    const chartData = (lineColor, data_to_draw) => {
+    if (data_to_draw == "motor1" || data_to_draw == "motor2") {
+      const labels = recentMotor.map((item) => item.time);
+      const data = recentMotor.map((item) => item[data_to_draw]);
+      return {
+        labels: labels,
+        datasets: [
+          {
+            label: "",
+            data: data, // Assuming data_CO2 has a co2 field
+            borderColor: lineColor,
+            backgroundColor: "rgba(75,192,192,0.2)",
+            fill: true,
+	    cubicInterpolationMode: "monotone",
+            tension: 0.4
+          },
+        ],
+      };
+    } else {
+      const labels = recentData.map((item) => item.time);
+      const data = recentData.map((item) => item[data_to_draw]);
+      return {
+        labels: labels,
+        datasets: [
+          {
+            label: "",
+            data: data, // Assuming data_CO2 has a co2 field
+            borderColor: lineColor,
+            backgroundColor: "rgba(75,192,192,0.2)",
+            fill: true,
+            cubicInterpolationMode: "monotone",
+            tension: 0.4
 
-    return {
-      labels: labels,
-      datasets: [
-        {
-          label: "",
-          data: data, // Assuming data_CO2 has a co2 field
-          borderColor: lineColor,
-          backgroundColor: "rgba(75,192,192,0.2)",
-          fill: true,
-	  cubicInterpolationMode: "monotone", // hoặc "default"
-          tension: 0.4,
-        },
-      ],
-    };
+          },
+        ],
+      };
+    }
+
+    
   };
   const imagePath = (name) => {
     new URL(`/src/assets/icon/${name}.jpg`, import.meta.url).href;
@@ -194,11 +216,12 @@ console.log(Unit["CO2"]);
 
     setPredict(response.data);
   };
-console.log("Home",dt2);
+console.log("Home",);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
       getPredict();
+      setRecentMotor(dt2.slice(-30));
       setRecentData(dt1.slice(-30));
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
@@ -224,7 +247,7 @@ console.log("Home",dt2);
       case "EC":
       case "pH":
         if (name) {
-	  return dt1.slice(-1)[0][name].toFixed(2);
+	  return dt1.slice(-1)[0][name].toFixed(1);
         }
     }
   };
