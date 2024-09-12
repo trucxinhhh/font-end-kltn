@@ -40,7 +40,25 @@ const DashBoard = [
   "motor1",
   "motor2",
 ];
-
+const Unit = {
+  CO2: "ppm",
+  Humi: "%",
+  Temp: "°C",
+  Flowmeters: "m²/s",
+  EC: "µS/cm",
+  WaterlevelSensor1: "",
+  WaterlevelSensor2: "",
+  pH: "ppt",
+  Pressure: "bar",
+  motor1: "",
+  motor2: "",
+};
+const { dataSensor, dataMotor } = {
+  dataMotor: localStorage.getItem("dataMotor"),
+  dataSensor: localStorage.getItem("dataSensor"),
+};
+const dt1 = JSON.parse(dataSensor);
+const dt2 = JSON.parse(dataMotor);
 function App() {
   //khai báo biến sử dụng
 
@@ -64,7 +82,7 @@ function App() {
       return "text-white";
     }
   };
-
+console.log(Unit["CO2"]);
   const SadColor = (value) => {
     if (35 < value && value < 80) {
       return "text-yellow-500";
@@ -111,6 +129,18 @@ function App() {
     if (nameChange == "pH") {
       return "Salinity";
     }
+    else if(nameChange=="WaterlevelSensor1"){
+      return "Full Tank";  
+    }
+    else if(nameChange=="WaterlevelSensor2"){
+      return "Empty Tank"
+    }
+    else if(nameChange=="motor1"){
+      return "MOTOR 1";
+    }
+    else if(nameChange=="motor2"){
+      return "MOTOR 2";
+    }
     return nameChange;
   };
   const options = (title) => ({
@@ -138,6 +168,8 @@ function App() {
           borderColor: lineColor,
           backgroundColor: "rgba(75,192,192,0.2)",
           fill: true,
+	  cubicInterpolationMode: "monotone", // hoặc "default"
+          tension: 0.4,
         },
       ],
     };
@@ -148,14 +180,8 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-  const { dataSensor, dataMotor } = {
-    dataMotor: localStorage.getItem("dataMotor"),
-    dataSensor: localStorage.getItem("dataSensor"),
-  };
-  const dt1 = JSON.parse(dataSensor);
-  const dt2 = JSON.parse(dataMotor);
-	console.log(dt1);
- // setRecentData(dt1.slice(-30));
+  console.log(dt1);
+  // setRecentData(dt1.slice(-30));
   const getPredict = async () => {
     const url = url_api + "predict";
     const response = await axios.get(url, {
@@ -168,12 +194,12 @@ function App() {
 
     setPredict(response.data);
   };
-
+console.log("Home",dt2);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
       getPredict();
-	setRecentData(dt1.slice(-30));
+      setRecentData(dt1.slice(-30));
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
@@ -181,19 +207,25 @@ function App() {
     switch (name) {
       case "motor1":
       case "motor2":
-	if (name){
-        return dt2.slice(-1)[0][name];}
-      case "CO2":
-      case "Humi":
       case "WaterlevelSensor1":
       case "WaterlevelSensor2":
+	 if (name) {
+          const data = dt2.slice(-1)[0][name];
+          if (data) {
+            return "ON";
+          }
+          return "OFF";
+        }
+      case "CO2":
+      case "Humi":
       case "Pressure":
       case "Temp":
       case "Flowmeters":
       case "EC":
       case "pH":
-        if(name){
-        return dt1.slice(-1)[0][name];}
+        if (name) {
+	  return dt1.slice(-1)[0][name].toFixed(2);
+        }
     }
   };
   //điều khiển icon status
@@ -321,7 +353,9 @@ function App() {
                       src={`src/assets/icon/${item}.jpg`}
                       class="h-auto w-1/3 object-contain "
                     />
-                    {checkValue(item)}
+		<h2 className="font-bold text-base mt-2 ">
+			{checkValue(item)}
+			{Unit[item]}</h2>
                   </button>
                 ))}
               </div>
@@ -364,11 +398,11 @@ function App() {
                   Quy trình chăm sóc
                 </p>
                 <p className="text-red-600 font-bold text-lg text-left">
-                  DAY: {Predict["days"]}
+                  DAY {Predict["days"]}
                 </p>
                 {ciuspe
                   ? JSON.parse(localStorage.getItem("advices")).map(
-                      (sentence, index) => <p key={index}>{sentence.trim()}.</p>
+                      (sentence, index) => <p className="ml-4 font-bold text-[#3C3D37]" key={index}>{sentence.trim()}.</p>
                     )
                   : null}
               </div>

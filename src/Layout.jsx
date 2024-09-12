@@ -151,7 +151,7 @@ const Layout = () => {
     });
     const dt1 = response.data;
     setData(dt1);
-	  //console.log("dt1 LAYOUT",dt1);
+	  console.log("dt1 LAYOUT",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
