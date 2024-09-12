@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
@@ -151,7 +152,7 @@ const Layout = () => {
     });
     const dt1 = response.data;
     setData(dt1);
-	  //console.log("dt1 LAYOUT",dt1);
+    //console.log("dt1 LAYOUT",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
@@ -163,7 +164,7 @@ const Layout = () => {
     const dt2 = responseMotor.data;
     //console.log("dt2",dt2);
 
-	  setData2(dt2);
+    setData2(dt2);
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
     for (var i = 0; i < listSensorData.length; i++) {
@@ -261,7 +262,7 @@ const Layout = () => {
     <>
       {location.pathname != "/" && (
         <div className="flex">
-	   <Dialog
+          <Dialog
             open={isDialogOpen}
             onClose={closeDialog}
             className="fixed inset-0 z-10 overflow-y-auto"
@@ -383,7 +384,7 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-	      {/*{errorValue && <ToastContainer />}*/}
+          {/*{errorValue && <ToastContainer />}*/}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
@@ -413,11 +414,8 @@ const Layout = () => {
                       </div>
                     </div>
                     <br />
-                    <ul className="fmt-6 leading-10 flex flex-col space-y-4">
-                      <a
-                        className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
-                        href=""
-                      >
+                    <ul className="fmt-6 leading-10 flex flex-col space-y-2">
+                      <a className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="34"
@@ -448,6 +446,46 @@ const Layout = () => {
                         </Link>
                       </a>
                       {Role === "admin" && (
+                        <Link to="/user-management">
+                          <a
+                            className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                            href=""
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="34"
+                              height="34"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="icon icon-tabler icons-tabler-outline icon-tabler-users"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                              <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                              <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            </svg>
+
+                            <span
+                              className="ml-4"
+                              onClick={() => {
+                                setDisplay(false);
+                              }}
+                            >
+                              Users
+                            </span>
+                          </a>
+                        </Link>
+                      )}
+                      <Link to="/control">
                         <a
                           className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
                           href=""
@@ -459,58 +497,23 @@ const Layout = () => {
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="icon icon-tabler icons-tabler-outline icon-tabler-users"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments-horizontal"
                           >
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            <path d="M14 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M4 6l8 0" />
+                            <path d="M16 6l4 0" />
+                            <path d="M8 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M4 12l2 0" />
+                            <path d="M10 12l10 0" />
+                            <path d="M17 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                            <path d="M4 18l11 0" />
+                            <path d="M19 18l1 0" />
                           </svg>
 
-                          <Link to="/user-management">
-                            <span
-                              className="ml-4"
-                              onClick={() => {
-                                setDisplay(false);
-                              }}
-                            >
-                              Users
-                            </span>
-                          </Link>
-                        </a>
-                      )}
-                      <a
-                        className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
-                        href=""
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="34"
-                          height="34"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments-horizontal"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M14 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                          <path d="M4 6l8 0" />
-                          <path d="M16 6l4 0" />
-                          <path d="M8 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                          <path d="M4 12l2 0" />
-                          <path d="M10 12l10 0" />
-                          <path d="M17 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                          <path d="M4 18l11 0" />
-                          <path d="M19 18l1 0" />
-                        </svg>
-                        <Link to="/control">
                           <span
                             className="ml-4"
                             onClick={() => {
@@ -519,32 +522,32 @@ const Layout = () => {
                           >
                             Control Panel
                           </span>
-                        </Link>
-                      </a>
-                      <a
-                        className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
-                        href=""
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="34"
-                          height="34"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon icon-tabler icons-tabler-outline icon-tabler-file-description"
+                        </a>
+                      </Link>
+                      <Link to="/Data-Analysis">
+                        <a
+                          className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                          href=""
                         >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                          <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                          <path d="M9 17h6" />
-                          <path d="M9 13h6" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="34"
+                            height="34"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-file-description"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                            <path d="M9 17h6" />
+                            <path d="M9 13h6" />
+                          </svg>
 
-                        <Link to="/Data-Analysis">
                           <span
                             className="ml-4"
                             onClick={() => {
@@ -553,37 +556,38 @@ const Layout = () => {
                           >
                             History
                           </span>
-                        </Link>
-                      </a>
-                      <a
-                        className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
-                        href=""
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="34"
-                          height="34"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="icon icon-tabler icons-tabler-outline icon-tabler-info-hexagon"
+                        </a>
+                      </Link>
+                      <Link to="/about-us">
+                        <a
+                          className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                          href=""
                         >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M19.875 6.27c.7 .398 1.13 1.143 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z" />
-                          <path d="M12 9h.01" />
-                          <path d="M11 12h1v4h1" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="34"
+                            height="34"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-info-hexagon"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M19.875 6.27c.7 .398 1.13 1.143 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z" />
+                            <path d="M12 9h.01" />
+                            <path d="M11 12h1v4h1" />
+                          </svg>
 
-                        <Link to="/about-us">
                           <span className="ml-4">About us</span>
-                        </Link>
-                      </a>
+                        </a>
+                      </Link>
                       <a
                         className="ml-1 inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
                         href=""
+                        onClick={() => goOut()}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -602,9 +606,7 @@ const Layout = () => {
                           <path d="M9 12h12l-3 -3" />
                           <path d="M18 15l3 -3" />
                         </svg>
-                        <span className="ml-4" onClick={() => goOut()}>
-                          Logout
-                        </span>
+                        <span className="ml-4">Logout</span>
                       </a>
                     </ul>
                   </div>
