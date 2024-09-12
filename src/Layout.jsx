@@ -151,6 +151,7 @@ const Layout = () => {
     });
     const dt1 = response.data;
     setData(dt1);
+	  //console.log("dt1 LAYOUT",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
@@ -248,7 +249,7 @@ const Layout = () => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
-    }, 5000);
+    }, 1000);
 
     // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);
@@ -258,7 +259,7 @@ const Layout = () => {
     <>
       {location.pathname != "/" && (
         <div className="flex">
-          <Dialog
+	   <Dialog
             open={isDialogOpen}
             onClose={closeDialog}
             className="fixed inset-0 z-10 overflow-y-auto"
@@ -380,7 +381,7 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-          {errorValue && <ToastContainer />}
+	      {/*{errorValue && <ToastContainer />}*/}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
