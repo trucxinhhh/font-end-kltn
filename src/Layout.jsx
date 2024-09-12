@@ -51,7 +51,7 @@ const Layout = () => {
   const [valueEmptyTank, setValueEmptyTank] = useState(false);
   const [data1, setData] = useState([]);
   const [data2, setData2] = useState([]);
-console.log("huhu ciu pe zoi");
+
   //warning report
   const [errorValue, setError] = useState(null);
   const notify = (message) => {
@@ -151,7 +151,7 @@ console.log("huhu ciu pe zoi");
     });
     const dt1 = response.data;
     setData(dt1);
-	  console.log("dt1 LAYOUT",dt1);
+	  //console.log("dt1 LAYOUT",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
@@ -161,7 +161,9 @@ console.log("huhu ciu pe zoi");
       },
     });
     const dt2 = responseMotor.data;
-    setData2(dt2);
+    //console.log("dt2",dt2);
+
+	  setData2(dt2);
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
     for (var i = 0; i < listSensorData.length; i++) {

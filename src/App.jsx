@@ -8,6 +8,7 @@ import Decentralization from "./pages/Decentralization";
 //import Home from "./pages/Home";
 import Layout from "./Layout";
 
+
 const Home = lazy(() => (import('./pages/Home')));
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";

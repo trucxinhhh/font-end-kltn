@@ -83,7 +83,7 @@ function App() {
       return "text-white";
     }
   };
-console.log(Unit["CO2"]);
+
   const SadColor = (value) => {
     if (35 < value && value < 80) {
       return "text-yellow-500";
@@ -202,7 +202,7 @@ console.log(Unit["CO2"]);
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-  console.log(dt1);
+
   // setRecentData(dt1.slice(-30));
   const getPredict = async () => {
     const url = url_api + "predict";
@@ -216,7 +216,7 @@ console.log(Unit["CO2"]);
 
     setPredict(response.data);
   };
-console.log("Home",);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
