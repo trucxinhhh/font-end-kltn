@@ -1,6 +1,6 @@
 import { Button } from "@material-tailwind/react";
 import React, { useEffect, useState, useRef } from "react";
-// import axios from "axios";
+//import axios from "axios";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
 import { url_api, url_local } from "../Provider.jsx";
@@ -70,13 +70,13 @@ const Control = () => {
     setStartThreshold(event.target.value);
     localStorage.setItem("HUMI_MIN", event.target.value);
   };
-
+  console.log("freq local",localStorage.getItem("frequencyPump"));
   const handleStopThresholdChange = (event) => {
     localStorage.setItem("HUMI_MAX", event.target.value);
     setStopThreshold(event.target.value);
   };
   const handleFrequencyPump = (event) => {
-    localStorage.setItem("FREQUENCY_MAX", event.target.value);
+    // localStorage.setItem("FREQUENCY_MAX", event.target.value);
     setFrequencyPumpd(event.target.value);
   };
 
@@ -98,20 +98,17 @@ const Control = () => {
           },
         }
       );
+      console.log("response humi", response.data);
     } catch (error) {
       console.error("Error:", error);
     }
   };
   const handleSaveFrequencyPumpClick = async () => {
-    const url = url_api + `threshold/humi`;
+    const url = url_api + `inv/${frequencyPump}`;
     try {
       const response = await axios.post(
-        url,
-        {
-          attribute: "humi",
-          upper: stopThreshold,
-          lower: startThreshold,
-        },
+        url,{},
+
         {
           headers: {
             accept: "application/json",
@@ -120,6 +117,7 @@ const Control = () => {
           },
         }
       );
+      console.log("response inv", response.data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -135,7 +133,17 @@ const Control = () => {
     // console.log(response);
     localStorage.setItem("low", response.data["lower"]);
     localStorage.setItem("up", response.data["upper"]);
-    localStorage.setItem("frequencyPump", response.data["frequencyPump"]);
+  };
+  const getFrequencyPump = async () => {
+    const response = await axios.get(url_api + "inv", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+	console.log("freq",response.data);
+    localStorage.setItem("frequencyPump", response.data);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -260,6 +268,7 @@ const Control = () => {
       // loadData();
       // generateRandomValues();
       getHumiThresh();
+	    getFrequencyPump();
     }, 6000);
   }, []);
 
@@ -632,7 +641,7 @@ const Control = () => {
                           />
                           %
                           <button
-                            onClick={handleSaveFrequencyPumpClick}
+                            onClick={handleSaveClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
                             Save
@@ -674,7 +683,7 @@ const Control = () => {
                           />
                           Hz
                           <button
-                            onClick={handleSaveClick}
+                            onClick={handleSaveFrequencyPumpClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
                             Save
