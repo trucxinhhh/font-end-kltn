@@ -70,7 +70,7 @@ const Control = () => {
     setStartThreshold(event.target.value);
     localStorage.setItem("HUMI_MIN", event.target.value);
   };
-  console.log("freq local",localStorage.getItem("frequencyPump"));
+  console.log("freq local", localStorage.getItem("frequencyPump"));
   const handleStopThresholdChange = (event) => {
     localStorage.setItem("HUMI_MAX", event.target.value);
     setStopThreshold(event.target.value);
@@ -107,8 +107,8 @@ const Control = () => {
     const url = url_api + `inv/${frequencyPump}`;
     try {
       const response = await axios.post(
-        url,{},
-
+        url,
+        {},
         {
           headers: {
             accept: "application/json",
@@ -142,7 +142,7 @@ const Control = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-	console.log("freq",response.data);
+
     localStorage.setItem("frequencyPump", response.data);
   };
 
@@ -252,56 +252,18 @@ const Control = () => {
   const dataMotor = localStorage.getItem("dataMotor");
   const dt1 = JSON.parse(dataMotor);
 
-  // async function loadData() {
-  //   setData(dt1);
-  //   setValueMotor1(dt1.slice(-1)[0]["motor1"]);
-  //   setValueMotor2(dt1.slice(-1)[0]["motor2"]);
-  //   setValueMotor3(dt1.slice(-1)[0]["motor3"]);
-  // }
   const generateRandomValues = () => {
     setTotalPump1(Math.floor(Math.random() * 100) + 1);
     setTotalPump2(Math.floor(Math.random() * 100) + 1);
-    // setTotalPump3(Math.floor(Math.random() * 100) + 1);
   };
   useEffect(() => {
     const ciupezoi = setInterval(() => {
-      // loadData();
-      // generateRandomValues();
+      generateRandomValues();
       getHumiThresh();
-	    getFrequencyPump();
+      getFrequencyPump();
     }, 6000);
   }, []);
 
-  const chartData = (lineColor, data_to_draw) => {
-    const labels = dataChart.map((item) => item.time);
-    const data = dataChart.map((item) => item[data_to_draw]);
-
-    return {
-      labels: labels,
-      datasets: [
-        {
-          label: "",
-          data: data, // Assuming data_CO2 has a co2 field
-          borderColor: lineColor,
-          backgroundColor: "rgba(75,192,192,0.2)",
-          fill: false,
-          stepped: true,
-        },
-      ],
-    };
-  };
-  const options = (title) => ({
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: title,
-      },
-    },
-  });
   // ve total pump
 
   const labels = ["Pump 1", "Pump 2"];
@@ -559,7 +521,7 @@ const Control = () => {
                           />
                           Hz
                           <button
-                            onClick={handleSaveClick}
+                            onClick={handleSaveFrequencyPumpClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
                             Save
@@ -865,12 +827,7 @@ const Control = () => {
                     </span>
                   </li>
                 </ul>
-                <div id="chart_Sensor_1" className="p-2  ">
-                  <Line
-                    data={chartData("#f15bb5", selector)}
-                    options={options(selector)}
-                  />
-                </div>
+                <div id="chart_Sensor_1" className="p-2  "></div>
               </div>
             </div>
           </div>

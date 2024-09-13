@@ -384,7 +384,7 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-          {/*{errorValue && <ToastContainer />}*/}
+          {errorValue && <ToastContainer />}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">

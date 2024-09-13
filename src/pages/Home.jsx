@@ -105,7 +105,7 @@ function App() {
       case "motor2":
       case "WaterlevelSensor1":
       case "WaterlevelSensor2":
-        if (value) return "shadow-cyan-600";
+        if (value){ return "shadow-cyan-600";}
         return "shadow-red-600";
       case "CO2":
       case "Humi":
@@ -230,14 +230,28 @@ function App() {
     switch (name) {
       case "motor1":
       case "motor2":
-      case "WaterlevelSensor1":
-      case "WaterlevelSensor2":
-	 if (name) {
+		    if (name) {
           const data = dt2.slice(-1)[0][name];
+           
           if (data) {
             return "ON";
           }
-          return "OFF";
+          else {
+            return "OFF";
+          }
+        }
+
+      case "WaterlevelSensor1":
+      case "WaterlevelSensor2":
+	 if (name) {	 
+          const data = dt1.slice(-1)[0][name];
+		 console.log("huhu",name,data);
+          if (data) {
+            return "ON";
+          }
+	  else {
+            return "OFF";
+	  }
         }
       case "CO2":
       case "Humi":
