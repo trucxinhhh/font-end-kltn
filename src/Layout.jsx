@@ -62,6 +62,7 @@ const Layout = () => {
     });
   };
   var listSensorData = ["CO2", "Humi", "Temp"];
+    const checkSensorData = () => {
   for (var i = 0; i < listSensorData.lenght; i++) {
     var val = "value" + listSensorData[i];
     const checkMAX = listSensorData[i] + "_MAX";
@@ -70,8 +71,14 @@ const Layout = () => {
       setError("warning sensor");
       notify("warning sensor");
     }
-  }
-
+  }};
+useEffect(() => {
+    
+    const interval = setInterval(() => {
+      checkSensorData();
+    }, 300000);
+    return () => clearInterval(interval);
+  }, [DataMap]);
   // get local inf
   localStorage.setItem("role", Role);
   localStorage.setItem("full_name", fullName);
@@ -172,10 +179,10 @@ const Layout = () => {
       const checkMAX = listSensorData[i] + "_MAX";
       const checkMIN = listSensorData[i] + "_MIN";
 
-      if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
-        setError("warning sensor");
-        notify(`Warning ${listSensorData[i]} over threshold`);
-      }
+    //  if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
+    //  setError("warning sensor");
+    //   notify(`Warning ${listSensorData[i]} over threshold`);
+     //}
     }
   }
 
@@ -256,7 +263,7 @@ const Layout = () => {
 
     // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);
-  }, []);
+  });
 
   return (
     <>

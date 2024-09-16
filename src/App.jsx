@@ -5,11 +5,11 @@ import Login from "./pages/Login";
 // import App from "./App.tsx";
 import PrivateRoute from "./PrivateRoute";
 import Decentralization from "./pages/Decentralization";
-//import Home from "./pages/Home";
+import Home from "./pages/Home";
 import Layout from "./Layout";
 
 
-const Home = lazy(() => (import('./pages/Home')));
+//const Home = lazy(() => (import('./pages/Home')));
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";
 import AboutUs from "./pages/AboutUs.jsx";
@@ -28,9 +28,9 @@ const App = () => {
             path="/home"
             element={
               <PrivateRoute>
-              <Suspense fallback={<Layout/>}>
+
 		    <Home />
-		    </Suspense>
+
               </PrivateRoute>
             }
           />

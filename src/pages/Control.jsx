@@ -28,7 +28,7 @@ const LOCK_DURATION = 60 * 1000;
 const DOUBLE_CLICK_THRESHOLD = 300;
 const GetDataTime = 0.2 * 60;
 const Control = () => {
-  const [isChecked, setIsChecked] = useState(localStorage.getItem("isChecked"));
+  const [isChecked, setIsChecked] = useState(false);
   const [Display, setDisplay] = useState("1");
   const [selector, setSelector] = useState("motor1");
   const [valueMotor1, setValueMotor1] = useState(false);

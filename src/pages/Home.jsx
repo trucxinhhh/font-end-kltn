@@ -202,6 +202,12 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
+const { dataSensor, dataMotor } = {
+  dataMotor: localStorage.getItem("dataMotor"),
+  dataSensor: localStorage.getItem("dataSensor"),
+};
+const dt1 = JSON.parse(dataSensor);
+const dt2 = JSON.parse(dataMotor);
 
   // setRecentData(dt1.slice(-30));
   const getPredict = async () => {
@@ -220,7 +226,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
-      getPredict();
+      //getPredict();
       setRecentMotor(dt2.slice(-30));
       setRecentData(dt1.slice(-30));
     }, 1000);
@@ -245,7 +251,7 @@ function App() {
       case "WaterlevelSensor2":
 	 if (name) {	 
           const data = dt1.slice(-1)[0][name];
-		 console.log("huhu",name,data);
+		 //console.log("huhu",name,data);
           if (data) {
             return "ON";
           }

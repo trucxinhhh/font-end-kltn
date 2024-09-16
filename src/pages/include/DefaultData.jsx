@@ -5,14 +5,14 @@ export const CO2_MAX = 1800;
 export const Humi_MIN = localStorage.getItem("HUMI_MIN");
 export const Humi_MAX = localStorage.getItem("HUMI_MAX");
 
-export const Temp_MIN = 20;
-export const Temp_MAX = 25;
+export const Temp_MIN = 0;
+export const Temp_MAX = 30;
 
-export const EC_MIN = 10;
-export const EC_MAX = 20;
+export const EC_MIN = 0;
+export const EC_MAX = 300;
 
-export const pH_MIN = 2;
-export const pH_MAX = 6;
+export const pH_MIN = 0;
+export const pH_MAX = 600;
 
 // -------------------------OVER VIEW-----------------------
 export const title_1_ov = "TITLE 1";
