@@ -57,12 +57,13 @@ const { dataSensor, dataMotor } = {
   dataMotor: localStorage.getItem("dataMotor"),
   dataSensor: localStorage.getItem("dataSensor"),
 };
+
 const dt1 = JSON.parse(dataSensor);
 const dt2 = JSON.parse(dataMotor);
 //const Predict = (localStorage.getItem("Predict"));
 function App() {
   //khai báo biến sử dụng
-
+const [Display, setDisplay] = useState(true);
   const [recentMotor, setRecentMotor] = useState([]);
   const [recentData, setRecentData] = useState([]);
   const [Predict, setPredict] = useState("");
@@ -406,7 +407,6 @@ function App() {
                 />
               </div>
             </div>
-
             {/*--------End Sensor Project --------*/}
           </div>
           {/*--------------------------End Status Box--------------------------*/}
@@ -466,103 +466,208 @@ function App() {
         </div>
       </div>
       {/* Mobile View */}
-      <div className="sm:hidden h-full w-screen  ">
-        <div className="p-4 w-screen h-screen md:w-1/2 ">
-          {/*----------Status Project ----------*/}
-          <div className="flex left-1 h-28 w-full  p-2">
-            <div className=" flex flex-col  items-center h-full w-4/6 p-2 shadow-xl bg-[#65B741] text-white rounded-md mr-2 ">
-              <h3 className="mt-2 text-2xl font-bold">{today}</h3>
-              <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
-            </div>
-            <div className="flex flex-col items-center h-full  w-4/6 p-2  shadow-xl bg-[#65B741] text-white rounded-md mr-2">
-              <h3 className="text-xl font-bold">Status Project</h3>
-              <div className="flex flex-nowrap">
-                <div
-                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
-                    stt_Project
-                  )}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="54"
-                    height="54"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                    <path d="M9 10h-.01" />
-                    <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                    <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                  </svg>
+      <div className="sm:hidden h-screen w-screen  ">
+        <ul className=" p-2 flex justify-center w-full overflow-x-auto ">
+          <li class="p-4   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
+            <span
+              class="ml-2 underline hover:underline-offset-8  "
+              onClick={() => {
+                setDisplay(true);
+              }}
+            >
+              Information
+            </span>
+          </li>
+          <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
+            <span
+              class="ml-2 underline hover:underline-offset-8 "
+              onClick={() => {
+                setDisplay(false);
+              }}
+            >
+              Monitor
+            </span>
+          </li>
+        </ul>
+        {Display ? (
+          <div>
+            <div className="p-2 w-screen h-screen md:w-1/2 ">
+              <div className=" p-2 w-full m rounded-r-3xl  ">
+                <div class="bg-white h-24 w-full rounded-3xl p-4 flex flex-row justify-center items-center space-x-4 gap-12">
+                  <img
+                    src="src/assets/logo/iuh.jpg"
+                    alt="Logo IUH"
+                    class="h-auto w-20 object-contain"
+                  />
+                  <img
+                    src="src/assets/logo/fet.jpg"
+                    alt="Logo FET"
+                    class="h-auto w-20 object-contain"
+                  />
+                  <img
+                    src="src/assets/logo/dai-viet.jpg"
+                    alt="Logo Đại Việt"
+                    class="h-auto w-20 object-contain"
+                  />
                 </div>
-                <div
-                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
-                    stt_Project
-                  )}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="54"
-                    height="54"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                    <path d="M9 10l.01 0" />
-                    <path d="M15 10l.01 0" />
-                    <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                  </svg>
+              </div>
+              {/*----------Status Project ----------*/}
+              <div className="flex left-1 h-28 w-full  p-2">
+                <div className=" flex flex-col  items-center h-full w-4/6 p-2 shadow-xl bg-[#65B741] text-white rounded-md mr-2 ">
+                  <h3 className="mt-2 text-2xl font-bold">{today}</h3>
+                  <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
                 </div>
+                <div className="flex flex-col items-center h-full  w-4/6 p-2  shadow-xl bg-[#65B741] text-white rounded-md mr-2">
+                  <h3 className="text-xl font-bold">Status Project</h3>
+                  <div className="flex flex-nowrap">
+                    <div
+                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
+                        stt_Project
+                      )}`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="54"
+                        height="54"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+                        <path d="M9 10h-.01" />
+                        <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
+                        <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
+                      </svg>
+                    </div>
+                    <div
+                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
+                        stt_Project
+                      )}`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="54"
+                        height="54"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                        <path d="M9 10l.01 0" />
+                        <path d="M15 10l.01 0" />
+                        <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
+                      </svg>
+                    </div>
 
-                <div
-                  className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
-                    stt_Project
-                  )}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="54"
-                    height="54"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                    <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                    <path d="M8 9l2 2" />
-                    <path d="M10 9l-2 2" />
-                    <path d="M14 9l2 2" />
-                    <path d="M16 9l-2 2" />
-                  </svg>
+                    <div
+                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
+                        stt_Project
+                      )}`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="54"
+                        height="54"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                        <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
+                        <path d="M8 9l2 2" />
+                        <path d="M10 9l-2 2" />
+                        <path d="M14 9l2 2" />
+                        <path d="M16 9l-2 2" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              {/*--------End Status Project --------*/}
+              {/*----------Recomment Box ----------*/}
+              <div className="mt-4 h-22/5 flex left-1">
+                <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
+                  <p className="text-gray-600 font-bold text-center text-xl">
+                    Quy trình chăm sóc
+                  </p>
+                  <p className="text-red-600 font-bold text-lg text-left">
+                    DAY {Predict["days"]}
+                  </p>
+                  {ciuspe
+                    ? JSON.parse(localStorage.getItem("advices")).map(
+                        (sentence, index) => (
+                          <p
+                            className="ml-4 font-bold text-[#3C3D37]"
+                            key={index}
+                          >
+                            {sentence.trim()}.
+                          </p>
+                        )
+                      )
+                    : null}
+                </div>
+              </div>
+              {/*----------End Recomment Box ----------*/}
+              {/* -----------------------Mo Hinh Nha Kinh------------------------------ */}
+              <div class="bg-white h-3/5  w-full rounded-3xl p-4 flex flex-row  bg-opacity-50 justify-center items-center space-x-4">
+                <img src="src/assets/logo/MoHinhNhaKinh-removebg-preview.png" />
+              </div>
+              {/* ----------------------- End Mo Hinh Nha Kinh------------------------------ */}
+            </div>
+          </div>
+        ) : (
+          <div className="">
+            <div className="flex flex-col sensor_table h-screen w-full rounded-r-2xl rounded-l-2xl ">
+              <div className="grid grid-cols-4 gap-2 h-20 text-white p-2 ">
+                {DashBoard.map((item) => (
+                  <button
+                    className={`flex text-black bg-white rounded-2xl  shadow ${statusColor(
+                      item,
+                      checkValue(item)
+                    )}`}
+                    onClick={() => {
+                      setSelector(item);
+                    }}
+                  >
+                    <img
+                      src={`src/assets/icon/${item}.jpg`}
+                      class="h-auto w-1/3 object-contain "
+                    />
+                    <h2 className="font-bold text-base mt-2 ">
+                      {checkValue(item)}
+                      {Unit[item]}
+                    </h2>
+                  </button>
+                ))}
+              </div>
+              <br></br>
+              <br></br>
+              <br></br>
+              <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
+                <Line
+                  data={chartData("#f15bb5", selector)}
+                  options={options(selector)}
+                />
               </div>
             </div>
           </div>
-
-          {/*--------End Status Project --------*/}
-
-          {/* ---------- Sensor Table ----------*/}
-
-          {/*--------End Sensor Project --------*/}
-        </div>
-        <br></br>
+        )}
       </div>
       {/* End Mobile View */}
     </div>
