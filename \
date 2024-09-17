@@ -32,9 +32,9 @@ const Control = () => {
     JSON.parse(localStorage.getItem("isChecked"))
   );
   console.log(
-    "Control ",
+    "Control",
     isChecked,
-    "Layout  ",
+    "Layout",
     JSON.parse(localStorage.getItem("isChecked"))
   );
   const [Display, setDisplay] = useState("1");
@@ -151,7 +151,7 @@ const Control = () => {
       },
     });
 
-    localStorage.setItem("frequencyPump", response.data);
+[O    localStorage.setItem("frequencyPump", response.data);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -268,7 +268,7 @@ const Control = () => {
     const ciupezoi = setInterval(() => {
       generateRandomValues();
       getHumiThresh();
-      getFrequencyPump();
+[I      getFrequencyPump();
     }, 6000);
   }, []);
 
@@ -315,11 +315,12 @@ const Control = () => {
         labels: {
           fontSize: 15,
         },
-      },
+[O      },
     },
   };
   const ModeControl = async (e) => {
     console.log("e", e.target.checked);
+    localStorage.setItem("isChecked", e.target.checked);
 
     try {
       const response = await axios.post(
@@ -332,20 +333,7 @@ const Control = () => {
           },
         }
       );
-      //   console.log(response.data);
-
-      const responseMode = await axios.get(url_api + "control_mode", {
-        headers: {
-          Authorization: access_token,
-          accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-      //   console.log("responseMode", responseMode);
-      setIsChecked(responseMode.data["system_mode"]);
-      localStorage.setItem("isChecked", responseMode.data["system_mode"]);
-
-      //   localStorage.setItem("isChecked", responseMode.data["system_mode"]);
+      console.log(response.data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -459,17 +447,104 @@ const Control = () => {
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  checked={isChecked}
+                  checked={JSON.parse(localStorage.getItem("isChecked"))}
                   onChange={ModeControl}
                 />
                 <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  {isChecked ? "Mode Auto" : "Mode Manual"}
+                  {JSON.parse(localStorage.getItem("isChecked"))
+                    ? "Mode Manual"
+                    : "Mode Auto"}
                 </span>
               </label>
             </div>
             {/* End Select mode */}
-            {isChecked ? (
+            {JSON.parse(localStorage.getItem("isChecked")) ? (
+              <div className="p-4 h-5/6 w-full  ">
+                <div className=" h-full w-full">
+                  <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 rounded-3xl shadow-md">
+                    <h1 className="text-3xl font-bold mb-6 text-gray-700">
+                      Pump Control
+                    </h1>
+                    {pumps.map((pump, index) => (
+                      <div
+                        key={index}
+                        className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                          pump ? "bg-gray-200" : ""
+                        }`}
+                      >
+                        <span
+                          className={`text-lg font-medium ${
+                            pump ? "text-blue-600" : "text-gray-600"
+                          }`}
+                        >
+                          Pump {index + 1}: {pump ? "ON" : "OFF"}
+                        </span>
+                        <button
+                          onClick={() => handleClick(index)}
+                          className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                            isLocked
+                              ? "bg-gray-500 cursor-not-allowed"
+                              : pump
+                              ? "bg-red-600 hover:bg-red-700"
+                              : "bg-green-600 hover:bg-green-700"
+                          }`}
+                          disabled={isLocked}
+                        >
+                          {isLocked
+                            ? `Locked: ${formatTime(timeLeft)}`
+                            : pump
+                            ? "Turn Off"
+                            : "Turn On"}
+                        </button>
+                      </div>
+                    ))}
+                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className="mb-4">
+                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                          SET FREQUENCY PUMP
+                        </div>
+
+                        <p className="text-gray-600 mb-2">
+                          Pump speed control{" "}
+                          <span className="font-bold">{frequencyPump}Hz</span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="range"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                            style={{
+                              background: `linear-gradient(to right, green, red ${
+                                frequencyPump * 2
+                              }%, #ccc ${frequencyPump * 2}%)`,
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            max="50"
+                            value={frequencyPump}
+                            onChange={handleFrequencyPump}
+                            className="text-right w-1/5"
+                          />
+                          Hz
+                          <button
+                            onClick={handleSaveFrequencyPumpClick}
+                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
                   <div class="flex flex-col gap-3">
@@ -539,7 +614,7 @@ const Control = () => {
                             className="text-right w-1/5"
                           />
                           %
-                          <button
+[I                          <button
                             onClick={handleSaveClick}
                             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
@@ -548,91 +623,6 @@ const Control = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP
-                        </div>
-
-                        <p className="text-gray-600 mb-2">
-                          Pump speed control{" "}
-                          <span className="font-bold">{frequencyPump}Hz</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPump}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${
-                                frequencyPump * 2
-                              }%, #ccc ${frequencyPump * 2}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPump}
-                            className="text-right w-1/5"
-                          />
-                          Hz
-                          <button
-                            onClick={handleSaveFrequencyPumpClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 h-5/6 w-full  ">
-                <div className=" h-full w-full">
-                  <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 rounded-3xl shadow-md">
-                    <h1 className="text-3xl font-bold mb-6 text-gray-700">
-                      Pump Control
-                    </h1>
-                    {pumps.map((pump, index) => (
-                      <div
-                        key={index}
-                        className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
-                          pump ? "bg-gray-200" : ""
-                        }`}
-                      >
-                        <span
-                          className={`text-lg font-medium ${
-                            pump ? "text-blue-600" : "text-gray-600"
-                          }`}
-                        >
-                          Pump {index + 1}: {pump ? "ON" : "OFF"}
-                        </span>
-                        <button
-                          onClick={() => handleClick(index)}
-                          className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                            isLocked
-                              ? "bg-gray-500 cursor-not-allowed"
-                              : pump
-                              ? "bg-red-600 hover:bg-red-700"
-                              : "bg-green-600 hover:bg-green-700"
-                          }`}
-                          disabled={isLocked}
-                        >
-                          {isLocked
-                            ? `Locked: ${formatTime(timeLeft)}`
-                            : pump
-                            ? "Turn Off"
-                            : "Turn On"}
-                        </button>
-                      </div>
-                    ))}
                     <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
                         <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
@@ -761,7 +751,7 @@ const Control = () => {
                     class="icon icon-tabler icons-tabler-outline icon-tabler-engine"
                   >
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10v6" />
+[O                    <path d="M3 10v6" />
                     <path d="M12 5v3" />
                     <path d="M10 5h4" />
                     <path d="M5 13h-2" />
@@ -863,17 +853,19 @@ const Control = () => {
                 <input
                   type="checkbox"
                   className="sr-only peer"
-                  checked={isChecked}
+                  checked={JSON.parse(localStorage.getItem("isChecked"))}
                   onChange={ModeControl}
                 />
                 <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  {isChecked ? "Mode Manual" : "Mode Auto"}
+                  {JSON.parse(localStorage.getItem("isChecked"))
+                    ? "Mode Manual"
+                    : "Mode Auto"}
                 </span>
               </label>
             </div>
             {/* End Select mode */}
-            {isChecked ? (
+            {JSON.parse(localStorage.getItem("isChecked")) ? (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
                   <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 rounded-3xl shadow-md">
