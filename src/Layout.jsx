@@ -262,6 +262,18 @@ const GetMode = async () => {
 localStorage.setItem("isChecked", response.data["system_mode"]);
 	console.log("Layout",localStorage.getItem("isChecked"));
 };
+ const getPredict = async () => {
+    const url = url_api + "predict";
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    localStorage.setItem("Predict",response.data);
+  };
 
   //get inf once time
   useEffect(() => {
@@ -269,6 +281,7 @@ localStorage.setItem("isChecked", response.data["system_mode"]);
     getIn4();
 	  GetMode();
     loadData();
+	  getPredict();
   }, []); // Chỉ chạy một lần khi component mount
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây

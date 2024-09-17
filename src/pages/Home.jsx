@@ -59,6 +59,7 @@ const { dataSensor, dataMotor } = {
 };
 const dt1 = JSON.parse(dataSensor);
 const dt2 = JSON.parse(dataMotor);
+//const Predict = (localStorage.getItem("Predict"));
 function App() {
   //khai báo biến sử dụng
 

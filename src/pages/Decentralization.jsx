@@ -101,7 +101,8 @@ const Decentralization = () => {
     }
   };
   const ChangeData = async () => {
-    const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
+console.log("userID", userID);
+	  const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
 
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
