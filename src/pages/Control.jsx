@@ -28,7 +28,13 @@ const LOCK_DURATION = 60 * 1000;
 const DOUBLE_CLICK_THRESHOLD = 300;
 const GetDataTime = 0.2 * 60;
 const Control = () => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState( JSON.parse(localStorage.getItem("isChecked")));
+	  console.log(
+    "Control",
+    isChecked,
+    "Layout",
+    JSON.parse(localStorage.getItem("isChecked"))
+  );
   const [Display, setDisplay] = useState("1");
   const [selector, setSelector] = useState("motor1");
   const [valueMotor1, setValueMotor1] = useState(false);
@@ -70,7 +76,7 @@ const Control = () => {
     setStartThreshold(event.target.value);
     localStorage.setItem("HUMI_MIN", event.target.value);
   };
-  console.log("freq local", localStorage.getItem("frequencyPump"));
+  //console.log("freq local", localStorage.getItem("frequencyPump"));
   const handleStopThresholdChange = (event) => {
     localStorage.setItem("HUMI_MAX", event.target.value);
     setStopThreshold(event.target.value);
@@ -98,7 +104,7 @@ const Control = () => {
           },
         }
       );
-      console.log("response humi", response.data);
+     // console.log("response humi", response.data);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -311,12 +317,19 @@ const Control = () => {
     },
   };
   const ModeControl = async (e) => {
-    setIsChecked(e.target.checked);
+    console.log("e", e.target.checked);
+	  setIsChecked(e.target.checked);
     localStorage.setItem("isChecked", e.target.checked);
+	  // setIsChecked(e.target.checked);
+ console.log(
+      "local in control",
+      JSON.parse(localStorage.getItem("isChecked"))
+    );
+	  console.log("mode post",isChecked);
     try {
       const response = await axios.post(
         url_api + "control_mode",
-        { mode: isChecked },
+        { mode: e.target.checked},
         {
           headers: {
             accept: "application/json",
@@ -324,6 +337,7 @@ const Control = () => {
           },
         }
       );
+	    console.log(response.data);
     } catch (error) {
       console.error("Error:", error);
     }

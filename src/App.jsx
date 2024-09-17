@@ -5,11 +5,16 @@ import Login from "./pages/Login";
 // import App from "./App.tsx";
 import PrivateRoute from "./PrivateRoute";
 import Decentralization from "./pages/Decentralization";
-import Home from "./pages/Home";
+//import Home from "./pages/Home";
 import Layout from "./Layout";
+import Loading from "./pages/Loading.jsx";
 
-
-//const Home = lazy(() => (import('./pages/Home')));
+function delayForDemo(promise) {
+  return new Promise(resolve => {
+    setTimeout(resolve, 2000);
+  }).then(() => promise);
+}
+const Home = lazy(() => delayForDemo(import('./pages/Home')));
 import Control from "./pages/Control";
 import DataAnalysis from "./pages/DataAnalysis";
 import AboutUs from "./pages/AboutUs.jsx";
@@ -28,9 +33,9 @@ const App = () => {
             path="/home"
             element={
               <PrivateRoute>
-
+<Suspense fallback={<Loading />}>
 		    <Home />
-
+</Suspense>
               </PrivateRoute>
             }
           />

@@ -249,10 +249,25 @@ useEffect(() => {
     getIn4();
   };
 
+
+const GetMode = async () => {
+    const response = await axios.get(url_api + "control_mode", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    console.log("mode", response.data);
+localStorage.setItem("isChecked", response.data["system_mode"]);
+	console.log("Layout",localStorage.getItem("isChecked"));
+};
+
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
+	  GetMode();
     loadData();
   }, []); // Chỉ chạy một lần khi component mount
   useEffect(() => {
