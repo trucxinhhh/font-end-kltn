@@ -106,7 +106,9 @@ function App() {
       case "motor2":
       case "WaterlevelSensor1":
       case "WaterlevelSensor2":
-        if (value){ return "shadow-cyan-600";}
+        if (value) {
+          return "shadow-cyan-600";
+        }
         return "shadow-red-600";
       case "CO2":
       case "Humi":
@@ -130,17 +132,13 @@ function App() {
   const change_name = (nameChange) => {
     if (nameChange == "pH") {
       return "Salinity";
-    }
-    else if(nameChange=="WaterlevelSensor1"){
-      return "Full Tank";  
-    }
-    else if(nameChange=="WaterlevelSensor2"){
-      return "Empty Tank"
-    }
-    else if(nameChange=="motor1"){
+    } else if (nameChange == "WaterlevelSensor1") {
+      return "Full Tank";
+    } else if (nameChange == "WaterlevelSensor2") {
+      return "Empty Tank";
+    } else if (nameChange == "motor1") {
       return "MOTOR 1";
-    }
-    else if(nameChange=="motor2"){
+    } else if (nameChange == "motor2") {
       return "MOTOR 2";
     }
     return nameChange;
@@ -157,7 +155,7 @@ function App() {
       },
     },
   });
-    const chartData = (lineColor, data_to_draw) => {
+  const chartData = (lineColor, data_to_draw) => {
     if (data_to_draw == "motor1" || data_to_draw == "motor2") {
       const labels = recentMotor.map((item) => item.time);
       const data = recentMotor.map((item) => item[data_to_draw]);
@@ -170,8 +168,8 @@ function App() {
             borderColor: lineColor,
             backgroundColor: "rgba(75,192,192,0.2)",
             fill: true,
-	    cubicInterpolationMode: "monotone",
-            tension: 0.4
+            cubicInterpolationMode: "monotone",
+            tension: 0.4,
           },
         ],
       };
@@ -188,14 +186,11 @@ function App() {
             backgroundColor: "rgba(75,192,192,0.2)",
             fill: true,
             cubicInterpolationMode: "monotone",
-            tension: 0.4
-
+            tension: 0.4,
           },
         ],
       };
     }
-
-    
   };
   const imagePath = (name) => {
     new URL(`/src/assets/icon/${name}.jpg`, import.meta.url).href;
@@ -203,12 +198,12 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-const { dataSensor, dataMotor } = {
-  dataMotor: localStorage.getItem("dataMotor"),
-  dataSensor: localStorage.getItem("dataSensor"),
-};
-const dt1 = JSON.parse(dataSensor);
-const dt2 = JSON.parse(dataMotor);
+  const { dataSensor, dataMotor } = {
+    dataMotor: localStorage.getItem("dataMotor"),
+    dataSensor: localStorage.getItem("dataSensor"),
+  };
+  const dt1 = JSON.parse(dataSensor);
+  const dt2 = JSON.parse(dataMotor);
 
   // setRecentData(dt1.slice(-30));
   const getPredict = async () => {
@@ -223,7 +218,9 @@ const dt2 = JSON.parse(dataMotor);
 
     setPredict(response.data);
   };
-
+  useEffect(() => {
+    getPredict();
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
@@ -237,28 +234,26 @@ const dt2 = JSON.parse(dataMotor);
     switch (name) {
       case "motor1":
       case "motor2":
-		    if (name) {
+        if (name) {
           const data = dt2.slice(-1)[0][name];
-           
+
           if (data) {
             return "ON";
-          }
-          else {
+          } else {
             return "OFF";
           }
         }
 
       case "WaterlevelSensor1":
       case "WaterlevelSensor2":
-	 if (name) {	 
+        if (name) {
           const data = dt1.slice(-1)[0][name];
-		 //console.log("huhu",name,data);
+          //console.log("huhu",name,data);
           if (data) {
             return "ON";
-          }
-	  else {
+          } else {
             return "OFF";
-	  }
+          }
         }
       case "CO2":
       case "Humi":
@@ -268,7 +263,7 @@ const dt2 = JSON.parse(dataMotor);
       case "EC":
       case "pH":
         if (name) {
-	  return dt1.slice(-1)[0][name].toFixed(1);
+          return dt1.slice(-1)[0][name].toFixed(1);
         }
     }
   };
@@ -397,9 +392,10 @@ const dt2 = JSON.parse(dataMotor);
                       src={`src/assets/icon/${item}.jpg`}
                       class="h-auto w-1/3 object-contain "
                     />
-		<h2 className="font-bold text-base mt-2 ">
-			{checkValue(item)}
-			{Unit[item]}</h2>
+                    <h2 className="font-bold text-base mt-2 ">
+                      {checkValue(item)}
+                      {Unit[item]}
+                    </h2>
                   </button>
                 ))}
               </div>
@@ -446,7 +442,14 @@ const dt2 = JSON.parse(dataMotor);
                 </p>
                 {ciuspe
                   ? JSON.parse(localStorage.getItem("advices")).map(
-                      (sentence, index) => <p className="ml-4 font-bold text-[#3C3D37]" key={index}>{sentence.trim()}.</p>
+                      (sentence, index) => (
+                        <p
+                          className="ml-4 font-bold text-[#3C3D37]"
+                          key={index}
+                        >
+                          {sentence.trim()}.
+                        </p>
+                      )
                     )
                   : null}
               </div>

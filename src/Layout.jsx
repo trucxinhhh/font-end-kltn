@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
@@ -62,18 +61,18 @@ const Layout = () => {
     });
   };
   var listSensorData = ["CO2", "Humi", "Temp"];
-    const checkSensorData = () => {
-  for (var i = 0; i < listSensorData.lenght; i++) {
-    var val = "value" + listSensorData[i];
-    const checkMAX = listSensorData[i] + "_MAX";
-    const checkMIN = listSensorData[i] + "_MIN";
-    if (!(DataMap[checkMIN] < val < DataMap[checkMAX])) {
-      setError("warning sensor");
-      notify("warning sensor");
+  const checkSensorData = () => {
+    for (var i = 0; i < listSensorData.lenght; i++) {
+      var val = "value" + listSensorData[i];
+      const checkMAX = listSensorData[i] + "_MAX";
+      const checkMIN = listSensorData[i] + "_MIN";
+      if (!(DataMap[checkMIN] < val < DataMap[checkMAX])) {
+        setError("warning sensor");
+        notify("warning sensor");
+      }
     }
-  }};
-useEffect(() => {
-    
+  };
+  useEffect(() => {
     const interval = setInterval(() => {
       checkSensorData();
     }, 300000);
@@ -179,10 +178,10 @@ useEffect(() => {
       const checkMAX = listSensorData[i] + "_MAX";
       const checkMIN = listSensorData[i] + "_MIN";
 
-    //  if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
-    //  setError("warning sensor");
-    //   notify(`Warning ${listSensorData[i]} over threshold`);
-     //}
+      //  if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
+      //  setError("warning sensor");
+      //   notify(`Warning ${listSensorData[i]} over threshold`);
+      //}
     }
   }
 
@@ -249,8 +248,7 @@ useEffect(() => {
     getIn4();
   };
 
-
-const GetMode = async () => {
+  const GetMode = async () => {
     const response = await axios.get(url_api + "control_mode", {
       headers: {
         Authorization: access_token,
@@ -259,29 +257,16 @@ const GetMode = async () => {
       },
     });
     console.log("mode", response.data);
-localStorage.setItem("isChecked", response.data["system_mode"]);
-	console.log("Layout",localStorage.getItem("isChecked"));
-};
- const getPredict = async () => {
-    const url = url_api + "predict";
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-
-    localStorage.setItem("Predict",response.data);
+    localStorage.setItem("isChecked", response.data["system_mode"]);
+    console.log("Layout", localStorage.getItem("isChecked"));
   };
 
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
-	  GetMode();
+    GetMode();
     loadData();
-	  getPredict();
   }, []); // Chỉ chạy một lần khi component mount
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
