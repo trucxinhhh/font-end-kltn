@@ -2,8 +2,9 @@ import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import axios from "./checkToken";
-import { url_api, url_local } from "../Provider.jsx";
-
+import { ToastContainer, toast } from "react-toastify";
+import { url_api, url_data, url_local } from "../Provider.jsx";
+import { RPSNotify, setrpsNotify } from "../Layout.jsx";
 const Decentralization = () => {
   const [CRfullname, setFullname] = useState("");
   const [CRusername, setUsername] = useState("");
@@ -28,6 +29,15 @@ const Decentralization = () => {
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
 
+  const [dlNotify, setDLNotify] = useState(false);
+  //console.log("dlNotify", dlNotify);
+  const notifyUser = (message) => {
+    toast.success(message, {
+      position: "top-center", // Position at the top
+      autoClose: 2000, // Auto close after 3 seconds
+    });
+    console.log("dasda");
+  };
   const { username, role } = location.state || {
     username: localStorage.getItem("username"),
     role: localStorage.getItem("role"),
@@ -92,7 +102,8 @@ const Decentralization = () => {
       };
 
       const response = await axios.post(url_api + `signup`, registerform);
-
+      setDLNotify(true);
+      notifyUser("Create new account successful");
       navigate("/user-management");
     } catch (e) {
       console.error("Error logging in:", e);
@@ -101,9 +112,9 @@ const Decentralization = () => {
     }
   };
   const ChangeData = async () => {
-console.log("userID", userID);
-	  const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
-console.log("link change mail",url);
+    console.log("userID", userID);
+    const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
+    console.log("link change mail", url);
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
       masterpwd: PassToCheck,
@@ -117,13 +128,16 @@ console.log("link change mail",url);
           "Content-Type": "application/json",
         },
       });
-	    console.log("bi khum ha",response);
+
+      console.log(response.data["status"]);
+      setrpsNotify(true);
+      RPSNotify(response.data["status"]);
     } finally {
       setIsDialogOpen(false);
     }
   };
   async function loadData() {
-    const response = await axios.get(url_api + "api/user/0", {
+    const response = await axios.get(url_data + "api/user/0", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -138,6 +152,7 @@ console.log("link change mail",url);
   }, [Display, ChangeData]);
   return (
     <div className="flex  h-full w-full ">
+      {/* {dlNotify && <ToastContainer />} */}
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}
@@ -305,7 +320,7 @@ console.log("link change mail",url);
             </div>
           </div>
         )}
-        {mode === "mail" && (
+        {mode === "email" && (
           <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
             <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
               <div className="text-lg font-bold text-gray-900">
@@ -433,7 +448,7 @@ console.log("link change mail",url);
                             <option elemet="admin">Edit </option>
                             <option value="password">Change Password</option>
                             <option value="role">Change Role</option>
-                            <option value="mail">Change Email</option>
+                            <option value="email">Change Email</option>
                             <option value="delete">Delete User</option>
                           </select>
                         </label>

@@ -10,9 +10,19 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const GetDataTime = 0.5 * 60 * 1000;
+// const GetDataTime = 0.5 * 60 * 1000;
+export const [rpsNotify, setrpsNotify] = useState(null);
+export const RPSNotify = (message) => {
+  toast.success(message, {
+    position: "top-center", // Position at the top
+    autoClose: 3000, // Auto close after 3 seconds
+  });
+};
 const Layout = () => {
   const location = useLocation();
+  const [FlagNotify, setFlagNotify] = useState(false);
+  const [displayNotify, setDisplayNotify] = useState(0);
+  const [count, setCount] = useState(0);
   // user information
   const [displayNavigateBar, setDisplay] = useState(false);
   const [fullName, setFullname] = useState("");
@@ -36,48 +46,22 @@ const Layout = () => {
   const [newHarvestDate, setnewHarvestDate] = useState([]);
   const [newStage, setnewnewStage] = useState([]);
 
-  // sensor data
-  const [valueCO2, setValueCO2] = useState(0);
-  const [valueTEMP, setValueTemp] = useState(0);
-  const [valueHUMI, setValueHumi] = useState(0);
-  const [valueEC, setValueEC] = useState(0);
-  const [valuePressure, setValuePressure] = useState(0);
-  const [valueFlowmeters, setValueFlowmeters] = useState(0);
-  const [valueAlkalinity, setValueAlkalinity] = useState(0);
-  const [valueMotor1, setValueMotor1] = useState(false);
-  const [valueMotor2, setValueMotor2] = useState(false);
-  const [valueMotor3, setValueMotor3] = useState(false);
-  const [valueFullTank, setValueFullTank] = useState(false);
-  const [valueEmptyTank, setValueEmptyTank] = useState(false);
-  const [data1, setData] = useState([]);
-  const [data2, setData2] = useState([]);
-
   //warning report
   const [errorValue, setError] = useState(null);
+  // const [rpsNotify, setrpsNotify] = useState(null);
   const notify = (message) => {
-    toast.error(message, {
+    toast.warning(message.toString(), {
+      position: "top-center", // Position at the top
+      autoClose: 1000, // Auto close after 3 seconds
+    });
+  };
+  const RPSNotify = (message) => {
+    toast.success(message, {
       position: "top-center", // Position at the top
       autoClose: 3000, // Auto close after 3 seconds
     });
   };
-  var listSensorData = ["CO2", "Humi", "Temp"];
-  const checkSensorData = () => {
-    for (var i = 0; i < listSensorData.lenght; i++) {
-      var val = "value" + listSensorData[i];
-      const checkMAX = listSensorData[i] + "_MAX";
-      const checkMIN = listSensorData[i] + "_MIN";
-      if (!(DataMap[checkMIN] < val < DataMap[checkMAX])) {
-        setError("warning sensor");
-        notify("warning sensor");
-      }
-    }
-  };
-  useEffect(() => {
-    const interval = setInterval(() => {
-      checkSensorData();
-    }, 300000);
-    return () => clearInterval(interval);
-  }, [DataMap]);
+
   // get local inf
   localStorage.setItem("role", Role);
   localStorage.setItem("full_name", fullName);
@@ -157,8 +141,7 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-    setData(dt1);
-    //console.log("dt1 LAYOUT",dt1);
+
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
@@ -168,20 +151,31 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
-    //console.log("dt2",dt2);
 
-    setData2(dt2);
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
     for (var i = 0; i < listSensorData.length; i++) {
       var val = dt1.slice(-1)[0][listSensorData[i]];
       const checkMAX = listSensorData[i] + "_MAX";
       const checkMIN = listSensorData[i] + "_MIN";
-
-      //  if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
-      //  setError("warning sensor");
-      //   notify(`Warning ${listSensorData[i]} over threshold`);
-      //}
+      if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
+        if (FlagNotify && displayNotify == 2) {
+          setError(null);
+          setCount(count + 1);
+          if (count == 30) {
+            setFlagNotify(false);
+            setCount(0);
+          }
+        } else {
+          setDisplayNotify(displayNotify + 1);
+          setError("warning sensor");
+          notify(`Warning ${listSensorData[i]} over threshold`);
+          if (displayNotify == 2) {
+            setDisplayNotify(0);
+            setFlagNotify(true);
+          }
+        }
+      }
     }
   }
 
@@ -214,38 +208,48 @@ const Layout = () => {
 
       if (response.ok) {
         const data = await response.json();
+        setrpsNotify(data["message"]);
+        RPSNotify(data["message"]);
       }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
   };
+
   const closeDialog = async () => {
     setIsDialogOpen(false);
   };
   const sendChange = async () => {
-    const response = axios.post(
-      url_api + "crop",
-      {
-        usr: {
-          masterusr: localStorage.getItem("username"),
-          masterpwd: PassToCheck,
+    try {
+      const response = axios.post(
+        url_api + "crop",
+        {
+          usr: {
+            masterusr: localStorage.getItem("username"),
+            masterpwd: PassToCheck,
+          },
+          crop_data: {
+            project: NameProject,
+            startdate: startDay,
+            quantity: Quantity,
+            area: Area,
+          },
         },
-        crop_data: {
-          project: NameProject,
-          startdate: startDay,
-          quantity: Quantity,
-          area: Area,
-        },
-      },
-      {
-        headers: {
-          Authorization: access_token,
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    getIn4();
+        {
+          headers: {
+            Authorization: access_token,
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setrpsNotify(true);
+      RPSNotify("Change Information Successful");
+      closeDialog();
+      getIn4();
+    } catch (error) {
+      console.error("Error to change Information:", error);
+    }
   };
 
   const GetMode = async () => {
@@ -256,22 +260,19 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log("mode", response.data);
-    localStorage.setItem("isChecked", response.data["system_mode"]);
-    console.log("Layout", localStorage.getItem("isChecked"));
   };
-
+  // console.log(rpsNotify);
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
     GetMode();
-    loadData();
-  }, []); // Chỉ chạy một lần khi component mount
+  }, [rpsNotify]); // Chỉ chạy một lần khi component mount
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
+      // checkSensorData();
     }, 1000);
 
     // Cleanup function để xóa interval khi component unmount
@@ -404,7 +405,8 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-          {errorValue && <ToastContainer />}
+          {(errorValue || rpsNotify) && <ToastContainer />}
+          {/* {rpsNotify && <ToastContainer />} */}
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">

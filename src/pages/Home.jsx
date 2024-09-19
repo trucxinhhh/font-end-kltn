@@ -26,7 +26,6 @@ ChartJS.register(
   Legend
 );
 
-const GetDataTime = 0.2 * 60;
 const DashBoard = [
   "CO2",
   "Humi",
@@ -58,26 +57,22 @@ const { dataSensor, dataMotor } = {
   dataSensor: localStorage.getItem("dataSensor"),
 };
 
-const dt1 = JSON.parse(dataSensor);
-const dt2 = JSON.parse(dataMotor);
-//const Predict = (localStorage.getItem("Predict"));
 function App() {
   //khai báo biến sử dụng
-const [Display, setDisplay] = useState(true);
+  const [Display, setDisplay] = useState(true);
   const [recentMotor, setRecentMotor] = useState([]);
   const [recentData, setRecentData] = useState([]);
   const [Predict, setPredict] = useState("");
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
   );
-  const [countTime, setCountTime] = useState(0);
   const [selector, setSelector] = useState("CO2");
-  // const [data1, setData] = useState([]);
 
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
-  // const recentData = data1.slice(-30);
+
+  // trang thai icon status
   const HappyColor = (value) => {
     if (value < 35) {
       return "text-green-400";
@@ -85,7 +80,6 @@ const [Display, setDisplay] = useState(true);
       return "text-white";
     }
   };
-
   const SadColor = (value) => {
     if (35 < value && value < 80) {
       return "text-yellow-500";
@@ -100,14 +94,57 @@ const [Display, setDisplay] = useState(true);
       return "text-white";
     }
   };
+
+  //chuan hoa gia tri cam bien
+  const checkValue = (name) => {
+    switch (name) {
+      case "motor1":
+      case "motor2":
+        if (name) {
+          const data = dt2.slice(-1)[0][name];
+
+          if (data) {
+            return "ON";
+          } else {
+            return "OFF";
+          }
+        }
+
+      case "WaterlevelSensor1":
+      case "WaterlevelSensor2":
+        if (name) {
+          const data = dt1.slice(-1)[0][name];
+          if (data) {
+            return "ON";
+          } else {
+            return "OFF";
+          }
+        }
+      case "CO2":
+      case "Humi":
+      case "Pressure":
+      case "Temp":
+      case "Flowmeters":
+      case "EC":
+      case "pH":
+        if (name) {
+          return dt1.slice(-1)[0][name].toFixed(1);
+        }
+    }
+  };
+  // bg-color-button-sensor
   const statusColor = (name, value) => {
     switch (name) {
       case "Pressure":
+        if (value) {
+          return "shadow-cyan-600";
+        }
+        return "shadow-red-600";
       case "motor1":
       case "motor2":
       case "WaterlevelSensor1":
       case "WaterlevelSensor2":
-        if (value) {
+        if (value == "ON") {
           return "shadow-cyan-600";
         }
         return "shadow-red-600";
@@ -225,49 +262,12 @@ const [Display, setDisplay] = useState(true);
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
-      //getPredict();
       setRecentMotor(dt2.slice(-30));
       setRecentData(dt1.slice(-30));
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
-  const checkValue = (name) => {
-    switch (name) {
-      case "motor1":
-      case "motor2":
-        if (name) {
-          const data = dt2.slice(-1)[0][name];
 
-          if (data) {
-            return "ON";
-          } else {
-            return "OFF";
-          }
-        }
-
-      case "WaterlevelSensor1":
-      case "WaterlevelSensor2":
-        if (name) {
-          const data = dt1.slice(-1)[0][name];
-          //console.log("huhu",name,data);
-          if (data) {
-            return "ON";
-          } else {
-            return "OFF";
-          }
-        }
-      case "CO2":
-      case "Humi":
-      case "Pressure":
-      case "Temp":
-      case "Flowmeters":
-      case "EC":
-      case "pH":
-        if (name) {
-          return dt1.slice(-1)[0][name].toFixed(1);
-        }
-    }
-  };
   //điều khiển icon status
   const stt_Project = Math.floor(Math.random() * 100);
 
