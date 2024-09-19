@@ -38,7 +38,6 @@ const App = () => {
               </PrivateRoute>
             }
           />
-
           <Route
             path="/control"
             element={
@@ -71,9 +70,9 @@ const App = () => {
               </PrivateRoute>
             }
           />
-//          <Route path="/test" element={<Test />} />
+          <Route path="/test" element={<Test />} />
         </Route>
-	    <Route path="/test" element={<Test />} />
+        <Route path="/test-out" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );

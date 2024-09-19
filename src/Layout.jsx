@@ -11,13 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 // const GetDataTime = 0.5 * 60 * 1000;
-export const [rpsNotify, setrpsNotify] = useState(null);
-export const RPSNotify = (message) => {
-  toast.success(message, {
-    position: "top-center", // Position at the top
-    autoClose: 3000, // Auto close after 3 seconds
-  });
-};
+
 const Layout = () => {
   const location = useLocation();
   const [FlagNotify, setFlagNotify] = useState(false);
@@ -48,7 +42,7 @@ const Layout = () => {
 
   //warning report
   const [errorValue, setError] = useState(null);
-  // const [rpsNotify, setrpsNotify] = useState(null);
+  const [rpsNotify, setrpsNotify] = useState(null);
   const notify = (message) => {
     toast.warning(message.toString(), {
       position: "top-center", // Position at the top
@@ -405,8 +399,8 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-          {(errorValue || rpsNotify) && <ToastContainer />}
-          {/* {rpsNotify && <ToastContainer />} */}
+          {/* {(errorValue || rpsNotify) && <ToastContainer />} */}
+          <ToastContainer />
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">

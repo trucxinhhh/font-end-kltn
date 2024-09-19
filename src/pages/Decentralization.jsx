@@ -4,7 +4,7 @@ import { Dialog } from "@headlessui/react";
 import axios from "./checkToken";
 import { ToastContainer, toast } from "react-toastify";
 import { url_api, url_data, url_local } from "../Provider.jsx";
-import { RPSNotify, setrpsNotify } from "../Layout.jsx";
+
 const Decentralization = () => {
   const [CRfullname, setFullname] = useState("");
   const [CRusername, setUsername] = useState("");
@@ -29,14 +29,11 @@ const Decentralization = () => {
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
 
-  const [dlNotify, setDLNotify] = useState(false);
-  //console.log("dlNotify", dlNotify);
   const notifyUser = (message) => {
     toast.success(message, {
       position: "top-center", // Position at the top
       autoClose: 2000, // Auto close after 3 seconds
     });
-    console.log("dasda");
   };
   const { username, role } = location.state || {
     username: localStorage.getItem("username"),
@@ -129,9 +126,7 @@ const Decentralization = () => {
         },
       });
 
-      console.log(response.data["status"]);
-      setrpsNotify(true);
-      RPSNotify(response.data["status"]);
+      notifyUser(response.data["status"]);
     } finally {
       setIsDialogOpen(false);
     }
@@ -152,7 +147,7 @@ const Decentralization = () => {
   }, [Display, ChangeData]);
   return (
     <div className="flex  h-full w-full ">
-      {/* {dlNotify && <ToastContainer />} */}
+      <ToastContainer />
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}
