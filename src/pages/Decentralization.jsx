@@ -103,7 +103,7 @@ const Decentralization = () => {
   const ChangeData = async () => {
 console.log("userID", userID);
 	  const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
-
+console.log("link change mail",url);
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
       masterpwd: PassToCheck,
@@ -117,6 +117,7 @@ console.log("userID", userID);
           "Content-Type": "application/json",
         },
       });
+	    console.log("bi khum ha",response);
     } finally {
       setIsDialogOpen(false);
     }

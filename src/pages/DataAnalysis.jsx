@@ -25,7 +25,6 @@ const DataAnalysis = () => {
   // DATA SENSOR
   useEffect(() => {
     async function loadData() {
-      console.log("get history");
       const response = await axios.get(
         url_data + "api/" + `${DataList}` + "/0",
         {
@@ -37,12 +36,9 @@ const DataAnalysis = () => {
         }
       );
       const dt1 = response.data;
-      console.log(dt1);
-
       setData(dt1);
     }
     loadData();
-    console.log(data1);
   }, [DataList]);
 
   //Sent Mail
@@ -83,7 +79,7 @@ const DataAnalysis = () => {
                   <option value="admin">Choice data</option>
                   <option value="data">Sensor</option>
                   <option value="user">User</option>
-                  <option value="control-History">Control History</option>
+                  <option value="Control-History">Control History</option>
                 </select>
               </label>
               <div className="w-2/3 flex items-center justify-between px-2">
@@ -233,7 +229,7 @@ const DataAnalysis = () => {
                   <option value="admin">Choice data </option>
                   <option value="data">Sensor</option>
                   <option value="user">User</option>
-                  <option value="control-History">Control History</option>
+                  <option value="Control-History">Control History</option>
                 </select>
               </label>
               <div className="w-fit  ml-2 ">
@@ -246,7 +242,7 @@ const DataAnalysis = () => {
               </div>
             </div>
           </div>
-          {DataList === "Sensor" && (
+          {DataList === "data" && (
             <div className="relative h-4/5 overflow-x-auto rounded-3xl mt-3">
               <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
@@ -280,7 +276,7 @@ const DataAnalysis = () => {
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       high
-                    </th>{" "}
+                    </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       low
                     </th>
