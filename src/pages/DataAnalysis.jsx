@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "./checkToken";
 import { url_api, url_local, url_data } from "../Provider.jsx";
 import { Button } from "@material-tailwind/react";
-
+import { ToastContainer, toast } from "react-toastify";
 const DataAnalysis = () => {
   const [data1, setData] = useState([]);
   const [DataList, setDataList] = useState("data");
@@ -13,7 +13,18 @@ const DataAnalysis = () => {
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
   const reversedData1 = data1.reverse();
-  // lấy trạng thái Motor để hiển thị
+  // lấy trạng thái date
+  const [inputType1, setInputType1] = useState("text");
+  const [inputType2, setInputType2] = useState("text");
+
+  //notify
+
+  const notifyInfo = (message) => {
+    toast.info(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
 
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
@@ -57,6 +68,10 @@ const DataAnalysis = () => {
         "Content-Type": "application/json",
       },
     });
+    response.then((value) => {
+      console.log(value.data["message"]);
+      notifyInfo(value.data["message"]);
+    });
   };
   return (
     <div className="flex-col h-full w-full  ">
@@ -68,10 +83,10 @@ const DataAnalysis = () => {
               <h1 className="text-5xl font-bold">history</h1>
             </div>
 
-            <div className="w-11/12 flex">
+            <div className="w-11/12 flex p-4 ">
               <label className="inline-flex items-center w-2/3 text-sm font-semibold">
                 <select
-                  className="text-gray-500 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  className="text-gray-500 mt-1 px-3 py-2 h-10 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                   name="data-list"
                   id="data-list"
                   onChange={(e) => setDataList(e.target.value)}
@@ -82,18 +97,23 @@ const DataAnalysis = () => {
                   <option value="Control-History">Control History</option>
                 </select>
               </label>
-              <div className="w-2/3 flex items-center justify-between px-2">
-                <input
-                  type="date"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block rounded-md sm:text-sm focus:ring-1"
-                  name="end-date"
-                  id="end-date"
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </div>
-              <div className="w-1/3">
+              <input
+                type={inputType1}
+                placeholder="Start Day"
+                onFocus={() => setInputType1("date")}
+                onBlur={() => setInputType1("text")}
+                // onChange={}
+              />
+              <input
+                type={inputType2}
+                placeholder="End Day"
+                onFocus={() => setInputType2("date")}
+                onBlur={() => setInputType2("text")}
+              />
+
+              <div className="w-1/3 mt-1">
                 <Button
-                  className="bg-white text-black float-right text-sm"
+                  className="bg-white text-black float-right text-xs h-10 "
                   onClick={() => SentMail()}
                 >
                   EXPORT FILE

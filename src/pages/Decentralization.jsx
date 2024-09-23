@@ -99,7 +99,7 @@ const Decentralization = () => {
       };
 
       const response = await axios.post(url_api + `signup`, registerform);
-      setDLNotify(true);
+
       notifyUser("Create new account successful");
       navigate("/user-management");
     } catch (e) {
@@ -147,7 +147,6 @@ const Decentralization = () => {
   }, [Display, ChangeData]);
   return (
     <div className="flex  h-full w-full ">
-      <ToastContainer />
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}

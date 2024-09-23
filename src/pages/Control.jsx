@@ -4,7 +4,8 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
 import { url_api, url_local } from "../Provider.jsx";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -57,6 +58,24 @@ const Control = () => {
     localStorage.getItem("frequencyPump")
   );
 
+  const notifySucces = (message) => {
+    toast.success(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
+  const notifyInfo = (message) => {
+    toast.info(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
+  const notifyError = (message) => {
+    toast.error(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
   const [pumps, setPumps] = useState([false, false]);
   const [clickCount, setClickCount] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
@@ -107,8 +126,10 @@ const Control = () => {
         }
       );
       // console.log("response humi", response.data);
+      notifySucces("Update Thresh for humi success");
     } catch (error) {
       console.error("Error:", error);
+      notifyError(error);
     }
   };
   const handleSaveFrequencyPumpClick = async () => {
@@ -125,9 +146,11 @@ const Control = () => {
           },
         }
       );
-      console.log("response inv", response.data);
+      console.log("response inv", response.data["Message"]);
+      notifySucces(response.data["Message"]);
     } catch (error) {
       console.error("Error:", error);
+      notifyError(error);
     }
   };
   const getHumiThresh = async () => {
@@ -245,8 +268,14 @@ const Control = () => {
             },
           }
         );
+        if (pumps[Flag - 1]) {
+          notifyInfo(`Pump ${Flag} is ON`);
+        } else {
+          notifyInfo(`Pump ${Flag} is OFF`);
+        }
       } catch (error) {
         console.error("Error:", error);
+        notifyError(error);
       }
     };
     controlPanel();

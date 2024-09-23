@@ -1,18 +1,16 @@
 import React from "react";
-
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 const Loading = () => {
   return (
-    <div >
-      <div class="middle p-10">
-        <div class="bar bar1"></div>
-        <div class="bar bar2"></div>
-        <div class="bar bar3"></div>
-        <div class="bar bar4"></div>
-        <div class="bar bar5"></div>
-        <div class="bar bar6"></div>
-        <div class="bar bar7"></div>
-        <div class="bar bar8"></div>
-      </div>
+    <div className="p-10 mt-72 w-2/5 ml-96">
+      <Skeleton
+        style={{
+          "--base-color": "#117554", // Màu cơ bản
+          "--highlight-color": "#6A9C89", // Màu highlight
+        }}
+        customHighlightBackground="linear-gradient(90deg, var(--base-color) 40%, var(--highlight-color) 50%, var(--base-color) 60%)"
+      />
     </div>
   );
 };
