@@ -222,11 +222,10 @@ const AboutUs = () => {
           )}
         </div>
       </div>
-
       {/* Mobile View */}
-      <div className="sm:hidden h-fit w-screen  ">
+      <div className="sm:hidden h-screen w-screen  ">
         <span class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block mt-5">
-          <span class="relative text-white text-2xl ">Over View</span>
+          <span class="relative text-white text-5xl ">Over View</span>
         </span>
         <ul className="p-4 lg:p-8 dark:bg-gray-100 dark:text-gray-800">
           <li>
@@ -234,7 +233,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_1_ov}
@@ -251,7 +250,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_2_ov}
@@ -268,7 +267,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_3_ov}
@@ -290,7 +289,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_1_inf}
@@ -307,7 +306,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_2_inf}
@@ -324,7 +323,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_3_inf}
@@ -343,11 +342,7 @@ const AboutUs = () => {
         <ul className="p-4 lg:p-8 dark:bg-gray-100 dark:text-gray-800">
           <li>
             <article>
-              <a
-                rel="noopener noreferrer"
-                href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
-              >
+              <a className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50">
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_1_US}
                 </h4>
@@ -363,7 +358,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_2_US}
@@ -380,7 +375,7 @@ const AboutUs = () => {
               <a
                 rel="noopener noreferrer"
                 href="#"
-                className="grid p-4 overflow-hidden md:grid-cols-5 rounded-xl lg:p-6 xl:grid-cols-12 hover:dark:bg-gray-50"
+                className=" p-4 overflow-hidden  rounded-xl lg:p-6  hover:dark:bg-gray-50"
               >
                 <h4 className="mb-1 ml-8 font-semibold md:col-start-2 md:col-span-4 md:ml-0 xl:col-start-3 xl:col-span-9">
                   {ParaGraph.title_3_US}
@@ -399,4 +394,3 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
-

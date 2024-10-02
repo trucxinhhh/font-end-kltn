@@ -399,9 +399,7 @@ const Layout = () => {
               </div>
             )}
           </Dialog>
-          {/* {(errorValue || rpsNotify) && <ToastContainer />} */}
           <ToastContainer />
-          {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
               <div className=" flex  bg-white bg-opacity-50 h-full rounded-l-3xl rounded-r-3xl">
@@ -538,7 +536,7 @@ const Layout = () => {
                           >
                             Control Panel
                           </span>
-                        </a>
+                       </a>
                       </Link>
                       <Link to="/Data-Analysis">
                         <a
