@@ -405,9 +405,9 @@ const Layout = () => {
               <div className=" flex  bg-white bg-opacity-50 h-full rounded-l-3xl rounded-r-3xl">
                 {/* ------------------------------List Box-----------------------------*/}
 
-                <div className="p-0 w-1/5 hidden md:block">
-                  <div className="p-4 w-46 rounded-r-xl rounded-l-xl bg-white Green_screen">
-                    <div className="flex items-center h-3/5 w-full">
+                <div className="p-0 w-1/5 h-full hidden md:block">
+                  <div className="p-4 w-46 h-fit rounded-r-xl rounded-l-xl bg-white Green_screen">
+                    <div className="flex items-center h-1/6 w-full">
                       <img
                         className="block mx-auto h-16 w-16 rounded-full sm:mx-0 sm:flex-shrink-0"
                         src={ImgUsr(localStorage.getItem("username"))}
@@ -428,7 +428,7 @@ const Layout = () => {
                       </div>
                     </div>
                     <br />
-                    <ul className="fmt-6 leading-10 flex flex-col space-y-2">
+                    <ul className="fmt-5 leading-10 flex flex-col ">
                       <a className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -462,7 +462,7 @@ const Layout = () => {
                       {Role === "admin" && (
                         <Link to="/user-management">
                           <a
-                            className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                            className="mt-2 inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
                             href=""
                           >
                             <svg
@@ -624,7 +624,7 @@ const Layout = () => {
                       </a>
                     </ul>
                   </div>
-                  <div className="p-2 w-46 rounded-r-xl rounded-l-xl bg-white Green_screen">
+                  <div className="p-2 w-46 h-2/5 rounded-r-xl rounded-l-xl bg-white Green_screen">
                     <p className="ml-4 font-bold text-center mb-4">
                       INFORMATION
                     </p>
@@ -662,11 +662,11 @@ const Layout = () => {
                       </tbody>
                     </table>
 
-                    <div className="flex justify-center mt-6">
+                    <div className="flex justify-center mt-1">
                       <button
                         value="create"
                         onClick={() => openDialog(true)}
-                        className="px-4 py-2 button-create-user bg-green-500 transition-colors duration-150 cursor-pointer hover:bg-green-900 text-cyan-50 rounded-full font-bold"
+                        className="px-4 py-1 button-create-user bg-green-500 transition-colors duration-150 cursor-pointer hover:bg-green-900 text-cyan-50 rounded-full font-bold"
                       >
                         Change Project
                       </button>
