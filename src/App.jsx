@@ -11,7 +11,7 @@ import Loading from "./pages/Loading.jsx";
 
 function delayForDemo(promise) {
   return new Promise((resolve) => {
-    setTimeout(resolve, 6000);
+    setTimeout(resolve, 2000);
   }).then(() => promise);
 }
 const Home = lazy(() => delayForDemo(import("./pages/Home")));

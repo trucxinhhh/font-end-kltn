@@ -32,17 +32,11 @@ const Control = () => {
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
-  console.log(
-    "Control ",
-    isChecked,
-    "Layout  ",
-    JSON.parse(localStorage.getItem("isChecked"))
-  );
+
   const [Display, setDisplay] = useState("1");
   const [selector, setSelector] = useState("motor1");
-  const [valueMotor1, setValueMotor1] = useState(false);
-  const [valueMotor2, setValueMotor2] = useState(false);
-  const [valueMotor3, setValueMotor3] = useState(false);
+  const [valueMotor1, setValueMotor1] = useState(JSON.parse(localStorage.getItem("pump1Status")));
+  const [valueMotor2, setValueMotor2] = useState(JSON.parse(localStorage.getItem("pump2Status")));
   const [data1, setData] = useState([]);
   const dataChart = data1.slice(-30);
   const [totalPump1, setTotalPump1] = useState();
@@ -60,8 +54,7 @@ const Control = () => {
   const [cycleSample, setCycleSample] = useState(
     localStorage.getItem("cycleSample")
   );
-  console.log(cycleSample);
-  console.log(frequencyPump);
+
   const notifySucces = (message) => {
     toast.success(message, {
       position: "top-center", // Position at the top
@@ -80,7 +73,7 @@ const Control = () => {
       autoClose: 3000, // Auto close after 3 seconds
     });
   };
-  const [pumps, setPumps] = useState([false, false]);
+  const [pumps, setPumps] = useState([valueMotor1, valueMotor2]);
   const [clickCount, setClickCount] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -88,10 +81,10 @@ const Control = () => {
   const lastClickTimeRef = useRef(0);
   const [Flag, setFlag] = useState();
 
+  const [VolumeDayMotor1,setVolumeDayMotor1]=useState(0);
+  const [VolumeDayMotor2,setVolumeDayMotor2]=useState(0);
   const timeDayMotor1 = 12;
-  const VolumeDayMotor1 = 12;
   const timeDayMotor2 = 12;
-  const VolumeDayMotor2 = 12;
 
   // Lấy token
   const token = localStorage.getItem("token");
@@ -101,18 +94,9 @@ const Control = () => {
     setStartThreshold(event.target.value);
     localStorage.setItem("HUMI_MIN", event.target.value);
   };
-  //console.log("freq local", localStorage.getItem("frequencyPump"));
   const handleStopThresholdChange = (event) => {
     localStorage.setItem("HUMI_MAX", event.target.value);
     setStopThreshold(event.target.value);
-  };
-  const handleFrequencyPump = (event) => {
-    // localStorage.setItem("FREQUENCY_MAX", event.target.value);
-    setFrequencyPumpd(event.target.value);
-  };
-  const handleCycleSample = (event) => {
-    // localStorage.setItem("FREQUENCY_MAX", event.target.value);
-    setCycleSample(event.target.value);
   };
 
   const handleSaveClick = async () => {
@@ -154,7 +138,7 @@ const Control = () => {
           },
         }
       );
-      console.log("response inv", response.data["message"]);
+
       notifySucces(response.data["message"]);
     } catch (error) {
       console.error("Error:", error);
@@ -163,7 +147,7 @@ const Control = () => {
   };
   const handleSaveCycleSample = async () => {
     const url = url_api + `spam/${cycleSample}`;
-    console.log("url cycle", url);
+
     try {
       const response = await axios.post(
         url,
@@ -176,7 +160,6 @@ const Control = () => {
         }
       );
 
-      // console.log("response inv", response);
       notifySucces(response.data["message"]);
     } catch (error) {
       console.error("Error:", error);
@@ -214,7 +197,7 @@ const Control = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log("cycleSample get response", response.data);
+
     setCycleSample(response.data);
     // localStorage.setItem("cycleSample", response.data);
   };
@@ -268,11 +251,25 @@ const Control = () => {
     return () => clearInterval(timer);
   }, [isLocked, timeLeft]);
 
+  const getPumpView =async () =>{
+    const response = await axios.get(url_api + "vol", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+ 
+    setVolumeDayMotor1(response.data["pump1"]);
+    setVolumeDayMotor2(response.data["pump2"]);
+  };
+
   // Freq, Thresh
   useEffect(() => {
     getHumiThresh();
     getFrequencyPump();
     getSampleCycle();
+    getPumpView();
   }, []);
 
   const handleClick = async (index) => {
@@ -394,9 +391,8 @@ const Control = () => {
       },
     },
   };
+  
   const ModeControl = async (e) => {
-    console.log("e", e.target.checked);
-
     try {
       const response = await axios.post(
         url_api + "control_mode",
@@ -417,7 +413,7 @@ const Control = () => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      //   console.log("responseMode", responseMode);
+
       setIsChecked(responseMode.data["system_mode"]);
       localStorage.setItem("isChecked", responseMode.data["system_mode"]);
 
@@ -426,7 +422,8 @@ const Control = () => {
       console.error("Error:", error);
     }
   };
-
+ 
+ 
   return (
     <div className="flex  h-full w-full ">
       {/* -----------------------PC View----------------------- */}
@@ -466,13 +463,13 @@ const Control = () => {
 
                 <div class="ml-2 w-full flex-1">
                   <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor1 ? "ON" : "Off"}</span>
+                    Status : <span>{valueMotor1 ? "ON" : "OFF"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
-                  </div>
+                  </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor1}l
+                    Flow : {VolumeDayMotor1 +"  lits"}
                   </div>
                 </div>
               </div>
@@ -506,11 +503,11 @@ const Control = () => {
                   <div class="mt-1 text-base text-gray-600">
                     Status : <span>{valueMotor2 ? "ON" : "Off"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor2}h
-                  </div>
+                  </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor2}l
+                    Flow :  {VolumeDayMotor2 +"  lits"}
                   </div>
                 </div>
               </div>
@@ -591,7 +588,7 @@ const Control = () => {
 
                       <div>
                         <p className="text-gray-600 mb-2">
-                          Pump STOP when Humidity greater than{" "}
+                          Pump STOP when Humidity greater than
                           <span className="font-bold">{stopThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
@@ -631,7 +628,7 @@ const Control = () => {
                         </div>
 
                         <p className="text-gray-600 mb-2">
-                          Pump speed control{" "}
+                          Pump speed control
                           <span className="font-bold">{frequencyPump}Hz</span>
                         </p>
                         <div className="flex items-center gap-2">
@@ -640,7 +637,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -653,7 +650,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="text-right w-1/5"
                           />
                           Hz
@@ -718,7 +715,7 @@ const Control = () => {
                         <input
                           type="text"
                           value={frequencyPump}
-                          onChange={handleFrequencyPump}
+                          onChange={(event)=>setFrequencyPumpd(event.target.value)}
                           className="text-center w-1/5  border-2 border-gray-700"
                         />
 
@@ -738,7 +735,7 @@ const Control = () => {
                         <input
                           type="text"
                           value={cycleSample}
-                          onChange={handleCycleSample}
+                          onChange={(event)=> setCycleSample(event.target.value)}
                           className="text-center w-1/5  border-2 border-gray-700 ml-4"
                         />
 
@@ -815,13 +812,13 @@ const Control = () => {
 
                 <div class="ml-2 w-full flex-1">
                   <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor1 ? "ON" : "Off"}</span>
+                    Status : <span>{valueMotor1 ? "ON" : "OFF"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
-                  </div>
+                  </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor1}l
+                    Flow :  {VolumeDayMotor1 +"  lits"}
                   </div>
                 </div>
               </div>
@@ -855,11 +852,11 @@ const Control = () => {
                   <div class="mt-1 text-base text-gray-600">
                     Status : <span>{valueMotor2 ? "ON" : "Off"}</span>
                   </div>
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor2}h
-                  </div>
+                  </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor2}l
+                    Flow :  {VolumeDayMotor2 +"  lits"}
                   </div>
                 </div>
               </div>
@@ -987,7 +984,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -1000,7 +997,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="text-right w-1/5"
                           />
                           Hz
@@ -1072,7 +1069,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -1085,7 +1082,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={handleFrequencyPump}
+                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
                             className="text-right w-1/5"
                           />
                           Hz

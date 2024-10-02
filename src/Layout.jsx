@@ -135,8 +135,8 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-
-    localStorage.setItem("dataSensor", JSON.stringify(dt1));
+   localStorage.setItem("dataSensor", JSON.stringify(dt1));
+   
     const responseMotor = await axios.get(url_data + "api/motor/0", {
       headers: {
         Authorization: access_token,
@@ -145,7 +145,12 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
-
+ if(dt1){
+      localStorage.setItem("pump1Status",JSON.stringify(dt2.slice(-1)[0]["motor1"]));
+      localStorage.setItem("pump2Status",JSON.stringify(dt2.slice(-1)[0]["motor2"]));
+      
+      console.log(dt1.slice(-1)[0]);
+    }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
     for (var i = 0; i < listSensorData.length; i++) {
