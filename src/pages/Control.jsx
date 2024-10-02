@@ -57,7 +57,11 @@ const Control = () => {
   const [frequencyPump, setFrequencyPumpd] = useState(
     localStorage.getItem("frequencyPump")
   );
-
+  const [cycleSample, setCycleSample] = useState(
+    localStorage.getItem("cycleSample")
+  );
+  console.log(cycleSample);
+  console.log(frequencyPump);
   const notifySucces = (message) => {
     toast.success(message, {
       position: "top-center", // Position at the top
@@ -106,6 +110,10 @@ const Control = () => {
     // localStorage.setItem("FREQUENCY_MAX", event.target.value);
     setFrequencyPumpd(event.target.value);
   };
+  const handleCycleSample = (event) => {
+    // localStorage.setItem("FREQUENCY_MAX", event.target.value);
+    setCycleSample(event.target.value);
+  };
 
   const handleSaveClick = async () => {
     const url = url_api + `threshold/humi`;
@@ -146,8 +154,30 @@ const Control = () => {
           },
         }
       );
-      console.log("response inv", response.data["Message"]);
-      notifySucces(response.data["Message"]);
+      console.log("response inv", response.data["message"]);
+      notifySucces(response.data["message"]);
+    } catch (error) {
+      console.error("Error:", error);
+      notifyError(error);
+    }
+  };
+  const handleSaveCycleSample = async () => {
+    const url = url_api + `spam/${cycleSample}`;
+    console.log("url cycle", url);
+    try {
+      const response = await axios.post(
+        url,
+        {},
+        {
+          headers: {
+            accept: "application/json",
+            Authorization: access_token,
+          },
+        }
+      );
+
+      // console.log("response inv", response);
+      notifySucces(response.data["message"]);
     } catch (error) {
       console.error("Error:", error);
       notifyError(error);
@@ -173,8 +203,20 @@ const Control = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-
+    setFrequencyPumpd(response.data);
     localStorage.setItem("frequencyPump", response.data);
+  };
+  const getSampleCycle = async () => {
+    const response = await axios.get(url_api + "spam", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    console.log("cycleSample get response", response.data);
+    setCycleSample(response.data);
+    // localStorage.setItem("cycleSample", response.data);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -225,6 +267,13 @@ const Control = () => {
     }
     return () => clearInterval(timer);
   }, [isLocked, timeLeft]);
+
+  // Freq, Thresh
+  useEffect(() => {
+    getHumiThresh();
+    getFrequencyPump();
+    getSampleCycle();
+  }, []);
 
   const handleClick = async (index) => {
     if (isLocked) return;
@@ -296,8 +345,6 @@ const Control = () => {
   useEffect(() => {
     const ciupezoi = setInterval(() => {
       generateRandomValues();
-      getHumiThresh();
-      getFrequencyPump();
     }, 6000);
   }, []);
 
@@ -577,7 +624,7 @@ const Control = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                   <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
                         <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
                           SET FREQUENCY PUMP
@@ -619,6 +666,7 @@ const Control = () => {
                         </div>
                       </div>
                     </div>
+                  
                   </div>
                 </div>
               </div>
@@ -662,46 +710,44 @@ const Control = () => {
                         </button>
                       </div>
                     ))}
-                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
+                    <div className="p-2 relative h-20 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className=" mt-2 flex">
                         <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP
+                          SET FREQUENCY PUMP (Hz)
                         </div>
+                        <input
+                          type="text"
+                          value={frequencyPump}
+                          onChange={handleFrequencyPump}
+                          className="text-center w-1/5  border-2 border-gray-700"
+                        />
 
-                        <p className="text-gray-600 mb-2">
-                          Pump speed control{" "}
-                          <span className="font-bold">{frequencyPump}Hz</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPump}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${
-                                frequencyPump * 2
-                              }%, #ccc ${frequencyPump * 2}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPump}
-                            className="text-right w-1/5"
-                          />
-                          Hz
-                          <button
-                            onClick={handleSaveFrequencyPumpClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
+                        <button
+                          onClick={handleSaveFrequencyPumpClick}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                    <div className="p-2 relative h-20 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                      <div className=" mt-2 flex">
+                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                          SAMPLE CYCLE (Seconds)
                         </div>
+                        <input
+                          type="text"
+                          value={cycleSample}
+                          onChange={handleCycleSample}
+                          className="text-center w-1/5  border-2 border-gray-700 ml-4"
+                        />
+
+                        <button
+                          onClick={handleSaveCycleSample}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1064,4 +1110,3 @@ const Control = () => {
 };
 
 export default Control;
-
