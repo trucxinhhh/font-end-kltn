@@ -1,13 +1,22 @@
-_______________________________________________________________________
+---
 
-TẠO SSH CHO MÁY 
-ssh-keygen // Tạo ssh 
+TẠO SSH CHO MÁY
+ssh-keygen // Tạo ssh
 
-ssh-keygen -t rsa -f C:\Users\trucd\.ssh\id_rsa -C truc -b 2048 // tạo ssh dùng gg 
+ssh-keygen -t rsa -f C:\Users\trucd\.ssh\id_rsa -C truc -b 2048 // tạo ssh dùng gg
 
-_______________________________________________________________________
+---
 
-SET UP MÔI TRƯỜNG SỬ DỤNG REACT 
+TẠO MÔI TRƯỜNG ẢO
+sudo apt-get install -y python3-pip
+sudo apt-get install -y python3-venv
+
+python3 -m venv frontend
+source frontend/bin/activate
+
+---
+
+SET UP MÔI TRƯỜNG SỬ DỤNG REACT
 
 B1: Cài node js version 18
 
@@ -18,22 +27,25 @@ sudo bash nodesource_setup.sh
 sudo apt install nodejs
 node -v
 
+//remove npm
+sudo apt-get purge --auto-remove nodejs
+
 https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-22-04
 
 B2: Cài YARN
 
-npm install --global yarn
+sudo npm install --global yarn
 yarn --version
 
 https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
 
-B3: Tạo project 
+B3: Tạo project
 
- - yarn create vite // tạo folder
- - <tên Project> -> React -> JavaScript
- -  cd test
-    yarn install
-    yarn dev 
+- yarn create vite // tạo folder
+- <tên Project> -> React -> JavaScript
+- cd test
+  yarn install
+  yarn dev
 
 B4: Cài Tailwind
 
@@ -41,22 +53,22 @@ npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 
 sửa file tailwind.config.js
-	/** @type {import('tailwindcss').Config} */
-	export default {
-	  content: [
-	    "./index.html",
-	    "./src/**/*.{js,ts,jsx,tsx}",
-	  ],
-	  theme: {
-	    extend: {},
-	  },
-	  plugins: [],
-	}
+/** @type {import('tailwindcss').Config} \*/
+export default {
+content: [
+"./index.html",
+"./src/**/\*.{js,ts,jsx,tsx}",
+],
+theme: {
+extend: {},
+},
+plugins: [],
+}
 
 sửa file index.css
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 xóa file App.css
 
@@ -77,17 +89,15 @@ pip install fastapi uvicorn python-jose[cryptography] passlib[bcrypt]
 pip install fastapi-mail
 pip install pyexcel pyexcel-xlsx
 
+---
 
-_______________________________________________________________________
-
-COPY 
+COPY
 cp -r /path/to/source/directory /path/to/destination/directory
 
-
 CAP QUYEN CHO USER TUY CHINH
-sudo chown -R truc:truc /home/truc/test
+sudo chown -R tai:truc /home/truc/font-end-kltn
 
-WEB SEND API 
+WEB SEND API
 https://sabuhish.github.io/fastapi-mail/
 
 WEB CAP App Passwork
@@ -96,9 +106,9 @@ https://myaccount.google.com/apppasswords?pli=1&rapt=AEjHL4NopfBmwr4XeCVmCMoudJL
 CSV TO XLSX
 pip install pyexcel pyexcel-xlsx
 
-_______________________________________________________________________
+---
 
-WEB tao animation 
+WEB tao animation
 
 https://mambaui.com/components/input
 https://tabler.io/icons
@@ -106,4 +116,6 @@ https://flowbite.com/docs/forms/toggle/
 https://flowbite.com/docs/forms/floating-label/
 https://mui.com/material-ui/react-toggle-button/
 
-_______________________________________________________________________
+---
+
+
