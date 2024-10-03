@@ -89,19 +89,36 @@ const Control = () => {
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
+  const role = localStorage.getItem("role");
 
   const handleStartThresholdChange = (event) => {
-    setStartThreshold(event.target.value);
+if(role =="admin"){
+      setStartThreshold(event.target.value);
     localStorage.setItem("HUMI_MIN", event.target.value);
+}else{
+       notifyError("Permission Denied!");
+    }
   };
   const handleStopThresholdChange = (event) => {
-    localStorage.setItem("HUMI_MAX", event.target.value);
+ if(role =="admin"){
+     localStorage.setItem("HUMI_MAX", event.target.value);
     setStopThreshold(event.target.value);
+ }else{
+       notifyError("Permission Denied!");
+    }
+  };
+   const handleFrequencyPumpdChange = (event) => {
+ if(role =="admin"){
+  setFrequencyPumpd(event.target.value)
+ }else{
+       notifyError("Permission Denied!");
+    }
   };
 
   const handleSaveClick = async () => {
     const url = url_api + `threshold/humi`;
-    try {
+   if(role =="admin"){
+     try {
       const response = await axios.post(
         url,
         {
@@ -123,10 +140,14 @@ const Control = () => {
       console.error("Error:", error);
       notifyError(error);
     }
+   }else{
+       notifyError("Permission Denied!");
+    }
   };
   const handleSaveFrequencyPumpClick = async () => {
     const url = url_api + `inv/${frequencyPump}`;
-    try {
+    if(role =="admin"){
+      try {
       const response = await axios.post(
         url,
         {},
@@ -144,11 +165,15 @@ const Control = () => {
       console.error("Error:", error);
       notifyError(error);
     }
+    }else{
+       notifyError("Permission Denied!");
+    }
   };
   const handleSaveCycleSample = async () => {
     const url = url_api + `spam/${cycleSample}`;
 
-    try {
+   if(role =="admin"){
+     try {
       const response = await axios.post(
         url,
         {},
@@ -164,6 +189,9 @@ const Control = () => {
     } catch (error) {
       console.error("Error:", error);
       notifyError(error);
+    }
+   }else{
+       notifyError("Permission Denied!");
     }
   };
   const getHumiThresh = async () => {
@@ -199,7 +227,7 @@ const Control = () => {
     });
 
     setCycleSample(response.data);
-    // localStorage.setItem("cycleSample", response.data);
+    localStorage.setItem("cycleSample", response.data);
   };
 
   // Tải trạng thái từ localStorage khi component mount
@@ -290,12 +318,11 @@ const Control = () => {
     } else {
       setClickCount(1);
     }
-
     lastClickTimeRef.current = now;
 
-    setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
-
-    setFlag(index + 1);
+      setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
+      setFlag(index + 1);
+ 
   };
   if (Flag) {
     //gửi control lên api
@@ -393,6 +420,7 @@ const Control = () => {
   };
   
   const ModeControl = async (e) => {
+
     try {
       const response = await axios.post(
         url_api + "control_mode",
@@ -404,8 +432,8 @@ const Control = () => {
           },
         }
       );
-      //   console.log(response.data);
-
+   
+    
       const responseMode = await axios.get(url_api + "control_mode", {
         headers: {
           Authorization: access_token,
@@ -419,7 +447,9 @@ const Control = () => {
 
       //   localStorage.setItem("isChecked", responseMode.data["system_mode"]);
     } catch (error) {
-      console.error("Error:", error);
+        notifyError(error.response.data["detail"]);
+      console.error("Error:", error.response.data["detail"]);
+      
     }
   };
  
@@ -537,7 +567,7 @@ const Control = () => {
                 />
                 <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                 <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  {isChecked ? "Mode Auto" : "Mode Manual"}
+                         {isChecked ? "Mode Auto" : "Mode Manual"}
                 </span>
               </label>
             </div>
@@ -637,7 +667,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -650,7 +680,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="text-right w-1/5"
                           />
                           Hz
@@ -715,7 +745,7 @@ const Control = () => {
                         <input
                           type="text"
                           value={frequencyPump}
-                          onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                          onChange={handleFrequencyPumpdChange}
                           className="text-center w-1/5  border-2 border-gray-700"
                         />
 
@@ -984,7 +1014,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -997,7 +1027,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="text-right w-1/5"
                           />
                           Hz
@@ -1069,7 +1099,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
                             style={{
                               background: `linear-gradient(to right, green, red ${
@@ -1082,7 +1112,7 @@ const Control = () => {
                             min="0"
                             max="50"
                             value={frequencyPump}
-                            onChange={(event)=>setFrequencyPumpd(event.target.value)}
+                            onChange={handleFrequencyPumpdChange}
                             className="text-right w-1/5"
                           />
                           Hz

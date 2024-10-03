@@ -300,8 +300,12 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    
-      localStorage.setItem("isChecked", JSON.stringify(response.data["system_mode"]));
+    if (localStorage.getItem("role")=="admin"){
+       localStorage.setItem("isChecked", JSON.stringify(response.data["system_mode"]));
+    }else{
+       localStorage.setItem("isChecked",true);
+    }
+     
   };
   // console.log(rpsNotify);
   //get inf once time
