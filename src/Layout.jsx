@@ -180,18 +180,60 @@ const Layout = () => {
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
   };
-  const handleImageChange = (event) => {
+  // const handleImageChange = (event) => {
+  //   console.log("huhu")
+  //   const file = event.target.files[0];
+  //   console.log(typeof file);
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setImageSrc(reader.result);
+  //       uploadImage(file);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+ const handleImageChange = (event) => {
+
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageSrc(reader.result);
-        uploadImage(file);
+      reader.onloadend = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Set canvas size to 1:1 aspect ratio (square)
+          const canvas = document.createElement("canvas");
+          const size = Math.min(img.width, img.height);
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
+
+          // Draw the image centered to maintain 1:1 ratio
+          ctx.drawImage(
+            img,
+            (img.width - size) / 2, // X-axis offset
+            (img.height - size) / 2, // Y-axis offset
+            size,
+            size,
+            0,
+            0,
+            size,
+            size
+          );
+
+         canvas.toBlob((blob) => {
+            const resizedFile = new File([blob], file.name, {
+              type: file.type,
+            });
+            // setImageFile(resizedFile); // Store file for POST request
+             uploadImage(resizedFile);
+          }, file.type);
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
   };
-
   // upload avatar user
   const uploadImage = async (file) => {
     const formData = new FormData();

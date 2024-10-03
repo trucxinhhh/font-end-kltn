@@ -1,53 +1,59 @@
-import React from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState } from "react";
 
-const App = () => {
-  // Toast thông báo thành công
-  const notifySuccess = (message) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 2000, // Đóng sau 2 giây
-    });
-  };
+function ImageUploader() {
+  const [imageSrc, setImageSrc] = useState(null);
 
-  // Toast thông báo lỗi
-  const notifyError = () => {
-    toast.error("This is an error message!", {
-      position: "top-center",
-      autoClose: 3000, // Đóng sau 3 giây
-    });
-  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Set canvas size to 1:1 aspect ratio (square)
+          const canvas = document.createElement("canvas");
+          const size = Math.min(img.width, img.height);
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext("2d");
 
-  // Toast thông báo thông tin
-  const notifyInfo = () => {
-    toast.info("This is an info message!", {
-      position: "bottom-right",
-      autoClose: 2500, // Đóng sau 2.5 giây
-    });
+          // Draw the image centered to maintain 1:1 ratio
+          ctx.drawImage(
+            img,
+            (img.width - size) / 2, // X-axis offset
+            (img.height - size) / 2, // Y-axis offset
+            size,
+            size,
+            0,
+            0,
+            size,
+            size
+          );
+
+          // Convert canvas back to a data URL (image)
+          const dataUrl = canvas.toDataURL();
+          setImageSrc(dataUrl);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <div>
-      <h1>React Toastify Example</h1>
-
-      {/* Các nút nhấn để hiển thị toast */}
-      <button
-        onClick={() => {
-          notifySuccess("This is a success message!");
-        }}
-      >
-        Show Success Toast
-      </button>
-      <button onClick={notifyError}>Show Error Toast</button>
-      <button onClick={notifyInfo}>Show Info Toast</button>
-
-      {/* ToastContainer để render thông báo toast */}
-      <ToastContainer />
+      <input
+        id="fileInput"
+        type="file"
+        style={{ display: "none" }}
+        onChange={handleImageChange}
+      />
+      <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
+        Upload Image
+      </label>
+      {imageSrc && <img src={imageSrc} alt="Resized" />}
     </div>
   );
-};
+}
 
-export default App;
-
-
+export default ImageUploader;
