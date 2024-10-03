@@ -629,7 +629,7 @@ const Decentralization = () => {
                   type="text"
                   name="fullname"
                   className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Thangwf user tên gì :)"
+                  placeholder="Họ và Tên"
                   value={CRfullname}
                   onChange={(e) => setFullname(e.target.value)}
                 />
@@ -645,7 +645,7 @@ const Decentralization = () => {
                   type="text"
                   name="username"
                   className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="cho no name deex nho"
+                  placeholder="Tên dùng để đăng nhập"
                   value={CRusername}
                   onChange={(e) => setUsername(e.target.value)}
                 />
@@ -661,7 +661,7 @@ const Decentralization = () => {
                   type="password"
                   name="new-password"
                   className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Đặt cái mật khẩu nhiều kí tự vào :)"
+                  placeholder="Đặt mật khẩu có kí tự"
                   value={CRpassword}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -678,7 +678,7 @@ const Decentralization = () => {
                     className="text-gray-500 mt-1 h-12 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
                     onChange={(e) => setRole(e.target.value)}
                   >
-                    <option value="Admin">Choice your authority</option>
+                    <option value="Admin">Phân quyền cho người dùng</option>
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                     <option value="others">Others</option>
@@ -701,7 +701,7 @@ const Decentralization = () => {
                     } ${
                       errorMail ? "focus:ring-red-500" : "focus:ring-sky-500"
                     } block w-full rounded-md sm:text-sm focus:ring-1`}
-                    placeholder="Nhập cái email cho chuẩn vào :)"
+                    placeholder="abc@gmail.com"
                     value={CRemail}
                     onChange={handleEmailChange}
                     required
@@ -722,14 +722,14 @@ const Decentralization = () => {
                 </span>
                 <div>
                   <input
-                    type="number"
+                    type="tel"
                     name="PhoneNumber"
                     className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
                       error ? "border-red-500" : "focus:border-sky-500"
                     } ${
                       error ? "focus:ring-red-500" : "focus:ring-sky-500"
                     } block w-full rounded-md sm:text-sm focus:ring-1`}
-                    placeholder="Biết ghi số điện thoại khum?"
+                    placeholder="0xxxxxxxxx"
                     value={CRphone}
                     onChange={handlePhoneChange}
                     // onBlur={handleBlur}

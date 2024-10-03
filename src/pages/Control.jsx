@@ -501,7 +501,7 @@ const Control = () => {
 
                 <div class="ml-2 w-full flex-1">
                   <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor2 ? "ON" : "Off"}</span>
+                    Status : <span>{valueMotor2 ? "ON" : "OFF"}</span>
                   </div>
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor2}h
@@ -850,7 +850,7 @@ const Control = () => {
 
                 <div class="ml-2 w-full flex-1">
                   <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor2 ? "ON" : "Off"}</span>
+                    Status : <span>{valueMotor2 ? "ON" : "OFF"}</span>
                   </div>
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor2}h

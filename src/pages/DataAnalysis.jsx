@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
 import { url_api, url_local, url_data } from "../Provider.jsx";
+import { toast } from "react-toastify";
 import { Button } from "@material-tailwind/react";
-import { ToastContainer, toast } from "react-toastify";
+
 const DataAnalysis = () => {
   const [data1, setData] = useState([]);
   const [DataList, setDataList] = useState("data");
@@ -12,10 +13,15 @@ const DataAnalysis = () => {
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
-  const reversedData1 = data1.reverse();
+  // const reversedData1 = data1.reverse();
   // lấy trạng thái date
   const [inputType1, setInputType1] = useState("text");
   const [inputType2, setInputType2] = useState("text");
+
+  // date export-file
+  const [startDay, setStartDay] = useState();
+  const [endDay, setEndDay] = useState();
+  const [Flag, setFlag] = useState(false);
 
   //notify
 
@@ -25,7 +31,12 @@ const DataAnalysis = () => {
       autoClose: 3000, // Auto close after 3 seconds
     });
   };
-
+  const notifyError = (message) => {
+    toast.error(message, {
+      position: "top-center", // Position at the top
+      autoClose: 3000, // Auto close after 3 seconds
+    });
+  };
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
     if (a === url_local + "src/pages/undefined") {
@@ -51,6 +62,26 @@ const DataAnalysis = () => {
     }
     loadData();
   }, [DataList]);
+  //apply button
+  const DateFil = async () => {
+    setFlag(false);
+    const date = { startday: startDay, enday: endDay };
+    const checkDate =
+      (new Date(endDay) - new Date(startDay)) / (1000 * 60 * 60 * 24);
+    if (checkDate > 7) {
+      notifyError("Limit search within 7 days, please try again!");
+    } else if (checkDate.toString() == "NaN") {
+      console.log("check", checkDate);
+      notifyError("Please select date!");
+    } else if (checkDate < 0) {
+      console.log("check", checkDate);
+      notifyError("Start Day is lesser than End Day !");
+    } else {
+      console.log("true date", checkDate);
+      setFlag(true);
+      notifyInfo("Waiting for data...");
+    }
+  };
 
   //Sent Mail
   const SentMail = async () => {
@@ -61,17 +92,23 @@ const DataAnalysis = () => {
     const address_toSend = url_api + `export-file/${DataList}`;
     console.log("address_toSend", address_toSend);
 
-    const response = axios.post(address_toSend, Account, {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    response.then((value) => {
-      console.log(value.data["message"]);
-      notifyInfo(value.data["message"]);
-    });
+    if (Flag) {
+      console.log("true flag export");
+      const response = axios.post(address_toSend, Account, {
+        headers: {
+          Authorization: access_token,
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      response.then((value) => {
+        console.log(value.data["message"]);
+        notifyInfo(value.data["message"]);
+      });
+    } else {
+      console.log("false flag export");
+      notifyError("Please select date again!");
+    }
   };
   return (
     <div className="flex-col h-full w-full  ">
@@ -84,7 +121,7 @@ const DataAnalysis = () => {
             </div>
 
             <div className="w-11/12 flex p-4 ">
-              <label className="inline-flex items-center w-2/3 text-sm font-semibold">
+              <label className="rounded-2xl first-line:inline-flex items-center w-2/3 text-sm font-semibold">
                 <select
                   className="text-gray-500 mt-1 px-3 py-2 h-10 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                   name="data-list"
@@ -97,23 +134,33 @@ const DataAnalysis = () => {
                   <option value="Control-History">Control History</option>
                 </select>
               </label>
-              <input
-                type={inputType1}
-                placeholder="Start Day"
-                onFocus={() => setInputType1("date")}
-                onBlur={() => setInputType1("text")}
-                // onChange={}
-              />
-              <input
-                type={inputType2}
-                placeholder="End Day"
-                onFocus={() => setInputType2("date")}
-                onBlur={() => setInputType2("text")}
-              />
-
-              <div className="w-1/3 mt-1">
+              <div className="flex p-1 ml-2 w-7/12 items-center justify-center ">
+                <input
+                  type={inputType1}
+                  placeholder="   Start Day"
+                  onFocus={() => setInputType1("date")}
+                  onBlur={() => setInputType1("text")}
+                  onChange={(e) => setStartDay(e.target.value)}
+                  className="rounded-xl w-28 h-10"
+                />
+                <input
+                  type={inputType2}
+                  placeholder="    End Day"
+                  onFocus={() => setInputType2("date")}
+                  onBlur={() => setInputType2("text")}
+                  onChange={(e) => setEndDay(e.target.value)}
+                  className="rounded-xl ml-2 w-28 h-10"
+                />
                 <Button
-                  className="bg-white text-black float-right text-xs h-10 "
+                  className="bg-blue-600 text-white float-right text-xs h-10 ml-2"
+                  onClick={() => DateFil()}
+                >
+                  Apply
+                </Button>
+              </div>
+              <div className="w-1/3 mt-1  ">
+                <Button
+                  className="bg-green-600 text-white float-right text-xs h-10 "
                   onClick={() => SentMail()}
                 >
                   EXPORT FILE
@@ -159,13 +206,10 @@ const DataAnalysis = () => {
                     <th scope="col" class="px-6 py-3 text-center">
                       low
                     </th>
-                    {/* <th scope="col" class="px-6 py-3 text-center">
-                      Motor
-                    </th> */}
                   </tr>
                 </thead>
                 <tbody className="">
-                  {reversedData1.map((item) => (
+                  {data1.map((item) => (
                     <tr class="bg-white dark:bg-gray-800" key={item._id}>
                       <td class="px-6 py-4 text-center">{item.device_name}</td>
                       <td class="px-6 py-4 text-center">{item.date}</td>
@@ -214,7 +258,7 @@ const DataAnalysis = () => {
                   </tr>
                 </thead>
                 <tbody className="rounded-b-2xl ">
-                  {reversedData1.map((item) => (
+                  {data1.map((item) => (
                     <tr class="bg-white dark:bg-gray-800" key={item._id}>
                       <td class="px-6 py-4 text-center">{item.full_name}</td>
                       <td class="px-6 py-4 text-center">{item.username}</td>
@@ -230,7 +274,44 @@ const DataAnalysis = () => {
             </div>
           )}
           {DataList === "Control-History" && (
-            <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3"></div>
+            <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3">
+                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Name
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      User Name
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Phone Number
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Email
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Role
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Login at
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* {data1.map((item) => (
+                    <tr class="bg-white dark:bg-gray-800" key={item._id}>
+                      <td class="px-6 py-4 text-center">{item.full_name}</td>
+                      <td class="px-6 py-4 text-center">{item.username}</td>
+                      <td class="px-6 py-4 text-center">{item.phone}</td>
+                      <td class="px-6 py-4 text-center">{item.email}</td>
+                      <td class="px-6 py-4 text-center">{item.role}</td>
+                      <td class="px-6 py-4 text-center">{item.lastlogin}</td>
+                    </tr>
+                  ))} */}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
@@ -252,6 +333,7 @@ const DataAnalysis = () => {
                   <option value="Control-History">Control History</option>
                 </select>
               </label>
+
               <div className="w-fit  ml-2 ">
                 <Button
                   className="bg-lime-600 text-white float-right text-sm"
@@ -262,6 +344,37 @@ const DataAnalysis = () => {
               </div>
             </div>
           </div>
+          <div className="h-16 m-3  flex  items-center">
+            <div className=" w-full flex">
+              <div className="inline-flex items-center w-7/12 h-10 text-sm font-semibold">
+                <input
+                  type={inputType1}
+                  placeholder="   Start Day"
+                  onFocus={() => setInputType1("date")}
+                  onBlur={() => setInputType1("text")}
+                  onChange={(e) => setStartDay(e.target.value)}
+                  className="rounded-xl w-28 h-10 shadow-lg"
+                />
+                <input
+                  type={inputType2}
+                  placeholder="    End Day"
+                  onFocus={() => setInputType2("date")}
+                  onBlur={() => setInputType2("text")}
+                  onChange={(e) => setEndDay(e.target.value)}
+                  className="rounded-xl ml-2 w-28 h-10 shadow-lg"
+                />
+              </div>
+              <div className="w-fit ml-2 ">
+                <Button
+                  className="bg-blue-600 text-white w-36 text-sm h-10 "
+                  onClick={() => DateFil()}
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {DataList === "data" && (
             <div className="relative h-4/5 overflow-x-auto rounded-3xl mt-3">
               <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -303,7 +416,7 @@ const DataAnalysis = () => {
                   </tr>
                 </thead>
                 <tbody className="">
-                  {reversedData1.map((item) => (
+                  {data1.map((item) => (
                     <tr class="bg-white dark:bg-gray-800" key={item._id}>
                       <td class="px-6 py-4 text-center">{item.device_name}</td>
                       <td class="px-6 py-4 text-center">{item.date}</td>
@@ -352,7 +465,7 @@ const DataAnalysis = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {reversedData1.map((item) => (
+                  {data1.map((item) => (
                     <tr class="bg-white dark:bg-gray-800" key={item._id}>
                       <td class="px-6 py-4 text-center">{item.full_name}</td>
                       <td class="px-6 py-4 text-center">{item.username}</td>
@@ -367,7 +480,9 @@ const DataAnalysis = () => {
             </div>
           )}
           {DataList === "Control-History" && (
-            <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3"></div>
+            <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3">
+                   
+            </div>
           )}
         </div>
       </div>
@@ -376,4 +491,3 @@ const DataAnalysis = () => {
 };
 
 export default DataAnalysis;
-

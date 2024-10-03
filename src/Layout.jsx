@@ -145,11 +145,10 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
- if(dt1){
+ if(dt2){
       localStorage.setItem("pump1Status",JSON.stringify(dt2.slice(-1)[0]["motor1"]));
       localStorage.setItem("pump2Status",JSON.stringify(dt2.slice(-1)[0]["motor2"]));
-      
-      console.log(dt1.slice(-1)[0]);
+
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
@@ -259,6 +258,8 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
+    
+      localStorage.setItem("isChecked", JSON.stringify(response.data["system_mode"]));
   };
   // console.log(rpsNotify);
   //get inf once time

@@ -633,7 +633,7 @@ function App() {
           </div>
         ) : (
           <div className="">
-            <div className="flex flex-col sensor_table h-screen w-full rounded-r-2xl rounded-l-2xl ">
+            <div className=" sensor_table h-screen w-full rounded-r-2xl rounded-l-2xl ">
               <div className="grid grid-cols-4 gap-2 h-20 text-white p-2 ">
                 {DashBoard.map((item) => (
                   <button
