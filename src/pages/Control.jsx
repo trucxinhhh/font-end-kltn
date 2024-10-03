@@ -1,6 +1,6 @@
 import { Button } from "@material-tailwind/react";
 import React, { useEffect, useState, useRef } from "react";
-//import axios from "axios";
+// import axios from "axios";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
 import { url_api, url_local } from "../Provider.jsx";
@@ -35,8 +35,12 @@ const Control = () => {
 
   const [Display, setDisplay] = useState("1");
   const [selector, setSelector] = useState("motor1");
-  const [valueMotor1, setValueMotor1] = useState(JSON.parse(localStorage.getItem("pump1Status")));
-  const [valueMotor2, setValueMotor2] = useState(JSON.parse(localStorage.getItem("pump2Status")));
+  const [valueMotor1, setValueMotor1] = useState(
+    JSON.parse(localStorage.getItem("pump1Status"))
+  );
+  const [valueMotor2, setValueMotor2] = useState(
+    JSON.parse(localStorage.getItem("pump2Status"))
+  );
   const [data1, setData] = useState([]);
   const dataChart = data1.slice(-30);
   const [totalPump1, setTotalPump1] = useState();
@@ -81,8 +85,8 @@ const Control = () => {
   const lastClickTimeRef = useRef(0);
   const [Flag, setFlag] = useState();
 
-  const [VolumeDayMotor1,setVolumeDayMotor1]=useState(0);
-  const [VolumeDayMotor2,setVolumeDayMotor2]=useState(0);
+  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(0);
+  const [VolumeDayMotor2, setVolumeDayMotor2] = useState(0);
   const timeDayMotor1 = 12;
   const timeDayMotor2 = 12;
 
@@ -92,106 +96,106 @@ const Control = () => {
   const role = localStorage.getItem("role");
 
   const handleStartThresholdChange = (event) => {
-if(role =="admin"){
+    if (role == "admin") {
       setStartThreshold(event.target.value);
-    localStorage.setItem("HUMI_MIN", event.target.value);
-}else{
-       notifyError("Permission Denied!");
+      localStorage.setItem("HUMI_MIN", event.target.value);
+    } else {
+      notifyError("Permission Denied!");
     }
   };
   const handleStopThresholdChange = (event) => {
- if(role =="admin"){
-     localStorage.setItem("HUMI_MAX", event.target.value);
-    setStopThreshold(event.target.value);
- }else{
-       notifyError("Permission Denied!");
+    if (role == "admin") {
+      localStorage.setItem("HUMI_MAX", event.target.value);
+      setStopThreshold(event.target.value);
+    } else {
+      notifyError("Permission Denied!");
     }
   };
-   const handleFrequencyPumpdChange = (event) => {
- if(role =="admin"){
-  setFrequencyPumpd(event.target.value)
- }else{
-       notifyError("Permission Denied!");
+  const handleFrequencyPumpdChange = (event) => {
+    if (role == "admin") {
+      setFrequencyPumpd(event.target.value);
+    } else {
+      notifyError("Permission Denied!");
     }
   };
 
   const handleSaveClick = async () => {
     const url = url_api + `threshold/humi`;
-   if(role =="admin"){
-     try {
-      const response = await axios.post(
-        url,
-        {
-          attribute: "humi",
-          upper: stopThreshold,
-          lower: startThreshold,
-        },
-        {
-          headers: {
-            accept: "application/json",
-            // "Content-Type": "application/json",
-            Authorization: access_token,
+    if (role == "admin") {
+      try {
+        const response = await axios.post(
+          url,
+          {
+            attribute: "humi",
+            upper: stopThreshold,
+            lower: startThreshold,
           },
-        }
-      );
-      // console.log("response humi", response.data);
-      notifySucces("Update Thresh for humi success");
-    } catch (error) {
-      console.error("Error:", error);
-      notifyError(error);
-    }
-   }else{
-       notifyError("Permission Denied!");
+          {
+            headers: {
+              accept: "application/json",
+              // "Content-Type": "application/json",
+              Authorization: access_token,
+            },
+          }
+        );
+        // console.log("response humi", response.data);
+        notifySucces("Update Thresh for humi success");
+      } catch (error) {
+        console.error("Error:", error);
+        notifyError(error);
+      }
+    } else {
+      notifyError("Permission Denied!");
     }
   };
   const handleSaveFrequencyPumpClick = async () => {
     const url = url_api + `inv/${frequencyPump}`;
-    if(role =="admin"){
+    if (role == "admin") {
       try {
-      const response = await axios.post(
-        url,
-        {},
-        {
-          headers: {
-            accept: "application/json",
-            // "Content-Type": "application/json",
-            Authorization: access_token,
-          },
-        }
-      );
+        const response = await axios.post(
+          url,
+          {},
+          {
+            headers: {
+              accept: "application/json",
+              // "Content-Type": "application/json",
+              Authorization: access_token,
+            },
+          }
+        );
 
-      notifySucces(response.data["message"]);
-    } catch (error) {
-      console.error("Error:", error);
-      notifyError(error);
-    }
-    }else{
-       notifyError("Permission Denied!");
+        notifySucces(response.data["message"]);
+      } catch (error) {
+        console.error("Error:", error);
+        notifyError(error);
+      }
+    } else {
+      notifyError("Permission Denied!");
     }
   };
   const handleSaveCycleSample = async () => {
     const url = url_api + `spam/${cycleSample}`;
 
-   if(role =="admin"){
-     try {
-      const response = await axios.post(
-        url,
-        {},
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: access_token,
-          },
-        }
-      );
+    if (role == "admin") {
+      try {
+        const response = await axios.post(
+          url,
+          {},
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: access_token,
+            },
+          }
+        );
 
-      notifySucces(response.data["message"]);
-    } catch (error) {
-      console.error("Error:", error);
-      notifyError(error);
-    }
-   }else{
-       notifyError("Permission Denied!");
+        notifySucces(response.data["message"]);
+      } catch (error) {
+        console.error("Error:", error);
+        notifyError(error);
+      }
+    } else {
+      notifyError("Permission Denied!");
     }
   };
   const getHumiThresh = async () => {
@@ -279,7 +283,7 @@ if(role =="admin"){
     return () => clearInterval(timer);
   }, [isLocked, timeLeft]);
 
-  const getPumpView =async () =>{
+  const getPumpView = async () => {
     const response = await axios.get(url_api + "vol", {
       headers: {
         Authorization: access_token,
@@ -287,7 +291,7 @@ if(role =="admin"){
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
- 
+
     setVolumeDayMotor1(response.data["pump1"]);
     setVolumeDayMotor2(response.data["pump2"]);
   };
@@ -320,9 +324,8 @@ if(role =="admin"){
     }
     lastClickTimeRef.current = now;
 
-      setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
-      setFlag(index + 1);
- 
+    setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
+    setFlag(index + 1);
   };
   if (Flag) {
     //gửi control lên api
@@ -418,9 +421,8 @@ if(role =="admin"){
       },
     },
   };
-  
-  const ModeControl = async (e) => {
 
+  const ModeControl = async (e) => {
     try {
       const response = await axios.post(
         url_api + "control_mode",
@@ -432,8 +434,7 @@ if(role =="admin"){
           },
         }
       );
-   
-    
+
       const responseMode = await axios.get(url_api + "control_mode", {
         headers: {
           Authorization: access_token,
@@ -447,13 +448,11 @@ if(role =="admin"){
 
       //   localStorage.setItem("isChecked", responseMode.data["system_mode"]);
     } catch (error) {
-        notifyError(error.response.data["detail"]);
+      notifyError(error.response.data["detail"]);
       console.error("Error:", error.response.data["detail"]);
-      
     }
   };
- 
- 
+
   return (
     <div className="flex  h-full w-full ">
       {/* -----------------------PC View----------------------- */}
@@ -499,7 +498,7 @@ if(role =="admin"){
                     Time : {timeDayMotor1}h
                   </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor1 +"  lits"}
+                    Flow : {VolumeDayMotor1 + "  lits"}
                   </div>
                 </div>
               </div>
@@ -537,7 +536,7 @@ if(role =="admin"){
                     Time : {timeDayMotor2}h
                   </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow :  {VolumeDayMotor2 +"  lits"}
+                    Flow : {VolumeDayMotor2 + "  lits"}
                   </div>
                 </div>
               </div>
@@ -557,8 +556,46 @@ if(role =="admin"){
           <div className="p-4 h-full w-2/3 rounded-3xl bg-teal-100 ">
             <h1 className="ml-4 font-bold text-center mb-4"> Control Pump</h1>
             {/* Select mode */}
-            <div className="bg-white bg-opacity-50 p-2 items-center justify-center rounded-xl">
-              <label class="inline-flex items-center cursor-pointer">
+
+            <div className=" flex flex-col bg-white bg-opacity-50 p-2  rounded-xl ">
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  SET FREQUENCY PUMP (Hz)
+                </div>
+                <input
+                  type="text"
+                  value={frequencyPump}
+                  onChange={handleFrequencyPumpdChange}
+                  className="text-center w-1/5  border-2 border-gray-700"
+                />
+
+                <button
+                  onClick={handleSaveFrequencyPumpClick}
+                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  SAMPLE CYCLE (Seconds)
+                </div>
+                <input
+                  type="text"
+                  value={cycleSample}
+                  onChange={(event) => setCycleSample(event.target.value)}
+                  className=" text-center w-1/5  border-2 border-gray-700 "
+                />
+
+                <button
+                  onClick={handleSaveCycleSample}
+                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
+
+              <label class="ml-1 mt-2 inline-flex font-bold cursor-pointer">
                 <input
                   type="checkbox"
                   className="sr-only peer"
@@ -566,8 +603,8 @@ if(role =="admin"){
                   onChange={ModeControl}
                 />
                 <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                         {isChecked ? "Mode Auto" : "Mode Manual"}
+                <span class="ml-3 text-sm  text-gray-900 dark:text-gray-300 font-bold">
+                  {isChecked ? "Mode Auto" : "Mode Manual"}
                 </span>
               </label>
             </div>
@@ -651,49 +688,6 @@ if(role =="admin"){
                         </div>
                       </div>
                     </div>
-                   <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP
-                        </div>
-
-                        <p className="text-gray-600 mb-2">
-                          Pump speed control
-                          <span className="font-bold">{frequencyPump}Hz</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${
-                                frequencyPump * 2
-                              }%, #ccc ${frequencyPump * 2}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="text-right w-1/5"
-                          />
-                          Hz
-                          <button
-                            onClick={handleSaveFrequencyPumpClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  
                   </div>
                 </div>
               </div>
@@ -737,46 +731,6 @@ if(role =="admin"){
                         </button>
                       </div>
                     ))}
-                    <div className="p-2 relative h-20 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className=" mt-2 flex">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP (Hz)
-                        </div>
-                        <input
-                          type="text"
-                          value={frequencyPump}
-                          onChange={handleFrequencyPumpdChange}
-                          className="text-center w-1/5  border-2 border-gray-700"
-                        />
-
-                        <button
-                          onClick={handleSaveFrequencyPumpClick}
-                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                    <div className="p-2 relative h-20 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className=" mt-2 flex">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SAMPLE CYCLE (Seconds)
-                        </div>
-                        <input
-                          type="text"
-                          value={cycleSample}
-                          onChange={(event)=> setCycleSample(event.target.value)}
-                          className="text-center w-1/5  border-2 border-gray-700 ml-4"
-                        />
-
-                        <button
-                          onClick={handleSaveCycleSample}
-                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -848,7 +802,7 @@ if(role =="admin"){
                     Time : {timeDayMotor1}h
                   </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow :  {VolumeDayMotor1 +"  lits"}
+                    Flow : {VolumeDayMotor1 + "  lits"}
                   </div>
                 </div>
               </div>
@@ -886,7 +840,7 @@ if(role =="admin"){
                     Time : {timeDayMotor2}h
                   </div> */}
                   <div class="mt-1 text-base text-gray-600">
-                    Flow :  {VolumeDayMotor2 +"  lits"}
+                    Flow : {VolumeDayMotor2 + "  lits"}
                   </div>
                 </div>
               </div>
