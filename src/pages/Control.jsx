@@ -378,6 +378,7 @@ const Control = () => {
     const intervalId = setInterval(() => {
       setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
       setValueMotor2(JSON.parse(localStorage.getItem("pump2Status")));
+      setPumps([JSON.parse(localStorage.getItem("pump1Status")), JSON.parse(localStorage.getItem("pump2Status"))]);
     }, 1000);
 
     // Cleanup function để xóa interval khi component unmount
