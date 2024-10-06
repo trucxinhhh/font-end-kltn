@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-// const GetDataTime = 0.5 * 60 * 1000;
+const TimeDelays =  60 ;
 
 const Layout = () => {
   const location = useLocation();
@@ -160,7 +160,7 @@ const Layout = () => {
         if (FlagNotify && displayNotify == 2) {
           setError(null);
           setCount(count + 1);
-          if (count == 30) {
+          if (count == TimeDelays) {
             setFlagNotify(false);
             setCount(0);
           }
@@ -300,11 +300,11 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    if (localStorage.getItem("role")=="admin"){
+    // if (localStorage.getItem("role")=="admin"){
        localStorage.setItem("isChecked", JSON.stringify(response.data["system_mode"]));
-    }else{
-       localStorage.setItem("isChecked",true);
-    }
+    // }else{
+    //    localStorage.setItem("isChecked",true);
+    // }
      
   };
   // console.log(rpsNotify);

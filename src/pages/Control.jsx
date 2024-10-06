@@ -305,27 +305,31 @@ const Control = () => {
   }, []);
 
   const handleClick = async (index) => {
-    if (isLocked) return;
+    if (role == "admin") {
+      if (isLocked) return;
 
-    const now = Date.now();
-    const timeSinceLastClick = now - lastClickTimeRef.current;
+      const now = Date.now();
+      const timeSinceLastClick = now - lastClickTimeRef.current;
 
-    if (timeSinceLastClick <= DOUBLE_CLICK_THRESHOLD) {
-      setClickCount((prev) => {
-        const newClickCount = prev + 1;
-        if (newClickCount >= MAX_CLICKS) {
-          setIsLocked(true);
-          setTimeLeft(LOCK_DURATION);
-        }
-        return newClickCount;
-      });
+      if (timeSinceLastClick <= DOUBLE_CLICK_THRESHOLD) {
+        setClickCount((prev) => {
+          const newClickCount = prev + 1;
+          if (newClickCount >= MAX_CLICKS) {
+            setIsLocked(true);
+            setTimeLeft(LOCK_DURATION);
+          }
+          return newClickCount;
+        });
+      } else {
+        setClickCount(1);
+      }
+      lastClickTimeRef.current = now;
+
+      setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
+      setFlag(index + 1);
     } else {
-      setClickCount(1);
+      notifyError("Permission Denied!");
     }
-    lastClickTimeRef.current = now;
-
-    setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
-    setFlag(index + 1);
   };
   if (Flag) {
     //gửi control lên api
@@ -374,11 +378,14 @@ const Control = () => {
       generateRandomValues();
     }, 6000);
   }, []);
-    useEffect(() => {
+  useEffect(() => {
     const intervalId = setInterval(() => {
       setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
       setValueMotor2(JSON.parse(localStorage.getItem("pump2Status")));
-      setPumps([JSON.parse(localStorage.getItem("pump1Status")), JSON.parse(localStorage.getItem("pump2Status"))]);
+      setPumps([
+        JSON.parse(localStorage.getItem("pump1Status")),
+        JSON.parse(localStorage.getItem("pump2Status")),
+      ]);
     }, 1000);
 
     // Cleanup function để xóa interval khi component unmount
