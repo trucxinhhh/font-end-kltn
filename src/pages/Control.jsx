@@ -374,6 +374,15 @@ const Control = () => {
       generateRandomValues();
     }, 6000);
   }, []);
+    useEffect(() => {
+    const intervalId = setInterval(() => {
+      setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
+      setValueMotor2(JSON.parse(localStorage.getItem("pump2Status")));
+    }, 1000);
+
+    // Cleanup function để xóa interval khi component unmount
+    return () => clearInterval(intervalId);
+  });
 
   // ve total pump
 

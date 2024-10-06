@@ -65,7 +65,8 @@ const DataAnalysis = () => {
   //apply button
   const DateFil = async () => {
     setFlag(false);
-    const date = { startday: startDay, enday: endDay };
+    const date =  url_data + "api/" + `${DataList}` + "/0?start="+`${startDay}`+"&end="+`${endDay}`;
+    console.log(date);
     const checkDate =
       (new Date(endDay) - new Date(startDay)) / (1000 * 60 * 60 * 24);
     if (checkDate > 7) {
@@ -79,6 +80,17 @@ const DataAnalysis = () => {
     } else {
       console.log("true date", checkDate);
       setFlag(true);
+      const response = await axios.get(
+        url_data + "api/" + `${DataList}` + "/0?start="+`${startDay}`+"&end="+`${endDay}`,
+        {
+          headers: {
+            Authorization: access_token,
+            accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      console.log("filter",response);
       notifyInfo("Waiting for data...");
     }
   };

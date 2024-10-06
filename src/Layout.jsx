@@ -127,7 +127,7 @@ const Layout = () => {
   };
   // get data sensor
   async function loadData() {
-    const response = await axios.get(url_data + "api/data/0", {
+    const response = await axios.get(url_data + "api/data/30", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -137,7 +137,7 @@ const Layout = () => {
     const dt1 = response.data;
    localStorage.setItem("dataSensor", JSON.stringify(dt1));
    
-    const responseMotor = await axios.get(url_data + "api/motor/0", {
+    const responseMotor = await axios.get(url_data + "api/motor/30", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -148,7 +148,7 @@ const Layout = () => {
  if(dt2){
       localStorage.setItem("pump1Status",JSON.stringify(dt2.slice(-1)[0]["motor1"]));
       localStorage.setItem("pump2Status",JSON.stringify(dt2.slice(-1)[0]["motor2"]));
-
+// console.log("get status pump ok");
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
