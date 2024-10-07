@@ -1,12 +1,12 @@
 import React from "react";
 import { useEffect, useState } from "react";
 // import axios from "axios";
-import axios from "./checkToken";
+import axios from "./checkToken.jsx";
 import { url_api, url_local, url_data } from "../Provider.jsx";
 import { toast } from "react-toastify";
 import { Button } from "@material-tailwind/react";
 
-const DataAnalysis = () => {
+const History = () => {
   const [data1, setData] = useState([]);
   const [DataList, setDataList] = useState("data");
 
@@ -510,4 +510,4 @@ const DataAnalysis = () => {
   );
 };
 
-export default DataAnalysis;
+export default History;

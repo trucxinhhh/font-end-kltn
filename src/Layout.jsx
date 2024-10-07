@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const TimeDelays =  60 *3;//seconds
+const TimeDelays =  60 *3 ;//seconds
 const TimeSpamLoadData = 1*1000; //seconds
 
 const Layout = () => {
@@ -547,7 +547,7 @@ const Layout = () => {
                                 setDisplay(false);
                               }}
                             >
-                              Users
+                              User Management
                             </span>
                           </a>
                         </Link>
@@ -848,7 +848,7 @@ const Layout = () => {
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                       </svg>
-                      <span className="ml-4">Users</span>
+                      <span className="ml-4">User Management</span>
                     </Link>
                   )}
                   {/* Control */}

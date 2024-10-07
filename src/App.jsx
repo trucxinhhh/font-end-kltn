@@ -4,7 +4,7 @@ import React, { lazy, Suspense } from "react";
 import Login from "./pages/Login";
 // import App from "./App.tsx";
 import PrivateRoute from "./PrivateRoute";
-import Decentralization from "./pages/Decentralization";
+import Management from "./pages/Management";
 //import Home from "./pages/Home";
 import Layout from "./Layout";
 import Loading from "./pages/Loading.jsx";
@@ -16,7 +16,7 @@ function delayForDemo(promise) {
 }
 const Home = lazy(() => delayForDemo(import("./pages/Home")));
 import Control from "./pages/Control";
-import DataAnalysis from "./pages/DataAnalysis";
+import History from "./pages/History";
 import AboutUs from "./pages/AboutUs.jsx";
 
 import Test from "./draft";
@@ -50,15 +50,15 @@ const App = () => {
             path="/user-management"
             element={
               <PrivateRoute>
-                <Decentralization />
+                <Management />
               </PrivateRoute>
             }
           />
           <Route
-            path="/Data-Analysis"
+            path="/history"
             element={
               <PrivateRoute>
-                <DataAnalysis />
+                <History />
               </PrivateRoute>
             }
           />

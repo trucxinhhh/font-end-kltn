@@ -1,11 +1,11 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
-import axios from "./checkToken";
+import axios from "./checkToken.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import { url_api, url_data, url_local } from "../Provider.jsx";
 
-const Decentralization = () => {
+const Management = () => {
   const [CRfullname, setFullname] = useState("");
   const [CRusername, setUsername] = useState("");
   const [CRpassword, setPassword] = useState("");
@@ -824,5 +824,5 @@ setFlag(true);
   );
 };
 
-export default Decentralization;
+export default Management;
 
