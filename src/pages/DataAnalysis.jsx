@@ -44,11 +44,12 @@ const DataAnalysis = () => {
     }
     return a;
   };
+
   // DATA SENSOR
   useEffect(() => {
     async function loadData() {
       const response = await axios.get(
-        url_data + "api/" + `${DataList}` + "/0",
+        url_data + "api/" + `${DataList}` + "/30",
         {
           headers: {
             Authorization: access_token,
@@ -58,10 +59,10 @@ const DataAnalysis = () => {
         }
       );
       const dt1 = response.data;
-      setData(dt1);
+      setData(dt1);                                                            
     }
     loadData();
-  }, [DataList]);
+  }, []);
   //apply button
   const DateFil = async () => {
     setFlag(false);
@@ -81,7 +82,7 @@ const DataAnalysis = () => {
       console.log("true date", checkDate);
       setFlag(true);
       const response = await axios.get(
-        url_data + "api/" + `${DataList}` + "/0?start="+`${startDay}`+"&end="+`${endDay}`,
+       date,
         {
           headers: {
             Authorization: access_token,
@@ -90,8 +91,15 @@ const DataAnalysis = () => {
           },
         }
       );
-      console.log("filter",response);
-      notifyInfo("Waiting for data...");
+      // console.log("filter",response.data.length);
+      if(response.data.length==0){
+        notifyError("Data is null. Please try again!");
+      }else{
+        
+          notifyInfo("Waiting for data...");
+          setData(response.data);
+      }
+    
     }
   };
 

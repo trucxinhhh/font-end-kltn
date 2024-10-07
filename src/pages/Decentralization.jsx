@@ -28,6 +28,7 @@ const Decentralization = () => {
 
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
+  const [Flag, setFlag] = useState(false);
 
   const notifyUser = (message) => {
     toast.success(message, {
@@ -99,7 +100,7 @@ const Decentralization = () => {
       };
 
       const response = await axios.post(url_api + `signup`, registerform);
-
+      setFlag(true);
       notifyUser("Create new account successful");
       navigate("/user-management");
     } catch (e) {
@@ -109,9 +110,8 @@ const Decentralization = () => {
     }
   };
   const ChangeData = async () => {
-    console.log("userID", userID);
+
     const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
-    console.log("link change mail", url);
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
       masterpwd: PassToCheck,
@@ -125,13 +125,14 @@ const Decentralization = () => {
           "Content-Type": "application/json",
         },
       });
-
+setFlag(true);
       notifyUser(response.data["status"]);
     } finally {
       setIsDialogOpen(false);
     }
   };
-  async function loadData() {
+  const loadData= async()=> {
+    
     const response = await axios.get(url_data + "api/user/0", {
       headers: {
         Authorization: access_token,
@@ -141,10 +142,14 @@ const Decentralization = () => {
     });
     const dt1 = response.data;
     setData(dt1);
+    
   }
-  useEffect(() => {
-    loadData();
-  }, [Display, ChangeData]);
+   useEffect(() => {
+   if(true){
+     loadData();
+    setFlag(false);
+   }
+  },[Flag]);
   return (
     <div className="flex  h-full w-full ">
       {/* Dialog*/}
@@ -558,7 +563,7 @@ const Decentralization = () => {
                   </span>
                   <div>
                     <input
-                      type="number"
+                      type="tel"
                       name="PhoneNumber"
                       className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
                         error ? "border-red-500" : "focus:border-sky-500"

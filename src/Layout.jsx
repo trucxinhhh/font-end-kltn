@@ -10,7 +10,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const TimeDelays =  60 ;
+const TimeDelays =  60 *3;//seconds
+const TimeSpamLoadData = 1*1000; //seconds
 
 const Layout = () => {
   const location = useLocation();
@@ -148,7 +149,7 @@ const Layout = () => {
  if(dt2){
       localStorage.setItem("pump1Status",JSON.stringify(dt2.slice(-1)[0]["motor1"]));
       localStorage.setItem("pump2Status",JSON.stringify(dt2.slice(-1)[0]["motor2"]));
-// console.log("get status pump ok");
+
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
@@ -319,7 +320,7 @@ const Layout = () => {
     const intervalId = setInterval(() => {
       loadData();
       // checkSensorData();
-    }, 1000);
+    }, TimeSpamLoadData);
 
     // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);

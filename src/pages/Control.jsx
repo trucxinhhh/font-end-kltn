@@ -78,6 +78,7 @@ const Control = () => {
     });
   };
   const [pumps, setPumps] = useState([valueMotor1, valueMotor2]);
+  const [pump, setPumpSend] = useState([valueMotor1, valueMotor2]);
   const [clickCount, setClickCount] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -325,7 +326,7 @@ const Control = () => {
       }
       lastClickTimeRef.current = now;
 
-      setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
+      setPumpSend(pumps.map((pump, i) => (i === index ? !pump : pump)));
       setFlag(index + 1);
     } else {
       notifyError("Permission Denied!");
@@ -339,7 +340,7 @@ const Control = () => {
         const response = await axios.post(
           url,
           {
-            status: pumps[Flag - 1],
+            status: pump[Flag - 1],
           },
           {
             headers: {
