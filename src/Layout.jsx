@@ -10,8 +10,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const TimeDelays =  60 *3 ;//seconds
-const TimeSpamLoadData = 1*1000; //seconds
+const TimeDelays = 60 * 3; //seconds
+const TimeSpamLoadData = 1 * 1000; //seconds
 
 const Layout = () => {
   const location = useLocation();
@@ -42,7 +42,7 @@ const Layout = () => {
   const [newStage, setnewnewStage] = useState([]);
 
   //warning report
-  const [errorValue, setError] = useState(null);
+
   const [rpsNotify, setrpsNotify] = useState(null);
   const notify = (message) => {
     toast.warning(message.toString(), {
@@ -126,6 +126,7 @@ const Layout = () => {
       return a;
     }
   };
+  
   // get data sensor
   async function loadData() {
     const response = await axios.get(url_data + "api/data/30", {
@@ -136,8 +137,8 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-   localStorage.setItem("dataSensor", JSON.stringify(dt1));
-   
+    localStorage.setItem("dataSensor", JSON.stringify(dt1));
+
     const responseMotor = await axios.get(url_data + "api/motor/30", {
       headers: {
         Authorization: access_token,
@@ -146,10 +147,17 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
- if(dt2){
-      localStorage.setItem("pump1Status",JSON.stringify(dt2.slice(-1)[0]["motor1"]));
-      localStorage.setItem("pump2Status",JSON.stringify(dt2.slice(-1)[0]["motor2"]));
-
+    console.log("dfsfdsf", dt2.slice(-1)[0]["motor"]);  
+    if (dt2) {
+  
+      localStorage.setItem(
+        "pump1Status",
+        JSON.stringify(dt2.slice(-1)[0]["motor"])
+      );
+      localStorage.setItem(
+        "pump2Status",
+        JSON.stringify(dt2.slice(-1)[0]["motor2"])
+      );
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
@@ -159,7 +167,6 @@ const Layout = () => {
       const checkMIN = listSensorData[i] + "_MIN";
       if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
         if (FlagNotify && displayNotify == 2) {
-          setError(null);
           setCount(count + 1);
           if (count == TimeDelays) {
             setFlagNotify(false);
@@ -167,7 +174,7 @@ const Layout = () => {
           }
         } else {
           setDisplayNotify(displayNotify + 1);
-          setError("warning sensor");
+
           notify(`Warning ${listSensorData[i]} over threshold`);
           if (displayNotify == 2) {
             setDisplayNotify(0);
@@ -194,8 +201,7 @@ const Layout = () => {
   //     reader.readAsDataURL(file);
   //   }
   // };
- const handleImageChange = (event) => {
-
+  const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -222,12 +228,12 @@ const Layout = () => {
             size
           );
 
-         canvas.toBlob((blob) => {
+          canvas.toBlob((blob) => {
             const resizedFile = new File([blob], file.name, {
               type: file.type,
             });
             // setImageFile(resizedFile); // Store file for POST request
-             uploadImage(resizedFile);
+            uploadImage(resizedFile);
           }, file.type);
         };
         img.src = event.target.result;
@@ -302,11 +308,13 @@ const Layout = () => {
       },
     });
     // if (localStorage.getItem("role")=="admin"){
-       localStorage.setItem("isChecked", JSON.stringify(response.data["system_mode"]));
+    localStorage.setItem(
+      "isChecked",
+      JSON.stringify(response.data["system_mode"])
+    );
     // }else{
     //    localStorage.setItem("isChecked",true);
     // }
-     
   };
   // console.log(rpsNotify);
   //get inf once time
@@ -589,7 +597,7 @@ const Layout = () => {
                           >
                             Control Panel
                           </span>
-                       </a>
+                        </a>
                       </Link>
                       <Link to="/Data-Analysis">
                         <a
@@ -984,4 +992,3 @@ const Layout = () => {
 };
 
 export default Layout;
-

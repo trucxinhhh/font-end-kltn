@@ -4,7 +4,7 @@ import axios from "axios";
 // import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
 import { url_api, url_local } from "./Provider.jsx";
-import { ToastContainer, toast } from "react-toastify";
+import { notifySuccess, notifyInfo, notifyError } from './pages/include/notifications';
 import "react-toastify/dist/ReactToastify.css";
 import {
   Chart as ChartJS,
@@ -24,34 +24,46 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-const MAX_CLICKS = 4;
-const LOCK_DURATION = 60 * 1000;
-const DOUBLE_CLICK_THRESHOLD = 300;
-const GetDataTime = 0.2 * 60;
+
+
 const Control = () => {
+  
+  // Lấy token
+  const token = localStorage.getItem("token");
+  const access_token = "Bearer " + token;
+  const role = localStorage.getItem("role");
+
+  //status mode 
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
 
+  // Change display in mobile view
   const [Display, setDisplay] = useState("1");
-  const [selector, setSelector] = useState("motor1");
+
+  //pump status
   const [valueMotor1, setValueMotor1] = useState(
     JSON.parse(localStorage.getItem("pump1Status"))
   );
-  const [valueMotor2, setValueMotor2] = useState(
-    JSON.parse(localStorage.getItem("pump2Status"))
-  );
-  const [data1, setData] = useState([]);
-  const dataChart = data1.slice(-30);
+ 
+  const [pumps, setPumps] = useState(valueMotor1);
+  const [pump, setPumpSend] = useState(valueMotor1);
+
+  // volume in week
   const [totalPump1, setTotalPump1] = useState();
   const [totalPump2, setTotalPump2] = useState();
-  // const [totalPump3, setTotalPump3] = useState();
+  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(0);
+  const [VolumeDayMotor2, setVolumeDayMotor2] = useState(0);
+
+  //create thresh humi 
   const [startThreshold, setStartThreshold] = useState(
     localStorage.getItem("low")
   );
   const [stopThreshold, setStopThreshold] = useState(
     localStorage.getItem("up")
   );
+
+  //thresh freq, cycle
   const [frequencyPump, setFrequencyPumpd] = useState(
     localStorage.getItem("frequencyPump")
   );
@@ -59,42 +71,18 @@ const Control = () => {
     localStorage.getItem("cycleSample")
   );
 
-  const notifySucces = (message) => {
-    toast.success(message, {
-      position: "top-center", // Position at the top
-      autoClose: 3000, // Auto close after 3 seconds
-    });
-  };
-  const notifyInfo = (message) => {
-    toast.info(message, {
-      position: "top-center", // Position at the top
-      autoClose: 3000, // Auto close after 3 seconds
-    });
-  };
-  const notifyError = (message) => {
-    toast.error(message, {
-      position: "top-center", // Position at the top
-      autoClose: 3000, // Auto close after 3 seconds
-    });
-  };
-  const [pumps, setPumps] = useState([valueMotor1, valueMotor2]);
-  const [clickCount, setClickCount] = useState(0);
+
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 
-  const lastClickTimeRef = useRef(0);
+  // flag to post pump status
   const [Flag, setFlag] = useState();
 
-  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(0);
-  const [VolumeDayMotor2, setVolumeDayMotor2] = useState(0);
-  const timeDayMotor1 = 12;
-  const timeDayMotor2 = 12;
 
-  // Lấy token
-  const token = localStorage.getItem("token");
-  const access_token = "Bearer " + token;
-  const role = localStorage.getItem("role");
+  // const timeDayMotor1 = 12;
+  // const timeDayMotor2 = 12;
 
+ // change thresh humi and post
   const handleStartThresholdChange = (event) => {
     if (role == "admin") {
       setStartThreshold(event.target.value);
@@ -111,15 +99,7 @@ const Control = () => {
       notifyError("Permission Denied!");
     }
   };
-  const handleFrequencyPumpdChange = (event) => {
-    if (role == "admin") {
-      setFrequencyPumpd(event.target.value);
-    } else {
-      notifyError("Permission Denied!");
-    }
-  };
-
-  const handleSaveClick = async () => {
+   const handleSaveClick = async () => {
     const url = url_api + `threshold/humi`;
     if (role == "admin") {
       try {
@@ -148,6 +128,15 @@ const Control = () => {
       notifyError("Permission Denied!");
     }
   };
+  const handleFrequencyPumpdChange = (event) => {
+    if (role == "admin") {
+      setFrequencyPumpd(event.target.value);
+    } else {
+      notifyError("Permission Denied!");
+    }
+  };
+
+ 
   const handleSaveFrequencyPumpClick = async () => {
     const url = url_api + `inv/${frequencyPump}`;
     if (role == "admin") {
@@ -164,7 +153,7 @@ const Control = () => {
           }
         );
 
-        notifySucces(response.data["message"]);
+        notifySuccess(response.data["message"]);
       } catch (error) {
         console.error("Error:", error);
         notifyError(error);
@@ -234,54 +223,6 @@ const Control = () => {
     localStorage.setItem("cycleSample", response.data);
   };
 
-  // Tải trạng thái từ localStorage khi component mount
-  useEffect(() => {
-    const storedLockStatus = localStorage.getItem("isLocked");
-    const storedTimeLeft = localStorage.getItem("timeLeft");
-    const storedClickCount = localStorage.getItem("clickCount");
-
-    if (storedLockStatus === "true") {
-      const timeRemaining = parseInt(storedTimeLeft, 10) - Date.now();
-      if (timeRemaining > 0) {
-        setIsLocked(true);
-        setTimeLeft(timeRemaining);
-      } else {
-        localStorage.removeItem("isLocked");
-        localStorage.removeItem("timeLeft");
-        setIsLocked(false);
-      }
-    }
-
-    if (storedClickCount) {
-      setClickCount(parseInt(storedClickCount, 10));
-    }
-  }, []);
-
-  // Lưu trạng thái vào localStorage khi thay đổi
-  useEffect(() => {
-    localStorage.setItem("clickCount", clickCount);
-    if (isLocked) {
-      localStorage.setItem("isLocked", "true");
-      localStorage.setItem("timeLeft", (Date.now() + timeLeft).toString());
-    } else {
-      localStorage.removeItem("isLocked");
-      localStorage.removeItem("timeLeft");
-    }
-  }, [clickCount, isLocked, timeLeft]);
-
-  // Xử lý bộ đếm ngược
-  useEffect(() => {
-    let timer;
-    if (isLocked && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1000);
-      }, 1000);
-    } else if (timeLeft <= 0) {
-      setIsLocked(false);
-      setClickCount(0);
-    }
-    return () => clearInterval(timer);
-  }, [isLocked, timeLeft]);
 
   const getPumpView = async () => {
     const response = await axios.get(url_api + "vol", {
@@ -305,27 +246,12 @@ const Control = () => {
   }, []);
 
   const handleClick = async (index) => {
-    if (isLocked) return;
-
-    const now = Date.now();
-    const timeSinceLastClick = now - lastClickTimeRef.current;
-
-    if (timeSinceLastClick <= DOUBLE_CLICK_THRESHOLD) {
-      setClickCount((prev) => {
-        const newClickCount = prev + 1;
-        if (newClickCount >= MAX_CLICKS) {
-          setIsLocked(true);
-          setTimeLeft(LOCK_DURATION);
-        }
-        return newClickCount;
-      });
+    if (role == "admin") {
+      setPumpSend(!pumps);
+      setFlag(index + 1);
     } else {
-      setClickCount(1);
+      notifyError("Permission Denied!");
     }
-    lastClickTimeRef.current = now;
-
-    setPumps(pumps.map((pump, i) => (i === index ? !pump : pump)));
-    setFlag(index + 1);
   };
   if (Flag) {
     //gửi control lên api
@@ -335,7 +261,7 @@ const Control = () => {
         const response = await axios.post(
           url,
           {
-            status: pumps[Flag - 1],
+            status: pump[Flag - 1],
           },
           {
             headers: {
@@ -344,7 +270,7 @@ const Control = () => {
             },
           }
         );
-        if (pumps[Flag - 1]) {
+        if (pump[Flag - 1]) {
           notifyInfo(`Pump ${Flag} is ON`);
         } else {
           notifyInfo(`Pump ${Flag} is OFF`);
@@ -374,6 +300,25 @@ const Control = () => {
       generateRandomValues();
     }, 6000);
   }, []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
+      setValueMotor2(JSON.parse(localStorage.getItem("pump2Status")));
+      setPumps([
+        JSON.parse(localStorage.getItem("pump1Status")),
+        JSON.parse(localStorage.getItem("pump2Status")),
+      ]);
+      setPumpSend([
+        JSON.parse(localStorage.getItem("pump1Status")),
+        JSON.parse(localStorage.getItem("pump2Status")),
+      ]);
+      console.log("pump send",pump);
+      console.log("pump get",pumps);
+    }, 1000);
+
+    // Cleanup function để xóa interval khi component unmount
+    return () => clearInterval(intervalId);
+  });
 
   // ve total pump
 
@@ -454,19 +399,19 @@ const Control = () => {
   };
 
   return (
-    <div className="flex  h-full w-full ">
-      {/* -----------------------PC View----------------------- */}
+   <div className="flex  h-full w-full ">
+       {/* -----------------------PC View----------------------- */}
 
-      <div className="hidden sm:block w-full">
-        <div className="flex p-4 h-full w-full gap-3  ">
-          {/* ----------------------- View Control Panel----------------------- */}
+       <div className="hidden sm:block w-full">
+         <div className="flex p-4 h-full w-full gap-3  ">
+           {/* ----------------------- View Control Panel----------------------- */}
 
-          <div className="p-4 h-full w-2/3  bg-teal-100 rounded-3xl ">
-            <h1 className="ml-4 font-bold text-center mb-4 ">PUMP VIEW</h1>
-            <div className="flex left-1 gap-3 items-center justify-center">
-              <div className=" flex flex-col  items-center h-1/6 w-36 p-2  shadow-xl bg-white text-black rounded-md mr-2 ">
-                <div class="flex justify-between text-black">
-                  <svg
+           <div className="p-4 h-full w-2/3  bg-teal-100 rounded-3xl ">
+             <h1 className="ml-4 font-bold text-center mb-4 ">PUMP VIEW</h1>
+             <div className="flex left-1 gap-3 items-center justify-center">
+               <div className=" flex flex-col  items-center h-1/6 w-36 p-2  shadow-xl bg-white text-black rounded-md mr-2 ">
+                 <div class="flex justify-between text-black">
+                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
@@ -502,44 +447,7 @@ const Control = () => {
                   </div>
                 </div>
               </div>
-              <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
-                <div class="flex justify-between text-black">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-engine"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10v6" />
-                    <path d="M12 5v3" />
-                    <path d="M10 5h4" />
-                    <path d="M5 13h-2" />
-                    <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
-                  </svg>
-                  <p className="text-left">
-                    <b>Motor 2</b>
-                  </p>
-                </div>
-
-                <div class="ml-2 w-full flex-1">
-                  <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor2 ? "ON" : "OFF"}</span>
-                  </div>
-                  {/* <div class="mt-1 text-base text-gray-600">
-                    Time : {timeDayMotor2}h
-                  </div> */}
-                  <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor2 + "  lits"}
-                  </div>
-                </div>
-              </div>
+           
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
@@ -698,7 +606,7 @@ const Control = () => {
                     <h1 className="text-3xl font-bold mb-6 text-gray-700">
                       Pump Control
                     </h1>
-                    {pumps.map((pump, index) => (
+                    {/* {pumps.map((pump, index) => (
                       <div
                         key={index}
                         className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
@@ -730,7 +638,29 @@ const Control = () => {
                             : "Turn On"}
                         </button>
                       </div>
-                    ))}
+                    ))} */}
+                     <div
+                        className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                          pump ? "bg-gray-200" : ""
+                        }`}
+                      >
+                        <span
+                          className={`text-lg font-medium ${
+                            pump ? "text-blue-600" : "text-gray-600"
+                          }`}
+                        >  Pump :  {pump ? "ON" : "OFF"}</span>
+                          <button
+                          onClick={() => handleClick(index)}
+                          className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                            isLocked
+                              ? "bg-gray-500 cursor-not-allowed"
+                              : pump
+                              ? "bg-red-600 hover:bg-red-700"
+                              : "bg-green-600 hover:bg-green-700"
+                          }`}
+                          disabled={isLocked}
+                        ></button>
+                        </div>
                   </div>
                 </div>
               </div>
@@ -806,44 +736,7 @@ const Control = () => {
                   </div>
                 </div>
               </div>
-              <div className=" flex flex-col  items-center h-1/6 w-36 p-2 shadow-xl bg-white text-black rounded-md mr-2 ">
-                <div class="flex justify-between text-black">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-engine"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10v6" />
-                    <path d="M12 5v3" />
-                    <path d="M10 5h4" />
-                    <path d="M5 13h-2" />
-                    <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
-                  </svg>
-                  <p className="text-left">
-                    <b>Motor 2</b>
-                  </p>
-                </div>
-
-                <div class="ml-2 w-full flex-1">
-                  <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor2 ? "ON" : "OFF"}</span>
-                  </div>
-                  {/* <div class="mt-1 text-base text-gray-600">
-                    Time : {timeDayMotor2}h
-                  </div> */}
-                  <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor2 + "  lits"}
-                  </div>
-                </div>
-              </div>
+           
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">

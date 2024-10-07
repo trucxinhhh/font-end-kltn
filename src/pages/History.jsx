@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // import axios from "axios";
 import axios from "./checkToken.jsx";
 import { url_api, url_local, url_data } from "../Provider.jsx";
-import { toast } from "react-toastify";
+import {  notifyInfo, notifyError } from './include/notifications';
 import { Button } from "@material-tailwind/react";
 
 const History = () => {
@@ -23,20 +23,6 @@ const History = () => {
   const [endDay, setEndDay] = useState();
   const [Flag, setFlag] = useState(false);
 
-  //notify
-
-  const notifyInfo = (message) => {
-    toast.info(message, {
-      position: "top-center", // Position at the top
-      autoClose: 3000, // Auto close after 3 seconds
-    });
-  };
-  const notifyError = (message) => {
-    toast.error(message, {
-      position: "top-center", // Position at the top
-      autoClose: 3000, // Auto close after 3 seconds
-    });
-  };
   const ImgUsr = (usr) => {
     const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
     if (a === url_local + "src/pages/undefined") {

@@ -32,25 +32,21 @@ const DashBoard = [
   "Temp",
   "Flowmeters",
   "EC",
-  "WaterlevelSensor1",
-  "WaterlevelSensor2",
   "pH", // Sal
   "Pressure",
-  "motor1",
-  "motor2",
+  "motor",
+  "Waterpumped"
 ];
 const Unit = {
   CO2: "ppm",
   Humi: "%",
   Temp: "°C",
-  Flowmeters: "m²/s",
+  Flowmeters: "m³/s",
   EC: "µS/cm",
-  WaterlevelSensor1: "",
-  WaterlevelSensor2: "",
+  Waterpumped: "m³",
   pH: "ppt",
-  Pressure: "bar",
-  motor1: "",
-  motor2: "",
+  Pressure: "bar",  
+  motor: "",
 };
 const { dataSensor, dataMotor } = {
   dataMotor: localStorage.getItem("dataMotor"),
@@ -98,7 +94,7 @@ function App() {
   //chuan hoa gia tri cam bien
   const checkValue = (name) => {
     switch (name) {
-      case "motor1":
+      case "motor":
       case "motor2":
         if (name) {
           const data = dt2.slice(-1)[0][name];
@@ -110,16 +106,6 @@ function App() {
           }
         }
 
-      case "WaterlevelSensor1":
-      case "WaterlevelSensor2":
-        if (name) {
-          const data = dt1.slice(-1)[0][name];
-          if (data) {
-            return "ON";
-          } else {
-            return "OFF";
-          }
-        }
       case "CO2":
       case "Humi":
       case "Pressure":
@@ -127,6 +113,7 @@ function App() {
       case "Flowmeters":
       case "EC":
       case "pH":
+      case "Waterpumped":
         if (name) {
           return dt1.slice(-1)[0][name].toFixed(1);
         }
@@ -136,14 +123,13 @@ function App() {
   const statusColor = (name, value) => {
     switch (name) {
       case "Pressure":
+      case "Waterpumped":
+      case "Flowmeters":
         if (value) {
           return "shadow-cyan-600";
         }
         return "shadow-red-600";
-      case "motor1":
-      case "motor2":
-      case "WaterlevelSensor1":
-      case "WaterlevelSensor2":
+      case "motor":
         if (value == "ON") {
           return "shadow-cyan-600";
         }
@@ -151,7 +137,6 @@ function App() {
       case "CO2":
       case "Humi":
       case "Temp":
-      case "Flowmeters":
       case "EC":
       case "pH":
         const checkMAX = name + "_MAX";
@@ -170,15 +155,9 @@ function App() {
   const change_name = (nameChange) => {
     if (nameChange == "pH") {
       return "Salinity";
-    } else if (nameChange == "WaterlevelSensor1") {
-      return "Full Tank";
-    } else if (nameChange == "WaterlevelSensor2") {
-      return "Empty Tank";
-    } else if (nameChange == "motor1") {
-      return "MOTOR 1";
-    } else if (nameChange == "motor2") {
-      return "MOTOR 2";
-    }
+    }  else if (nameChange == "motor") {
+      return "MOTOR";
+    } 
     return nameChange;
   };
   const options = (title) => ({
@@ -194,7 +173,7 @@ function App() {
     },
   });
   const chartData = (lineColor, data_to_draw) => {
-    if (data_to_draw == "motor1" || data_to_draw == "motor2") {
+    if (data_to_draw == "motor" ) {
       const labels = recentMotor.map((item) => item.time);
       const data = recentMotor.map((item) => item[data_to_draw]);
       return {
