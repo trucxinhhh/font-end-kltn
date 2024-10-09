@@ -3,20 +3,22 @@
 @tailwind utilities;
 
 /* ------------------------------------------login------------------------------------------ */
-.gradient-background-login{
+.gradient-background-login {
   overflow: hidden;
   background: linear-gradient(62deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
   animation: gradient 15s ease infinite;
   background-size: 400% 600%;
 
 }
+
 .gradient-background {
   overflow: hidden;
-  background: linear-gradient(62deg,  #23A6D5, #23D5AB);
+  background: linear-gradient(62deg, #23A6D5, #23D5AB);
   animation: gradient 15s ease infinite;
   background-size: 400% 600%;
 
 }
+
 @-webkit-keyframes gradient {
   0% {
     background-position: 0 50%;
@@ -63,7 +65,7 @@
 }
 
 .container {
-  margin-top: 5%;
+  margin-top: 10%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -72,7 +74,7 @@
 h1 {
   font-size: 275%;
   /* font-weight: 100; */
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   font-family: "Work Sans", sans-serif;
   letter-spacing: -3px;
   transition: 700ms ease;
@@ -87,7 +89,7 @@ h1:hover {
 }
 
 .login_box {
-  margin-top: 15%;
+  margin-top: 10%;
   margin-left: 8%;
   /* background-color: #134e4a; */
   width: 80%;
@@ -169,17 +171,19 @@ h2 {
 
 
 /* ------------------------------------------Decentralization------------------------------------------ */
-.search-bar{
+.search-bar {
   margin-left: 5%;
 }
+
 .list-user {
   margin-top: 3%;
   max-width: 800px;
 }
 
-.creat-user{
+.creat-user {
   margin-left: 3%;
 }
+
 .button-creat-user {
   margin-top: 3%;
   max-width: 200x;
@@ -202,7 +206,7 @@ h2 {
 }
 
 /* ------------------------------------------Data Analysis------------------------------------------ */
-.children-container{
+.children-container {
   margin-left: 10%;
 }
 
@@ -260,8 +264,8 @@ aside {
   opacity: 0.9;
 }
 
-/* ------------------------Date color--------------------------- */lk
-.date-picker-container {
+/* ------------------------Date color--------------------------- */
+lk .date-picker-container {
   position: relative;
   max-width: 400px;
   margin: 0 auto;
@@ -346,6 +350,7 @@ h4 {
   cursor: pointer;
   font-weight: bold;
 }
+
 /* -------------------------------------------test-------------------------------- */
 
 .grid {
@@ -423,4 +428,25 @@ h4 {
     transform: scaleY(0.1);
     background: transparent;
   }
+}
+
+/* font text */
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.monoton-regular {
+  font-family: "Monoton", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.playwrite-cl {
+  font-family: "Playwrite CL", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }

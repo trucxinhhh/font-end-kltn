@@ -81,6 +81,7 @@ npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fo
 npm install @material-tailwind/react
 npm i react-phone-input-2
 npm install react-icons
+npm install @fontsource/pacifico
 
 B6: Cai thu vien ho tro Server
 pip install "passlib[bcrypt]"

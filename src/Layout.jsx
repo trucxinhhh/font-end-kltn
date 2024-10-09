@@ -8,10 +8,12 @@ import axios from "./pages/checkToken.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 const TimeDelays = 60 * 3; //seconds
-const TimeSpamLoadData = 1 * 1000; //seconds
+const TimeSpamLoadData = 1* 1000; //seconds
 
 const Layout = () => {
   const location = useLocation();
@@ -137,7 +139,17 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
+    // console.log("ciu moi",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
+    //get volume
+    const responseVol = await axios.get(url_data + "api/volume/30", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    // console.log("get vol ok",responseVol);
 
     const responseMotor = await axios.get(url_data + "api/motor/30", {
       headers: {
@@ -147,17 +159,14 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
-    console.log("dfsfdsf", dt2.slice(-1)[0]["motor"]);  
+    // console.log("dfsfdsf", dt2);  
     if (dt2) {
-  
+  // console.log("ok if dt");
       localStorage.setItem(
         "pump1Status",
         JSON.stringify(dt2.slice(-1)[0]["motor"])
       );
-      localStorage.setItem(
-        "pump2Status",
-        JSON.stringify(dt2.slice(-1)[0]["motor2"])
-      );
+     
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
@@ -346,7 +355,7 @@ const Layout = () => {
             {mode ? (
               <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
                 <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
-                  <h1>Change Information</h1>
+                  <h1 >Change Information</h1>
                   <div class="relative">
                     <input
                       type="text"
@@ -482,10 +491,10 @@ const Layout = () => {
                         onChange={handleImageChange}
                       />
                       <div style={{ marginLeft: 10 }}>
-                        <p>
-                          <strong>{localStorage.getItem("full_name")}</strong>
+                        <p className="playwrite-cl ">
+                          <strong className="font-bold">{localStorage.getItem("full_name")}</strong>
                         </p>
-                        <span>{Role}</span>
+                        <span className="playwrite-cl">{Role}</span>
                       </div>
                     </div>
                     <br />
@@ -599,7 +608,7 @@ const Layout = () => {
                           </span>
                         </a>
                       </Link>
-                      <Link to="/Data-Analysis">
+                      <Link to="/history">
                         <a
                           className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
                           href=""
@@ -686,8 +695,8 @@ const Layout = () => {
                     </ul>
                   </div>
                   <div className="p-2 w-46 h-2/5 rounded-r-xl rounded-l-xl bg-white Green_screen">
-                    <p className="ml-4 font-bold text-center mb-4">
-                      INFORMATION
+                    <p className="ml-4 font-bold pacifico-regular text-center text-3xl mb-4">
+                      Information
                     </p>
 
                     <table className="ml-4 w-4/5">
@@ -766,7 +775,7 @@ const Layout = () => {
 
                   {/* User Inf*/}
                   <div className=" mt-4 text-white w-3/5">
-                    <p>
+                    <p className="playwrite-cl">
                       <strong>{localStorage.getItem("full_name")}</strong>
                     </p>
                     <span>{Role}</span>

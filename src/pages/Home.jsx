@@ -113,13 +113,18 @@ function App() {
       case "Flowmeters":
       case "EC":
       case "pH":
-      case "Waterpumped":
+      // case "Waterpumped":
         if (name) {
           return dt1.slice(-1)[0][name].toFixed(1);
         }
+      case "Waterpumped":
+         if (name) {
+          // return dt1.slice(-1)[0][name].toFixed(1);
+          return 20;
+        }
     }
   };
-  // bg-color-button-sensor
+  // bg-color-button-sensor-thresh
   const statusColor = (name, value) => {
     switch (name) {
       case "Pressure":
@@ -149,6 +154,7 @@ function App() {
         } else {
           return "shadow-red-600";
         }
+      case "":
     }
   };
 

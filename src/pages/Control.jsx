@@ -53,8 +53,7 @@ const Control = () => {
   const [totalPump1, setTotalPump1] = useState();
   const [totalPump2, setTotalPump2] = useState();
   const [VolumeDayMotor1, setVolumeDayMotor1] = useState(0);
-  const [VolumeDayMotor2, setVolumeDayMotor2] = useState(0);
-
+  
   //create thresh humi 
   const [startThreshold, setStartThreshold] = useState(
     localStorage.getItem("low")
@@ -234,7 +233,6 @@ const Control = () => {
     });
 
     setVolumeDayMotor1(response.data["pump1"]);
-    setVolumeDayMotor2(response.data["pump2"]);
   };
 
   // Freq, Thresh

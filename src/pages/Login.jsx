@@ -52,8 +52,8 @@ function App() {
   return (
     <div className="flex h-screen w-screen gradient-background-login items-center justify-center">
       <div className="flex flex-col white-box top-1/4 md:top-1/2">
-        <div className="container">
-          <h1>WELCOME</h1>
+        <div className="container mt-20">
+          <h1 className="playwrite-cl ">Welcome</h1>
         </div>
         <div className="login_box">
           <div className="inline-flex items-center w-full text-sm font-semibold text-black transition-colors duration-150 cursor-pointer hover:text-green-500">
@@ -84,7 +84,7 @@ function App() {
             onChange={(e) => localStorage.setItem("username", e.target.value)}
           />
 
-          <div className="inline-flex items-center w-full text-sm font-semibold text-black transition-colors duration-150 cursor-pointer hover:text-green-500">
+          <div className="mt-4 inline-flex items-center w-full text-sm font-semibold text-black transition-colors duration-150 cursor-pointer hover:text-green-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

@@ -15,6 +15,7 @@ export const pH_MIN = 0;
 export const pH_MAX = 600;
 
 // -------------------------OVER VIEW-----------------------
+export const nameTitle_ov="Over View"
 export const title_1_ov = "TITLE 1";
 export const title_2_ov = "TITLE 2";
 export const title_3_ov = "TITLE 3";
@@ -28,6 +29,7 @@ export const paragraph_3_ov =
   " P3OV - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique saepe exercitationem numquam, labore necessitatibus deleniti quasi. Illo porro nihil necessitatibus debitis delectus aperiam, fuga impedit assumenda odit, velit eveniet est.";
 
 // -------------------------INTRODUCTTION PROJECT-----------------------
+export const nameTitle_inf="Introduction Project"
 export const title_1_inf = "TITLE 1";
 export const title_2_inf = "TITLE 2";
 export const title_3_inf = "TITLE 3";
@@ -40,6 +42,7 @@ export const paragraph_2_inf =
 export const paragraph_3_inf =
   " P3inf - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique saepe exercitationem numquam, labore necessitatibus deleniti quasi. Illo porro nihil necessitatibus debitis delectus aperiam, fuga impedit assumenda odit, velit eveniet est.";
 // -------------------------US-----------------------
+export const nameTitle_US="Us"
 export const title_1_US = "TITLE 1";
 export const title_2_US = "TITLE 2";
 export const title_3_US = "TITLE 3";
@@ -66,6 +69,7 @@ export const DataMap = {
 
 export const ParaGraph = {
   // overview
+  nameTitle_ov,
   title_1_ov,
   title_2_ov,
   title_3_ov,
@@ -73,6 +77,7 @@ export const ParaGraph = {
   paragraph_2_ov,
   paragraph_3_ov,
   //INFOR
+  nameTitle_inf,
   title_1_inf,
   title_2_inf,
   title_3_inf,
@@ -80,6 +85,7 @@ export const ParaGraph = {
   paragraph_2_inf,
   paragraph_3_inf,
   //US
+  nameTitle_US,
   title_1_US,
   title_2_US,
   title_3_US,
