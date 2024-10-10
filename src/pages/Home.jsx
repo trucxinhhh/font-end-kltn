@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, Suspense } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 // import axios from "axios";
 import * as Thresh from "./include/DefaultData";
@@ -9,6 +9,7 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
+  BarElement,
   PointElement,
   LineElement,
   Title,
@@ -19,6 +20,7 @@ import {
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  BarElement,
   PointElement,
   LineElement,
   Title,
@@ -35,7 +37,7 @@ const DashBoard = [
   "pH", // Sal
   "Pressure",
   "motor",
-  "Waterpumped"
+  "Waterpumped",
 ];
 const Unit = {
   CO2: "ppm",
@@ -44,14 +46,14 @@ const Unit = {
   Flowmeters: "m³/s",
   EC: "µS/cm",
   Waterpumped: "m³",
-  pH: "ppt",
-  Pressure: "bar",  
+  pH: "ppm",
+  Pressure: "bar",
   motor: "",
 };
-const { dataSensor, dataMotor } = {
-  dataMotor: localStorage.getItem("dataMotor"),
-  dataSensor: localStorage.getItem("dataSensor"),
-};
+const TimeHour = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+  23, 24,
+];
 
 function App() {
   //khai báo biến sử dụng
@@ -67,7 +69,34 @@ function App() {
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
+  const imagePath = (name) => {
+    new URL(`/src/assets/icon/${name}.jpg`, import.meta.url).href;
+  };
+  // lấy ngày giờ
+  let today = new Date().toLocaleDateString();
 
+  const { dataSensor, dataMotor } = {
+    dataMotor: localStorage.getItem("dataMotor"),
+    dataSensor: localStorage.getItem("dataSensor"),
+  };
+  const dt1 = JSON.parse(dataSensor);
+  const dt2 = JSON.parse(dataMotor);
+  const dataVol = JSON.parse(localStorage.getItem("dataVol"));
+  const TotalHour = JSON.parse(localStorage.getItem("TotalHour"));
+  // console.log("TotalHour", TotalHour);
+  //get predict
+  const getPredict = async () => {
+    const url = url_api + "predict";
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    setPredict(response.data);
+  };
   // trang thai icon status
   const HappyColor = (value) => {
     if (value < 35) {
@@ -95,7 +124,6 @@ function App() {
   const checkValue = (name) => {
     switch (name) {
       case "motor":
-      case "motor2":
         if (name) {
           const data = dt2.slice(-1)[0][name];
 
@@ -113,12 +141,12 @@ function App() {
       case "Flowmeters":
       case "EC":
       case "pH":
-      // case "Waterpumped":
+        // case "Waterpumped":
         if (name) {
           return dt1.slice(-1)[0][name].toFixed(1);
         }
       case "Waterpumped":
-         if (name) {
+        if (name) {
           // return dt1.slice(-1)[0][name].toFixed(1);
           return 20;
         }
@@ -157,15 +185,17 @@ function App() {
       case "":
     }
   };
-
+  // rename sensor
   const change_name = (nameChange) => {
     if (nameChange == "pH") {
       return "Salinity";
-    }  else if (nameChange == "motor") {
+    } else if (nameChange == "motor") {
       return "MOTOR";
-    } 
+    }
     return nameChange;
   };
+
+  //chart Line
   const options = (title) => ({
     responsive: true,
     plugins: {
@@ -179,7 +209,7 @@ function App() {
     },
   });
   const chartData = (lineColor, data_to_draw) => {
-    if (data_to_draw == "motor" ) {
+    if (data_to_draw == "motor") {
       const labels = recentMotor.map((item) => item.time);
       const data = recentMotor.map((item) => item[data_to_draw]);
       return {
@@ -190,7 +220,8 @@ function App() {
             data: data, // Assuming data_CO2 has a co2 field
             borderColor: lineColor,
             backgroundColor: "rgba(75,192,192,0.2)",
-            fill: true,
+            fill: false,
+            stepped: true,
             cubicInterpolationMode: "monotone",
             tension: 0.4,
           },
@@ -215,32 +246,68 @@ function App() {
       };
     }
   };
-  const imagePath = (name) => {
-    new URL(`/src/assets/icon/${name}.jpg`, import.meta.url).href;
-  };
-  // lấy ngày giờ
-  let today = new Date().toLocaleDateString();
+  //chart Bar
+  const data2 = {
+    labels: TimeHour,
+    datasets: [
+      {
+        axis: "x",
+        label: "Total in a day",
 
-  const { dataSensor, dataMotor } = {
-    dataMotor: localStorage.getItem("dataMotor"),
-    dataSensor: localStorage.getItem("dataSensor"),
-  };
-  const dt1 = JSON.parse(dataSensor);
-  const dt2 = JSON.parse(dataMotor);
-
-  // setRecentData(dt1.slice(-30));
-  const getPredict = async () => {
-    const url = url_api + "predict";
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
+        data: TotalHour,
+        fill: false,
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          // "rgb(201, 203, 207)",
+        ],
+        borderWidth: 1,
       },
-    });
-
-    setPredict(response.data);
+    ],
   };
+  const optionsBar = {
+    indexAxis: "x",
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Hour in day", // Set the y-axis title with the unit
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "m³", // Set the y-axis title with the unit
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        labels: {
+          fontSize: 15,
+        },
+      },
+    },
+  };
+
+  // tach dong predict
+  const ciuspe = Predict["advices"];
+  if (ciuspe) {
+    const adviceSentences = ciuspe
+      .split(".")
+      .filter((sentence) => sentence.trim() !== "");
+    localStorage.setItem("advices", JSON.stringify(adviceSentences));
+  }
+  //điều khiển icon status
+  const stt_Project = Math.floor(Math.random() * 100);
   useEffect(() => {
     getPredict();
   }, []);
@@ -252,17 +319,6 @@ function App() {
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });
-
-  //điều khiển icon status
-  const stt_Project = Math.floor(Math.random() * 100);
-
-  const ciuspe = Predict["advices"];
-  if (ciuspe) {
-    const adviceSentences = ciuspe
-      .split(".")
-      .filter((sentence) => sentence.trim() !== "");
-    localStorage.setItem("advices", JSON.stringify(adviceSentences));
-  }
   return (
     <div className="flex  h-full  w-full  ">
       {/* PC View */}
@@ -386,10 +442,14 @@ function App() {
                 ))}
               </div>
               <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
-                <Line
-                  data={chartData("#f15bb5", selector)}
-                  options={options(selector)}
-                />
+                {selector == "Waterpumped" ? (
+                  <Bar data={data2} options={optionsBar} />
+                ) : (
+                  <Line
+                    data={chartData("#f15bb5", selector)}
+                    options={options(selector)}
+                  />
+                )}
               </div>
             </div>
             {/*--------End Sensor Project --------*/}
@@ -419,12 +479,18 @@ function App() {
             {/*----------Recomment Box ----------*/}
             <div className="mt-4 h-22/5 flex left-1">
               <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
-                <p className="text-gray-600 font-bold text-center text-xl">
+                {/* <strong className="text-gray-600 font-bold text-center roboto-flex text-3xl">
                   Quy trình chăm sóc
+                </strong> */}
+                <p className="flex roboto-flex ">
+                  <strong className="font-bold  text-xl text-center ">
+                    Quy trình chăm sóc
+                  </strong>
+                  <p className="ml-2 text-red-600 font-bold text-lg text-left">
+                    DAY {Predict["days"]}:
+                  </p>
                 </p>
-                <p className="text-red-600 font-bold text-lg text-left">
-                  DAY {Predict["days"]}
-                </p>
+
                 {ciuspe
                   ? JSON.parse(localStorage.getItem("advices")).map(
                       (sentence, index) => (
@@ -432,7 +498,7 @@ function App() {
                           className="ml-4 font-bold text-[#3C3D37]"
                           key={index}
                         >
-                          {sentence.trim()}.
+                          - {sentence.trim()}.
                         </p>
                       )
                     )
@@ -645,10 +711,15 @@ function App() {
               <br></br>
               <br></br>
               <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
-                <Line
-                  data={chartData("#f15bb5", selector)}
-                  options={options(selector)}
-                />
+                {selector == "Waterpumped" ? (
+                  // <div>0</div>
+                  <Bar data={data2} options={optionsBar} />
+                ) : (
+                  <Line
+                    data={chartData("#f15bb5", selector)}
+                    options={options(selector)}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -660,4 +731,3 @@ function App() {
 }
 
 export default App;
-

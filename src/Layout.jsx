@@ -8,12 +8,10 @@ import axios from "./pages/checkToken.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 const TimeDelays = 60 * 3; //seconds
-const TimeSpamLoadData = 1* 1000; //seconds
+const TimeSpamLoadData = 1 * 1000; //seconds
 
 const Layout = () => {
   const location = useLocation();
@@ -43,8 +41,12 @@ const Layout = () => {
   const [newHarvestDate, setnewHarvestDate] = useState([]);
   const [newStage, setnewnewStage] = useState([]);
 
-  //warning report
+  // data for volume draw chart
+  const today = new Date().toISOString().slice(0, 10);
+  const itemsByHour = Array.from({ length: 24 }, () => []);
+  const TotalHour = [];
 
+  //warning report
   const [rpsNotify, setrpsNotify] = useState(null);
   const notify = (message) => {
     toast.warning(message.toString(), {
@@ -58,6 +60,9 @@ const Layout = () => {
       autoClose: 3000, // Auto close after 3 seconds
     });
   };
+  // Lấy token
+  const token = localStorage.getItem("token");
+  const access_token = "Bearer " + token;
 
   // get local inf
   localStorage.setItem("role", Role);
@@ -68,10 +73,10 @@ const Layout = () => {
     setMode(mode);
     setIsDialogOpen(true);
   };
-  // Lấy token
-  const token = localStorage.getItem("token");
-  const access_token = "Bearer " + token;
 
+  const closeDialog = async () => {
+    setIsDialogOpen(false);
+  };
   // logout account
   const goOut = async () => {
     localStorage.clear();
@@ -98,7 +103,7 @@ const Layout = () => {
     setFullname(response.data["full_name"]);
   };
 
-  //i get project information
+  // get project information
   const getIn4 = async () => {
     const respone = await axios.get(url_api + "crop", {
       headers: {
@@ -128,9 +133,22 @@ const Layout = () => {
       return a;
     }
   };
-  
-  // get data sensor
+  const filteVolume = async (data) => {
+    const filteredData = data.filter((item) => item.date === today);
+    filteredData.filter((item) => {
+      const hour = parseInt(item.time.split(":")[0], 10); // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
+      const data = item.volume;
+      itemsByHour[hour].push(data);
+    });
+
+    itemsByHour.filter((item, index) => {
+      TotalHour[index] = item.reduce((a, b) => a + b, 0);
+    });
+    localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
+  };
+  // get data all
   async function loadData() {
+    //get data sensor
     const response = await axios.get(url_data + "api/data/30", {
       headers: {
         Authorization: access_token,
@@ -139,17 +157,19 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-    // console.log("ciu moi",dt1);
     localStorage.setItem("dataSensor", JSON.stringify(dt1));
+
     //get volume
-    const responseVol = await axios.get(url_data + "api/volume/30", {
+    const responseVol = await axios.get(url_data + "api/volume/300", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    // console.log("get vol ok",responseVol);
+    const dataVol = responseVol.data;
+    filteVolume(dataVol);
+    localStorage.setItem("volume", JSON.stringify(dataVol));
 
     const responseMotor = await axios.get(url_data + "api/motor/30", {
       headers: {
@@ -159,14 +179,11 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
-    // console.log("dfsfdsf", dt2);  
     if (dt2) {
-  // console.log("ok if dt");
       localStorage.setItem(
         "pump1Status",
         JSON.stringify(dt2.slice(-1)[0]["motor"])
       );
-     
     }
     localStorage.setItem("dataMotor", JSON.stringify(dt2));
     var listSensorData = ["CO2", "Humi", "Temp"];
@@ -193,23 +210,11 @@ const Layout = () => {
       }
     }
   }
-
+  // post and resize avatar
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
   };
-  // const handleImageChange = (event) => {
-  //   console.log("huhu")
-  //   const file = event.target.files[0];
-  //   console.log(typeof file);
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setImageSrc(reader.result);
-  //       uploadImage(file);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -271,10 +276,7 @@ const Layout = () => {
       console.error("Error uploading image:", error);
     }
   };
-
-  const closeDialog = async () => {
-    setIsDialogOpen(false);
-  };
+  //post Project
   const sendChange = async () => {
     try {
       const response = axios.post(
@@ -307,7 +309,7 @@ const Layout = () => {
       console.error("Error to change Information:", error);
     }
   };
-
+  //get mode control
   const GetMode = async () => {
     const response = await axios.get(url_api + "control_mode", {
       headers: {
@@ -332,6 +334,7 @@ const Layout = () => {
     getIn4();
     GetMode();
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
+
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
@@ -355,7 +358,7 @@ const Layout = () => {
             {mode ? (
               <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
                 <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
-                  <h1 >Change Information</h1>
+                  <h1>Change Information</h1>
                   <div class="relative">
                     <input
                       type="text"
@@ -491,10 +494,12 @@ const Layout = () => {
                         onChange={handleImageChange}
                       />
                       <div style={{ marginLeft: 10 }}>
-                        <p className="playwrite-cl ">
-                          <strong className="font-bold">{localStorage.getItem("full_name")}</strong>
+                        <p className="roboto-flex text-2xl">
+                          <strong className="font-bold">
+                            {localStorage.getItem("full_name")}
+                          </strong>
                         </p>
-                        <span className="playwrite-cl">{Role}</span>
+                        <span className="roboto-flex">{Role}</span>
                       </div>
                     </div>
                     <br />
@@ -520,7 +525,7 @@ const Layout = () => {
 
                         <Link to="/home">
                           <span
-                            className="ml-4"
+                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
@@ -559,7 +564,7 @@ const Layout = () => {
                             </svg>
 
                             <span
-                              className="ml-4"
+                              className="ml-4 mt-1 archivo text-xl justify-center items-center"
                               onClick={() => {
                                 setDisplay(false);
                               }}
@@ -599,7 +604,7 @@ const Layout = () => {
                           </svg>
 
                           <span
-                            className="ml-4"
+                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
@@ -633,7 +638,7 @@ const Layout = () => {
                           </svg>
 
                           <span
-                            className="ml-4"
+                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
@@ -665,7 +670,9 @@ const Layout = () => {
                             <path d="M11 12h1v4h1" />
                           </svg>
 
-                          <span className="ml-4">About us</span>
+                          <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                            About us
+                          </span>
                         </a>
                       </Link>
                       <a
@@ -690,7 +697,9 @@ const Layout = () => {
                           <path d="M9 12h12l-3 -3" />
                           <path d="M18 15l3 -3" />
                         </svg>
-                        <span className="ml-4">Logout</span>
+                        <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                          Logout
+                        </span>
                       </a>
                     </ul>
                   </div>
@@ -702,7 +711,7 @@ const Layout = () => {
                     <table className="ml-4 w-4/5">
                       <tbody>
                         <tr>
-                          <th className="text-left">Project:</th>
+                          <th className="text-left ">Project:</th>
                           <td className="text-right">{newNameProject}</td>
                         </tr>
                         <tr>
@@ -775,7 +784,7 @@ const Layout = () => {
 
                   {/* User Inf*/}
                   <div className=" mt-4 text-white w-3/5">
-                    <p className="playwrite-cl">
+                    <p className="roboto-flex">
                       <strong>{localStorage.getItem("full_name")}</strong>
                     </p>
                     <span>{Role}</span>
@@ -837,7 +846,9 @@ const Layout = () => {
                       <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
                       <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                     </svg>
-                    <span className="ml-4">Dashboard</span>
+                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                      Dashboard
+                    </span>
                   </Link>
                   {Role === "admin" && (
                     <Link
@@ -865,7 +876,9 @@ const Layout = () => {
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                       </svg>
-                      <span className="ml-4">User Management</span>
+                      <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                        User Management
+                      </span>
                     </Link>
                   )}
                   {/* Control */}
@@ -899,7 +912,9 @@ const Layout = () => {
                       <path d="M4 18l11 0" />
                       <path d="M19 18l1 0" />
                     </svg>
-                    <span className="ml-4">Control Panel</span>
+                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                      Control Panel
+                    </span>
                   </Link>
                   {/* History */}
                   <Link
@@ -927,7 +942,9 @@ const Layout = () => {
                       <path d="M9 17h6" />
                       <path d="M9 13h6" />
                     </svg>
-                    <span className="ml-4">History</span>
+                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                      History
+                    </span>
                   </Link>
 
                   <Link
@@ -953,7 +970,9 @@ const Layout = () => {
                       <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
                       <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
                     </svg>
-                    <span className="ml-4">About Us</span>
+                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                      About Us
+                    </span>
                   </Link>
                   {/* Logout */}
 
@@ -978,7 +997,9 @@ const Layout = () => {
                       <path d="M9 12h12l-3 -3" />
                       <path d="M18 15l3 -3" />
                     </svg>
-                    <span className="ml-4">Logout</span>
+                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                      Logout
+                    </span>
                   </a>
                 </ul>
               </aside>
