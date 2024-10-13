@@ -338,31 +338,31 @@ const Control = () => {
 
   const closeDialog = async () => {
     if (isChecked == "manual") {
+      if (inputTime > 0) {
+        setTimer(inputTime * 60);
+        handleClick();
+        setIsLocked(true);
+      }
       const registerform = {
         timer: timerSend,
-        status: !valueMotor1,
+        status: pump,
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
 
-      const response = await axios.post(
-        url_api + "control/" + isChecked,
-        registerform,
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: access_token,
-          },
-        }
-      );
+      postMode(isChecked, registerform);
+      console.log("isLocked", isLocked);
+    } else {
+      const registerform = {
+        on: TimeOn,
+        off: TimeOff,
+        masterusr: localStorage.getItem("username"),
+        masterpwd: PassToCheck,
+      };
+      console.log("typeof TimeOff", typeof TimeOff);
+      postMode(isChecked, registerform);
     }
 
-    if (inputTime > 0) {
-      setTimer(inputTime * 60); // Chuyển giá trị từ phút sang giây
-      // setPumpSend(!pump); // Đổi trạng thái pump
-      setIsLocked(true); // Khóa nút
-    }
-    console.log("isLocked", isLocked);
     setIsDialogOpen(false);
   };
 
@@ -374,11 +374,11 @@ const Control = () => {
     if (timerSend > 0) {
       const interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
-      }, 1000); // 1000ms = 1 giây
+      }, 1000);
 
-      return () => clearInterval(interval); // Dọn dẹp interval khi unmount hoặc thay đổi
+      return () => clearInterval(interval);
     } else if (timerSend === 0 && isLocked) {
-      setIsLocked(false); // Mở khóa khi timerSend = 0
+      setIsLocked(false);
     }
   }, [timerSend]);
   const minutes = Math.floor(timerSend / 60);
@@ -402,7 +402,7 @@ const Control = () => {
               <input
                 type="number"
                 name="password"
-                placeholder="min"
+                placeholder="Skip if not set a timer (min)."
                 className="mt-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
                 onChange={(e) => setInputTime(e.target.value)}
               />
@@ -435,7 +435,40 @@ const Control = () => {
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
+            <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
+              <div className="text-lg font-bold text-red-600">Notification</div>
+
+              <div className=" text-sm font-bold  text-gray-500">
+                Please enter a password to proceed.
+              </div>
+
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="mt-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
+                onChange={(e) => SetPassCheck(e.target.value)}
+              />
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={hiddenDialog}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition-colors duration-150"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={closeDialog}
+                  className="ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </Dialog>
       {/* -----------------------PC View----------------------- */}
 
@@ -680,17 +713,7 @@ const Control = () => {
                           >
                             Pump : {pump ? "ON" : "OFF"}
                           </span>
-                          {/* <button
-                            // onClick={() => handleClick()}
-                            onClick={() => openDialog()}
-                            className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                              pump
-                                ? "bg-red-600 hover:bg-red-700"
-                                : "bg-green-600 hover:bg-green-700"
-                            }`}
-                          >
-                            {pump ? "Turn Off" : "Turn On"}
-                          </button> */}
+
                           <button
                             onClick={openDialog}
                             className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
@@ -736,6 +759,29 @@ const Control = () => {
                               <path d="M9 12h6" />
                               <path d="M12 9v6" />
                             </svg>
+
+                            <input
+                              type="time"
+                              value={TimeOn}
+                              onChange={(e) => {
+                                setTimeOn(e.target.value);
+                              }}
+                              className="ml-2 text-center w-2/5 border-2 border-gray-500"
+                            />
+                            <input
+                              type="time"
+                              value={TimeOff}
+                              onChange={(e) => {
+                                setTimeOff(e.target.value);
+                              }}
+                              className="ml-2 text-center w-2/5 border-2 border-gray-500 "
+                            />
+                            <button
+                              onClick={openDialog}
+                              className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                            >
+                              Save
+                            </button>
                           </div>
                         </div>
                       )}

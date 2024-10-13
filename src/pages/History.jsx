@@ -37,10 +37,11 @@ const History = () => {
         }
       );
       const dt1 = response.data;
+
       setData(dt1);
     }
     loadData();
-  }, []);
+  }, [data1]);
   //apply button
   const DateFil = async () => {
     setFlag(false);
@@ -117,7 +118,7 @@ const History = () => {
         <div className="flex-col  h-full w-full data-table-container">
           <div className="h-16 m-3  flex  items-center">
             <div className=" w-2/5">
-              <h1 className="text-5xl font-bold">history</h1>
+              <h1 className="text-5xl font-bold">History</h1>
             </div>
 
             <div className="w-11/12 flex p-4 ">
