@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 // import axios from "axios";
 import axios from "./checkToken.jsx";
 import { url_api, url_local, url_data } from "../Provider.jsx";
-import {  notifyInfo, notifyError } from './include/notifications';
+import { notifyInfo, notifyError } from "./include/notifications";
 import { Button } from "@material-tailwind/react";
 
 const History = () => {
@@ -23,14 +23,6 @@ const History = () => {
   const [endDay, setEndDay] = useState();
   const [Flag, setFlag] = useState(false);
 
-  const ImgUsr = (usr) => {
-    const a = new URL(`/src/assets/user/${usr}.jpg`, import.meta.url).href;
-    if (a === url_local + "src/pages/undefined") {
-      return new URL(`/src/assets/user/user.jpg`, import.meta.url).href;
-    }
-    return a;
-  };
-
   // DATA SENSOR
   useEffect(() => {
     async function loadData() {
@@ -45,14 +37,21 @@ const History = () => {
         }
       );
       const dt1 = response.data;
-      setData(dt1);                                                            
+      setData(dt1);
     }
     loadData();
   }, []);
   //apply button
   const DateFil = async () => {
     setFlag(false);
-    const date =  url_data + "api/" + `${DataList}` + "/0?start="+`${startDay}`+"&end="+`${endDay}`;
+    const date =
+      url_data +
+      "api/" +
+      `${DataList}` +
+      "/0?start=" +
+      `${startDay}` +
+      "&end=" +
+      `${endDay}`;
     console.log(date);
     const checkDate =
       (new Date(endDay) - new Date(startDay)) / (1000 * 60 * 60 * 24);
@@ -67,25 +66,20 @@ const History = () => {
     } else {
       console.log("true date", checkDate);
       setFlag(true);
-      const response = await axios.get(
-       date,
-        {
-          headers: {
-            Authorization: access_token,
-            accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      const response = await axios.get(date, {
+        headers: {
+          Authorization: access_token,
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
       // console.log("filter",response.data.length);
-      if(response.data.length==0){
+      if (response.data.length == 0) {
         notifyError("Data is null. Please try again!");
-      }else{
-        
-          notifyInfo("Waiting for data...");
-          setData(response.data);
+      } else {
+        notifyInfo("Waiting for data...");
+        setData(response.data);
       }
-    
     }
   };
 
@@ -137,7 +131,7 @@ const History = () => {
                   <option value="admin">Choice data</option>
                   <option value="data">Sensor</option>
                   <option value="user">User</option>
-                  <option value="Control-History">Control History</option>
+                  <option value="warning">Premonition</option>
                 </select>
               </label>
               <div className="flex p-1 ml-2 w-7/12 items-center justify-center ">
@@ -279,42 +273,51 @@ const History = () => {
               </table>
             </div>
           )}
-          {DataList === "Control-History" && (
+          {DataList === "warning" && (
             <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3">
-                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Name
+                      STT
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      User Name
+                      Date
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Phone Number
+                      Time
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Email
+                      Message
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
+                      level
+                    </th>
+                    {/* <th scope="col" class="px-6 py-3 text-center">
                       Role
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       Login at
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {data1.map((item) => (
-                    <tr class="bg-white dark:bg-gray-800" key={item._id}>
-                      <td class="px-6 py-4 text-center">{item.full_name}</td>
-                      <td class="px-6 py-4 text-center">{item.username}</td>
-                      <td class="px-6 py-4 text-center">{item.phone}</td>
-                      <td class="px-6 py-4 text-center">{item.email}</td>
-                      <td class="px-6 py-4 text-center">{item.role}</td>
-                      <td class="px-6 py-4 text-center">{item.lastlogin}</td>
+                  {data1.map((item) => (
+                    <tr
+                      key={item._id}
+                      className={`bg-white dark:bg-gray-800 ${
+                        item.level === "Alarm"
+                          ? "text-red-500 font-bold"
+                          : "text-black"
+                      }`}
+                    >
+                      <td class="px-6 py-4 text-center">{item._id}</td>
+                      <td class="px-6 py-4 text-center">{item.date}</td>
+                      <td class="px-6 py-4 text-center">{item.time}</td>
+                      <td class="px-6 py-4 text-center">{item.message}</td>
+                      <td class="px-6 py-4 text-center">{item.level}</td>
                     </tr>
-                  ))} */}
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -336,7 +339,7 @@ const History = () => {
                   <option value="admin">Choice data </option>
                   <option value="data">Sensor</option>
                   <option value="user">User</option>
-                  <option value="Control-History">Control History</option>
+                  <option value="warning">Premonition</option>
                 </select>
               </label>
 
@@ -485,10 +488,46 @@ const History = () => {
               </table>
             </div>
           )}
-          {DataList === "Control-History" && (
-            <div className="relative h-4/5 bg-white overflow-x-auto  rounded-3xl mt-3">
-                   
-            </div>
+          {DataList === "warning" && (
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-center">
+                    STT
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-center">
+                    Date
+                  </th>
+
+                  <th scope="col" class="px-6 py-3 text-center">
+                    Time
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-center">
+                    Message
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-center">
+                    level
+                  </th>
+                  {/* <th scope="col" class="px-6 py-3 text-center">
+                      Role
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Login at
+                    </th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {data1.map((item) => (
+                  <tr class="bg-white dark:bg-gray-800" key={item._id}>
+                    <td class="px-6 py-4 text-center">{item._id}</td>
+                    <td class="px-6 py-4 text-center">{item.date}</td>
+                    <td class="px-6 py-4 text-center">{item.time}</td>
+                    <td class="px-6 py-4 text-center">{item.message}</td>
+                    <td class="px-6 py-4 text-center">{item.level}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           )}
         </div>
       </div>

@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const TimeDelays = 60 * 3; //seconds
+const TimeDelays = 60 * 30;
 const TimeSpamLoadData = 1 * 1000; //seconds
 
 const Layout = () => {
@@ -194,6 +194,7 @@ const Layout = () => {
       if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
         if (FlagNotify && displayNotify == 2) {
           setCount(count + 1);
+          // console.log(count);
           if (count == TimeDelays) {
             setFlagNotify(false);
             setCount(0);
@@ -318,27 +319,24 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    // if (localStorage.getItem("role")=="admin"){
     localStorage.setItem(
       "isChecked",
       JSON.stringify(response.data["system_mode"])
     );
-    // }else{
-    //    localStorage.setItem("isChecked",true);
-    // }
+    console.log("system_mode", JSON.parse(localStorage.getItem("isChecked")));
   };
   // console.log(rpsNotify);
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
-    GetMode();
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
+      GetMode();
       // checkSensorData();
     }, TimeSpamLoadData);
 

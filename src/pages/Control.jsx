@@ -1,10 +1,15 @@
-import { Button } from "@material-tailwind/react";
 import React, { useEffect, useState, useRef } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
 import { Line, Bar } from "react-chartjs-2";
+import { Dialog } from "@headlessui/react";
+
 import { url_api, url_local } from "../Provider.jsx";
-import { notifySuccess, notifyInfo, notifyError } from './include/notifications';
+import {
+  notifySuccess,
+  notifyInfo,
+  notifyError,
+} from "./include/notifications";
 import "react-toastify/dist/ReactToastify.css";
 import {
   Chart as ChartJS,
@@ -25,36 +30,42 @@ ChartJS.register(
   Legend
 );
 
-
 const Control = () => {
-  
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
   const role = localStorage.getItem("role");
 
-  //status mode 
+  //status mode
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
 
+  const [StatusSwitchMode, setStatusSwitchMode] = useState();
+
   // Change display in mobile view
   const [Display, setDisplay] = useState("1");
-
+  // Dialog status
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   //pump status
   const [valueMotor1, setValueMotor1] = useState(
     JSON.parse(localStorage.getItem("pump1Status"))
   );
- 
-  const [pumps, setPumps] = useState(valueMotor1);
   const [pump, setPumpSend] = useState(valueMotor1);
-
+  const [statusToContol, setStatusToContol] = useState();
+  //mode in manual
+  const [PassToCheck, SetPassCheck] = useState("");
+  const [timerSend, setTimer] = useState(0);
+  const [inputTime, setInputTime] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  //mode sequent
+  const [TimeOn, setTimeOn] = useState(0);
+  const [TimeOff, setTimeOff] = useState(0);
   // volume in week
   const [totalPump1, setTotalPump1] = useState();
-  const [totalPump2, setTotalPump2] = useState();
-  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(0);
-  
-  //create thresh humi 
+  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(10);
+
+  //create thresh humi
   const [startThreshold, setStartThreshold] = useState(
     localStorage.getItem("low")
   );
@@ -70,18 +81,13 @@ const Control = () => {
     localStorage.getItem("cycleSample")
   );
 
-
-  const [isLocked, setIsLocked] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-
   // flag to post pump status
   const [Flag, setFlag] = useState();
-
 
   // const timeDayMotor1 = 12;
   // const timeDayMotor2 = 12;
 
- // change thresh humi and post
+  // change thresh humi and post
   const handleStartThresholdChange = (event) => {
     if (role == "admin") {
       setStartThreshold(event.target.value);
@@ -98,7 +104,7 @@ const Control = () => {
       notifyError("Permission Denied!");
     }
   };
-   const handleSaveClick = async () => {
+  const handleSaveClick = async () => {
     const url = url_api + `threshold/humi`;
     if (role == "admin") {
       try {
@@ -117,8 +123,8 @@ const Control = () => {
             },
           }
         );
-        // console.log("response humi", response.data);
-        notifySucces("Update Thresh for humi success");
+
+        notifySuccess("Update Thresh for humi success");
       } catch (error) {
         console.error("Error:", error);
         notifyError(error);
@@ -135,7 +141,6 @@ const Control = () => {
     }
   };
 
- 
   const handleSaveFrequencyPumpClick = async () => {
     const url = url_api + `inv/${frequencyPump}`;
     if (role == "admin") {
@@ -177,7 +182,7 @@ const Control = () => {
           }
         );
 
-        notifySucces(response.data["message"]);
+        notifySuccess(response.data["message"]);
       } catch (error) {
         console.error("Error:", error);
         notifyError(error);
@@ -222,154 +227,20 @@ const Control = () => {
     localStorage.setItem("cycleSample", response.data);
   };
 
-
-  const getPumpView = async () => {
-    const response = await axios.get(url_api + "vol", {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-
-    setVolumeDayMotor1(response.data["pump1"]);
-  };
-
   // Freq, Thresh
   useEffect(() => {
     getHumiThresh();
     getFrequencyPump();
     getSampleCycle();
-    getPumpView();
   }, []);
-
-  const handleClick = async () => {
-    if (role == "admin") {
-      setPumpSend(!pumps);
-      setFlag(true);
-    } else {
-      notifyError("Permission Denied!");
-    }
-  };
-  if (Flag) {
-    //gửi control lên api
-    const controlPanel = async () => {
-      try {
-        const url = url_api + `motor/${Flag}`;
-        const response = await axios.post(
-          url,
-          {
-            status: pump[Flag - 1],
-          },
-          {
-            headers: {
-              accept: "application/json",
-              Authorization: access_token,
-            },
-          }
-        );
-        if (pump[Flag - 1]) {
-          notifyInfo(`Pump ${Flag} is ON`);
-        } else {
-          notifyInfo(`Pump ${Flag} is OFF`);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        notifyError(error);
-      }
-    };
-    controlPanel();
-    setFlag(false);
-  }
-  const formatTime = (ms) => {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
-  const dataMotor = localStorage.getItem("dataMotor");
-  const dt1 = JSON.parse(dataMotor);
-
-  const generateRandomValues = () => {
-    setTotalPump1(Math.floor(Math.random() * 100) + 1);
-    setTotalPump2(Math.floor(Math.random() * 100) + 1);
-  };
-  useEffect(() => {
-    const ciupezoi = setInterval(() => {
-      generateRandomValues();
-    }, 6000);
-  }, []);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
-      setValueMotor2(JSON.parse(localStorage.getItem("pump2Status")));
-      setPumps([
-        JSON.parse(localStorage.getItem("pump1Status")),
-        JSON.parse(localStorage.getItem("pump2Status")),
-      ]);
-      setPumpSend([
-        JSON.parse(localStorage.getItem("pump1Status")),
-        JSON.parse(localStorage.getItem("pump2Status")),
-      ]);
-      console.log("pump send",pump);
-      console.log("pump get",pumps);
-    }, 1000);
-
-    // Cleanup function để xóa interval khi component unmount
-    return () => clearInterval(intervalId);
-  });
-
-  // ve total pump
-
-  const labels = ["Pump 1", "Pump 2"];
-  const data2 = {
-    labels: labels,
-    datasets: [
-      {
-        axis: "y",
-        label: "Total in a Week",
-
-        data: [totalPump1, totalPump2],
-        fill: false,
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-        ],
-        borderColor: [
-          "rgb(75, 192, 192)",
-          "rgb(54, 162, 235)",
-          "rgb(153, 102, 255)",
-          // "rgb(201, 203, 207)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-  const optionsBar = {
-    indexAxis: "y",
-    scales: {
-      x: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Volume (liters)", // Set the y-axis title with the unit
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        labels: {
-          fontSize: 15,
-        },
-      },
-    },
-  };
-
-  const ModeControl = async (e) => {
+  const controlPanel = async () => {
     try {
+      const url = url_api + `control/motor`;
       const response = await axios.post(
-        url_api + "control_mode",
-        { mode: e.target.checked },
+        url,
+        {
+          status: pump,
+        },
         {
           headers: {
             accept: "application/json",
@@ -377,6 +248,41 @@ const Control = () => {
           },
         }
       );
+      if (pump) {
+        notifyInfo(`Pump  is ON`);
+      } else {
+        notifyInfo(`Pump is OFF`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      notifyError(error);
+    }
+  };
+  const handleClick = async () => {
+    if (role == "admin") {
+      setPumpSend(!valueMotor1);
+      setFlag(true);
+    } else {
+      notifyError("Permission Denied!");
+    }
+  };
+  if (Flag) {
+    controlPanel();
+    setFlag(false);
+  }
+
+  const dataMotor = localStorage.getItem("dataMotor");
+  const dt1 = JSON.parse(dataMotor);
+
+  const postMode = async (mode, data) => {
+    try {
+      const response = await axios.post(url_api + "control/" + mode, data, {
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: access_token,
+        },
+      });
 
       const responseMode = await axios.get(url_api + "control_mode", {
         headers: {
@@ -387,17 +293,150 @@ const Control = () => {
       });
 
       setIsChecked(responseMode.data["system_mode"]);
-      localStorage.setItem("isChecked", responseMode.data["system_mode"]);
-
-      //   localStorage.setItem("isChecked", responseMode.data["system_mode"]);
+      localStorage.setItem(
+        "isChecked",
+        JSON.stringify(responseMode.data["system_mode"])
+      );
     } catch (error) {
-      notifyError(error.response.data["detail"]);
-      console.error("Error:", error.response.data["detail"]);
+      console.error(error);
     }
   };
+  const sendMode = async (mode) => {
+    if (mode == "sequent") {
+      const data = { on: TimeOn, off: TimeOff };
+      postMode(mode, data);
+    } else {
+      const data = { status: true, timerSend: 0 };
+      postMode(mode, data);
+    }
+  };
+  const ModeControl = async (e) => {
+    setStatusSwitchMode(e.target.checked);
+    if (e.target.checked) {
+      const mode = "auto";
+      const data = { status: e.target.checked };
+      postMode(mode, data);
+    } else {
+      const mode = "manual";
+      const data = { status: e.target.checked, timerSend: 0 };
+      postMode(mode, data);
+    }
+  };
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
+      setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
+      setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+    }, 1000);
 
+    // Cleanup function để xóa interval khi component unmount
+    return () => clearInterval(intervalId);
+  });
+  const openDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = async () => {
+    if (isChecked == "manual") {
+      const registerform = {
+        timer: timerSend,
+        status: !valueMotor1,
+        masterusr: localStorage.getItem("username"),
+        masterpwd: PassToCheck,
+      };
+
+      const response = await axios.post(
+        url_api + "control/" + isChecked,
+        registerform,
+        {
+          headers: {
+            accept: "application/json",
+            Authorization: access_token,
+          },
+        }
+      );
+    }
+
+    if (inputTime > 0) {
+      setTimer(inputTime * 60); // Chuyển giá trị từ phút sang giây
+      // setPumpSend(!pump); // Đổi trạng thái pump
+      setIsLocked(true); // Khóa nút
+    }
+    console.log("isLocked", isLocked);
+    setIsDialogOpen(false);
+  };
+
+  const hiddenDialog = async () => {
+    setIsDialogOpen(false);
+  };
+
+  useEffect(() => {
+    if (timerSend > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000); // 1000ms = 1 giây
+
+      return () => clearInterval(interval); // Dọn dẹp interval khi unmount hoặc thay đổi
+    } else if (timerSend === 0 && isLocked) {
+      setIsLocked(false); // Mở khóa khi timerSend = 0
+    }
+  }, [timerSend]);
+  const minutes = Math.floor(timerSend / 60);
+  const seconds = timerSend % 60;
   return (
     <div className="flex  h-full w-full ">
+      {/* Dialog*/}
+      <Dialog
+        open={isDialogOpen}
+        onClose={closeDialog}
+        className="fixed inset-0 z-10 overflow-y-auto"
+      >
+        {isChecked === "manual" ? (
+          <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
+            <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
+              <div className="text-lg font-bold text-red-600">Notification</div>
+              <div className="mt-2 text-sm font-bold  text-gray-500">
+                Set timer to turn {valueMotor1 ? "off" : "on"}.
+              </div>
+
+              <input
+                type="number"
+                name="password"
+                placeholder="min"
+                className="mt-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
+                onChange={(e) => setInputTime(e.target.value)}
+              />
+
+              <div className=" text-sm font-bold  text-gray-500">
+                Please enter a password to proceed.
+              </div>
+
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="mt-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
+                onChange={(e) => SetPassCheck(e.target.value)}
+              />
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={hiddenDialog}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition-colors duration-150"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={closeDialog}
+                  className="ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </Dialog>
       {/* -----------------------PC View----------------------- */}
 
       <div className="hidden sm:block w-full">
@@ -440,18 +479,18 @@ const Control = () => {
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
                   </div> */}
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Flow : {VolumeDayMotor1 + "  lits"}
-                  </div>
+                  </div> */}
                 </div>
               </div>
-             
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
-                  <Bar data={data2} options={optionsBar} />
-                </div>
+                <div
+                  className="ml-15 mt-10"
+                  style={{ maxWidth: "4S00px" }}
+                ></div>
               </div>
             </div>
           </div>
@@ -501,29 +540,33 @@ const Control = () => {
                 </button>
               </div>
 
-              <label class="ml-1 mt-2 inline-flex font-bold cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={isChecked}
-                  onChange={ModeControl}
-                />
-                <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                <span class="ml-3 text-sm  text-gray-900 dark:text-gray-300 font-bold">
-                  {isChecked ? "Mode Auto" : "Mode Manual"}
-                </span>
-              </label>
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-blue-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  {/* {isChecked} */}
+                  {isChecked == "auto" ? "Auto" : "Manual"}
+                </div>
+
+                <label class="ml-1 mt-2 inline-flex font-bold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={StatusSwitchMode}
+                    onChange={(e) => ModeControl(e)}
+                  />
+                  <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                </label>
+              </div>
             </div>
             {/* End Select mode */}
-            {isChecked ? (
+            {isChecked == "auto" ? (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
                   <div class="flex flex-col gap-3">
                     <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET RULE
-                        </div>
+                        <h1 className="text-3xl font-bold mb-6 text-gray-700">
+                          Auto Mode
+                        </h1>
 
                         <p className="text-gray-600 mb-2">
                           Pump START when Humidity less than{" "}
@@ -600,38 +643,103 @@ const Control = () => {
             ) : (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
-                  <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 rounded-3xl shadow-md">
-                    <h1 className="text-3xl font-bold mb-6 text-gray-700">
-                      Pump Control
-                    </h1>
-               
-                     <div
-                        className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
-                          pump ? "bg-gray-200" : ""
-                        }`}
-                      >
+                  <div className="max-w-4xl mx-auto  bg-white border border-gray-300 rounded-3xl shadow-md">
+                    <ul className=" flex justify-center w-full overflow-x-auto ">
+                      <li class="   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
                         <span
-                          className={`text-lg font-medium ${
-                            pump ? "text-blue-600" : "text-gray-600"
+                          class="ml-2 underline hover:underline-offset-8  "
+                          onClick={() => {
+                            sendMode("manual");
+                          }}
+                        >
+                          Manual
+                        </span>
+                      </li>
+                      <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
+                        <span
+                          class="ml-2 underline hover:underline-offset-8 "
+                          onClick={() => {
+                            sendMode("sequent");
+                          }}
+                        >
+                          Sequent
+                        </span>
+                      </li>
+                    </ul>
+                    <div className="p-4">
+                      {isChecked == "manual" ? (
+                        <div
+                          className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                            pump ? "bg-gray-200" : ""
                           }`}
-                        >  Pump :  {pump ? "ON" : "OFF"}</span>
+                        >
+                          <span
+                            className={`text-lg font-medium ${
+                              pump ? "text-blue-600" : "text-gray-600"
+                            }`}
+                          >
+                            Pump : {pump ? "ON" : "OFF"}
+                          </span>
+                          {/* <button
+                            // onClick={() => handleClick()}
+                            onClick={() => openDialog()}
+                            className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                              pump
+                                ? "bg-red-600 hover:bg-red-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            }`}
+                          >
+                            {pump ? "Turn Off" : "Turn On"}
+                          </button> */}
                           <button
-                          onClick={() => handleClick(index)}
-                          className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                            isLocked
-                              ? "bg-gray-500 cursor-not-allowed"
-                              : pump
-                              ? "bg-red-600 hover:bg-red-700"
-                              : "bg-green-600 hover:bg-green-700"
-                          }`}
-                          disabled={isLocked}
-                        > {isLocked
-                            ? `Locked: ${formatTime(timeLeft)}`
-                            : pump
-                            ? "Turn Off"
-                            : "Turn On"}</button>
+                            onClick={openDialog}
+                            className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                              pump
+                                ? "bg-red-600 hover:bg-red-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            } ${
+                              isLocked ? "cursor-not-allowed opacity-50" : ""
+                            }`}
+                            disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
+                          >
+                            {pump ? "Turn Off" : "Turn On"}{" "}
+                            {timerSend > 0
+                              ? `(${minutes}:${
+                                  seconds < 10 ? `0${seconds}` : seconds
+                                })`
+                              : ""}
+                          </button>
                         </div>
-                     
+                      ) : (
+                        <div className="   ">
+                          <div
+                            className={`flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                              <path d="M9 12h6" />
+                              <path d="M12 9v6" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -702,18 +810,18 @@ const Control = () => {
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
                   </div> */}
-                  <div class="mt-1 text-base text-gray-600">
+                  {/* <div class="mt-1 text-base text-gray-600">
                     Flow : {VolumeDayMotor1 + "  lits"}
-                  </div>
+                  </div> */}
                 </div>
               </div>
-    
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
-                  <Bar data={data2} options={optionsBar} />
-                </div>
+                <div
+                  className="ml-15 mt-10"
+                  style={{ maxWidth: "4S00px" }}
+                ></div>
               </div>
             </div>
           </div>
@@ -868,39 +976,30 @@ const Control = () => {
                     <h1 className="text-3xl font-bold mb-6 text-gray-700">
                       Pump Control
                     </h1>
-                    {pumps.map((pump, index) => (
-                      <div
-                        key={index}
-                        className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
-                          pump ? "bg-gray-200" : ""
+                    <div
+                      className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                        pump ? "bg-gray-200" : ""
+                      }`}
+                    >
+                      <span
+                        className={`text-lg font-medium ${
+                          pump ? "text-blue-600" : "text-gray-600"
                         }`}
                       >
-                        <span
-                          className={`text-lg font-medium ${
-                            pump ? "text-blue-600" : "text-gray-600"
-                          }`}
-                        >
-                          Pump {index + 1}: {pump ? "ON" : "OFF"}
-                        </span>
-                        <button
-                          onClick={() => handleClick(index)}
-                          className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                            isLocked
-                              ? "bg-gray-500 cursor-not-allowed"
-                              : pump
-                              ? "bg-red-600 hover:bg-red-700"
-                              : "bg-green-600 hover:bg-green-700"
-                          }`}
-                          disabled={isLocked}
-                        >
-                          {isLocked
-                            ? `Locked: ${formatTime(timeLeft)}`
-                            : pump
-                            ? "Turn Off"
-                            : "Turn On"}
-                        </button>
-                      </div>
-                    ))}
+                        {" "}
+                        Pump : {pump ? "ON" : "OFF"}
+                      </span>
+                      <button
+                        onClick={() => handleClick()}
+                        className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                          pump
+                            ? "bg-red-600 hover:bg-red-700"
+                            : "bg-green-600 hover:bg-green-700"
+                        }`}
+                      >
+                        {pump ? "Turn Off" : "Turn On"}
+                      </button>
+                    </div>
                     <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
                         <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">

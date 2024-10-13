@@ -110,7 +110,6 @@ const Management = () => {
     }
   };
   const ChangeData = async () => {
-
     const url = url_api + `users/${mode}/${userID}?updated_data=${dataChange}`;
     const dataAdmin = {
       masterusr: localStorage.getItem("username"),
@@ -125,14 +124,13 @@ const Management = () => {
           "Content-Type": "application/json",
         },
       });
-setFlag(true);
+      setFlag(true);
       notifyUser(response.data["status"]);
     } finally {
       setIsDialogOpen(false);
     }
   };
-  const loadData= async()=> {
-    
+  const loadData = async () => {
     const response = await axios.get(url_data + "api/user/0", {
       headers: {
         Authorization: access_token,
@@ -142,14 +140,13 @@ setFlag(true);
     });
     const dt1 = response.data;
     setData(dt1);
-    
-  }
-   useEffect(() => {
-   if(true){
-     loadData();
-    setFlag(false);
-   }
-  },[Flag]);
+  };
+  useEffect(() => {
+    if (true) {
+      loadData();
+      setFlag(false);
+    }
+  }, [Flag]);
   return (
     <div className="flex  h-full w-full ">
       {/* Dialog*/}
@@ -825,4 +822,3 @@ setFlag(true);
 };
 
 export default Management;
-

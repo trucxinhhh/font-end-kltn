@@ -220,7 +220,7 @@ function App() {
             data: data, // Assuming data_CO2 has a co2 field
             borderColor: lineColor,
             backgroundColor: "rgba(75,192,192,0.2)",
-            fill: false,
+            fill: true,
             stepped: true,
             cubicInterpolationMode: "monotone",
             tension: 0.4,
@@ -239,6 +239,7 @@ function App() {
             borderColor: lineColor,
             backgroundColor: "rgba(75,192,192,0.2)",
             fill: true,
+            stepped: false,
             cubicInterpolationMode: "monotone",
             tension: 0.4,
           },
@@ -278,7 +279,7 @@ function App() {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Hour in day", // Set the y-axis title with the unit
+          text: "Times in day", // Set the y-axis title with the unit
         },
       },
       y: {

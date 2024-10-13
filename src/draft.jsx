@@ -1,102 +1,82 @@
-import React from "react";
-import { data } from "./data";
-import { Line, Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import React, { useState, useEffect } from "react";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+function PumpControlButton() {
+  const [pump, setPump] = useState(false); // Trạng thái bật/tắt
+  const [timer, setTimer] = useState(0); // Timer ban đầu tính bằng giây
+  const [isLocked, setIsLocked] = useState(false); // Trạng thái khóa nút
+  const [showDialog, setShowDialog] = useState(false); // Hiển thị dialog để đặt timer
+  const [inputTime, setInputTime] = useState(0); // Giá trị nhập từ người dùng
 
-const Draft = () => {
-  const today = new Date().toISOString().slice(0, 10);
-  const itemsByHour = Array.from({ length: 24 }, () => []);
-  const TotalHour = [];
-  const TimeHour= [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
-  console.log(today); // Hiển thị dạng YYYY-MM-DD
-  const filteredData = data.filter((item) => item.date === today);
-  filteredData.filter((item) => {
-    const hour = parseInt(item.time.split(":")[0], 10); // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
-    const data = item.volume;
-    itemsByHour[hour].push(data);
-  });
-
-  itemsByHour.filter((item,index)=>{
-    TotalHour[index]=(item.reduce((a, b) => a + b, 0));
-  });
-  console.log("TotalHour",TotalHour);
-
-    const data2 = {
-    labels: TimeHour,
-    datasets: [
-      {
-        axis: "x",
-        label: "Total in a day",
-
-        data: TotalHour,
-        fill: false,
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-        ],
-        borderColor: [
-          "rgb(75, 192, 192)",
-          "rgb(54, 162, 235)",
-          "rgb(153, 102, 255)",
-          // "rgb(201, 203, 207)",
-        ],
-        borderWidth: 1,
-      },
-    ],
+  // Hàm để mở hộp thoại
+  const openDialog = () => {
+    setShowDialog(true); // Mở hộp thoại
   };
-  const optionsBar = {
-    indexAxis: "x",
-    scales: {
-      x: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "Hour in day", // Set the y-axis title with the unit
-        },
-      },
-       y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "m³", // Set the y-axis title with the unit
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        labels: {
-          fontSize: 15,
-        },
-      },
-    },
-  };
-  return <div>
-     <div className=" h-2/3 w-full p-4 mt-3">
-              <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
-                  <Bar data={data2} options={optionsBar} />
-                </div>
-              </div>
-            </div>
-  </div>;
-};
 
-export default Draft;
+  // Hàm xử lý khi nhấn OK trong hộp thoại
+  const handleOk = () => {
+    setShowDialog(false); // Đóng hộp thoại
+    if (inputTime > 0) {
+      setTimer(inputTime * 60); // Chuyển giá trị từ phút sang giây
+      setPump(!pump); // Đổi trạng thái pump
+      setIsLocked(true); // Khóa nút
+    }
+  };
+
+  // Hàm xử lý khi nhấn Cancel trong hộp thoại
+  const handleCancel = () => {
+    setShowDialog(false); // Đóng hộp thoại
+  };
+
+  // Sử dụng useEffect để giảm timer mỗi giây
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000); // 1000ms = 1 giây
+
+      return () => clearInterval(interval); // Dọn dẹp interval khi unmount hoặc thay đổi
+    } else if (timer === 0 && isLocked) {
+      setIsLocked(false); // Mở khóa khi timer = 0
+    }
+  }, [timer]);
+
+  // Chuyển đổi từ giây sang phút và giây
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
+
+  return (
+    <div>
+      <button
+        onClick={openDialog}
+        className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+          pump
+            ? "bg-red-600 hover:bg-red-700"
+            : "bg-green-600 hover:bg-green-700"
+        } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+        disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
+      >
+        {pump ? "Turn Off" : "Turn On"}{" "}
+        {timer > 0
+          ? `(${minutes}:${seconds < 10 ? `0${seconds}` : seconds})`
+          : ""}
+      </button>
+
+      {/* Hiển thị hộp thoại */}
+      {showDialog && (
+        <div className="dialog">
+          <h3>Set Timer</h3>
+          <input
+            type="number"
+            value={inputTime}
+            onChange={(e) => setInputTime(e.target.value)}
+            placeholder="Enter minutes"
+          />
+          <button onClick={handleOk}>OK</button>
+          <button onClick={handleCancel}>Cancel</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default PumpControlButton;
