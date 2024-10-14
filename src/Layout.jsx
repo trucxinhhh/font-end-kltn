@@ -168,8 +168,13 @@ const Layout = () => {
       },
     });
     const dataVol = responseVol.data;
+    // console.log(dataVol.slice(-1)[0]["total"]);
     filteVolume(dataVol);
     localStorage.setItem("volume", JSON.stringify(dataVol));
+    localStorage.setItem(
+      "TotalVolume",
+      JSON.stringify(dataVol.slice(-1)[0]["total"])
+    );
 
     const responseMotor = await axios.get(url_data + "api/motor/30", {
       headers: {
@@ -323,7 +328,6 @@ const Layout = () => {
       "isChecked",
       JSON.stringify(response.data["system_mode"])
     );
-    console.log("system_mode", JSON.parse(localStorage.getItem("isChecked")));
   };
   // console.log(rpsNotify);
   //get inf once time

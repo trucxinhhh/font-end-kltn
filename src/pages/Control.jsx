@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 // import axios from "axios";
 import axios from "./checkToken";
-import { Line, Bar } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { Dialog } from "@headlessui/react";
 
-import { url_api, url_local } from "../Provider.jsx";
+import { url_api, url_local, url_data } from "../Provider.jsx";
 import {
   notifySuccess,
   notifyInfo,
@@ -40,9 +40,10 @@ const Control = () => {
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
-
   const [StatusSwitchMode, setStatusSwitchMode] = useState();
-
+  //volume
+  const [dataVol, setDataVol] = useState();
+  const [totals, setTotals] = useState({});
   // Change display in mobile view
   const [Display, setDisplay] = useState("1");
   // Dialog status
@@ -63,7 +64,9 @@ const Control = () => {
   const [TimeOff, setTimeOff] = useState(0);
   // volume in week
   const [totalPump1, setTotalPump1] = useState();
-  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(10);
+  const [VolumeDayMotor1, setVolumeDayMotor1] = useState(
+    JSON.parse(localStorage.getItem("TotalVolume"))
+  );
 
   //create thresh humi
   const [startThreshold, setStartThreshold] = useState(
@@ -84,8 +87,90 @@ const Control = () => {
   // flag to post pump status
   const [Flag, setFlag] = useState();
 
-  // const timeDayMotor1 = 12;
-  // const timeDayMotor2 = 12;
+  const getLastSevenDays = () => {
+    const dates = [];
+    const today = new Date().toISOString().slice(0, 10);
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(new Date(today).getDate() - i);
+      dates.push(date.toISOString().slice(0, 10));
+    }
+
+    return dates.reverse();
+  };
+
+  // Gọi hàm để lấy danh sách các ngày
+  const dateList = getLastSevenDays();
+
+  const filteVolume = async (listday, data) => {
+    console.log("aaaaaaaaa");
+    const filteredData = data.filter((item) => item.date === listday);
+    const maxTotal =
+      filteredData.length > 0
+        ? Math.max(...filteredData.map((item) => item.total))
+        : 0;
+    console.log("Max total for", listday, ":", maxTotal);
+    return maxTotal;
+  };
+
+  const calculateTotals = async () => {
+    const totalsObj = {};
+    for (const date of dateList) {
+      totalsObj[date] = await filteVolume(date, dataVol);
+    }
+    setTotals(totalsObj); // Update state with totals
+  };
+  const data2 = {
+    labels: dateList,
+    datasets: [
+      {
+        axis: "x",
+        label: "Total in a day",
+
+        data: totals,
+        fill: false,
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          // "rgb(201, 203, 207)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const optionsBar = {
+    indexAxis: "x",
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Times in day", // Set the y-axis title with the unit
+        },
+      },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "m³", // Set the y-axis title with the unit
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        labels: {
+          fontSize: 15,
+        },
+      },
+    },
+  };
 
   // change thresh humi and post
   const handleStartThresholdChange = (event) => {
@@ -226,12 +311,24 @@ const Control = () => {
     setCycleSample(response.data);
     localStorage.setItem("cycleSample", response.data);
   };
+  const getVol = async () => {
+    const responseVol = await axios.get(url_data + "api/volume/0", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    console.log("responseVol.data", responseVol.data);
+    setDataVol(responseVol.data);
+  };
 
   // Freq, Thresh
   useEffect(() => {
     getHumiThresh();
     getFrequencyPump();
     getSampleCycle();
+    getVol();
   }, []);
   const controlPanel = async () => {
     try {
@@ -327,6 +424,8 @@ const Control = () => {
       setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
       setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+      setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
+      calculateTotals();
     }, 1000);
 
     // Cleanup function để xóa interval khi component unmount
@@ -349,7 +448,7 @@ const Control = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-
+      console.log("typeof pump", typeof pump);
       postMode(isChecked, registerform);
       console.log("isLocked", isLocked);
     } else {
@@ -512,18 +611,18 @@ const Control = () => {
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
                   </div> */}
-                  {/* <div class="mt-1 text-base text-gray-600">
+                  <div class="mt-1 text-base text-gray-600">
                     Flow : {VolumeDayMotor1 + "  lits"}
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div
-                  className="ml-15 mt-10"
-                  style={{ maxWidth: "4S00px" }}
-                ></div>
+                <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
+                  {" "}
+                  <Bar data={data2} options={optionsBar} />
+                </div>
               </div>
             </div>
           </div>
@@ -702,7 +801,7 @@ const Control = () => {
                     <div className="p-4">
                       {isChecked == "manual" ? (
                         <div
-                          className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                          className={`mt-2 flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
                             pump ? "bg-gray-200" : ""
                           }`}
                         >
@@ -734,9 +833,24 @@ const Control = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="   ">
+                        <div className="mt-2">
+                          <p className=" ml-2 text-sm font-family:Times New Roman">
+                            Chế độ bơm liên tục là chế độ điều khiển máy bơm
+                            theo chu kỳ, trong đó Time On là thời gian máy bơm
+                            hoạt động và Time Off là thời gian máy bơm ngừng
+                            hoạt động (tính bằng phút).
+                          </p>
+                          <br></br>
+                          <p className="ml-2 text-sm font-family:Times New Roman">
+                            Giả sử: Time On = 180 phút và Time Off = 30 phút.
+                            Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết
+                            thời gian hoạt động (Time On), máy bơm sẽ ngừng
+                            trong 30 phút (Time Off) và sau đó tự động khởi động
+                            lại chu kỳ.
+                          </p>
+                          <br></br>
                           <div
-                            className={`flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                            className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -748,7 +862,7 @@ const Control = () => {
                               stroke-width="2"
                               stroke-linecap="round"
                               stroke-linejoin="round"
-                              class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus"
+                              class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
                             >
                               <path
                                 stroke="none"
@@ -761,20 +875,24 @@ const Control = () => {
                             </svg>
 
                             <input
-                              type="time"
-                              value={TimeOn}
+                              type="number"
+                              placeholder="Time On"
+                              // value={TimeOn}
                               onChange={(e) => {
                                 setTimeOn(e.target.value);
                               }}
-                              className="ml-2 text-center w-2/5 border-2 border-gray-500"
+                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                              required
                             />
+
                             <input
-                              type="time"
-                              value={TimeOff}
+                              type="number"
+                              // value={TimeOff}
+                              placeholder="Time Off"
                               onChange={(e) => {
                                 setTimeOff(e.target.value);
                               }}
-                              className="ml-2 text-center w-2/5 border-2 border-gray-500 "
+                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
                             />
                             <button
                               onClick={openDialog}
@@ -856,9 +974,9 @@ const Control = () => {
                   {/* <div class="mt-1 text-base text-gray-600">
                     Time : {timeDayMotor1}h
                   </div> */}
-                  {/* <div class="mt-1 text-base text-gray-600">
+                  <div class="mt-1 text-base text-gray-600">
                     Flow : {VolumeDayMotor1 + "  lits"}
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>

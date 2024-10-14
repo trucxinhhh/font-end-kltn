@@ -560,7 +560,7 @@ const Management = () => {
                   </span>
                   <div>
                     <input
-                      type="tel"
+                      type="number"
                       name="PhoneNumber"
                       className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
                         error ? "border-red-500" : "focus:border-sky-500"
