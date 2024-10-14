@@ -921,7 +921,7 @@ const Layout = () => {
                   {/* History */}
                   <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
-                    to="/Data-Analysis"
+                    to="/history"
                     onClick={() => {
                       setDisplay(false);
                     }}

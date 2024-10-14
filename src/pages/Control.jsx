@@ -982,10 +982,9 @@ const Control = () => {
             </div>
             <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div
-                  className="ml-15 mt-10"
-                  style={{ maxWidth: "4S00px" }}
-                ></div>
+                <div className="ml-15 mt-10" style={{ maxWidth: "400px" }}>
+                  <Bar data={data2} options={optionsBar} />
+                </div>
               </div>
             </div>
           </div>
@@ -994,30 +993,72 @@ const Control = () => {
           <div className=" ">
             <h1 className="ml-4 font-bold text-center mb-4"> Control Pump</h1>
             {/* Select mode */}
-            <div className="bg-white bg-opacity-50 p-2 items-center justify-center rounded-xl">
-              <label class="inline-flex items-center cursor-pointer">
+
+            <div className=" flex flex-col bg-white bg-opacity-50 p-2  rounded-xl ">
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  SET FREQUENCY PUMP (Hz)
+                </div>
                 <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={isChecked}
-                  onChange={ModeControl}
+                  type="text"
+                  value={frequencyPump}
+                  onChange={handleFrequencyPumpdChange}
+                  className="text-center w-1/5  border-2 border-gray-700"
                 />
-                <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  {isChecked ? "Mode Auto" : "Mode Manual"}
-                </span>
-              </label>
+
+                <button
+                  onClick={handleSaveFrequencyPumpClick}
+                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  SAMPLE CYCLE (Seconds)
+                </div>
+                <input
+                  type="text"
+                  value={cycleSample}
+                  onChange={(event) => setCycleSample(event.target.value)}
+                  className=" text-center w-1/5  border-2 border-gray-700 "
+                />
+
+                <button
+                  onClick={handleSaveCycleSample}
+                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+              </div>
+
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-blue-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  {/* {isChecked} */}
+                  {isChecked == "auto" ? "Auto" : "Manual"}
+                </div>
+
+                <label class="ml-1 mt-2 inline-flex font-bold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={StatusSwitchMode}
+                    onChange={(e) => ModeControl(e)}
+                  />
+                  <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                </label>
+              </div>
             </div>
             {/* End Select mode */}
-            {isChecked ? (
+            {isChecked == "auto" ? (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
                   <div class="flex flex-col gap-3">
-                    <div className="p-4 relative h-60 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
+                    <div className="p-4 relative h-72 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
                       <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET RULE
-                        </div>
+                        <h1 className="text-3xl font-bold mb-6 text-gray-700">
+                          Auto Mode
+                        </h1>
 
                         <p className="text-gray-600 mb-2">
                           Pump START when Humidity less than{" "}
@@ -1055,7 +1096,7 @@ const Control = () => {
 
                       <div>
                         <p className="text-gray-600 mb-2">
-                          Pump STOP when Humidity greater than{" "}
+                          Pump STOP when Humidity greater than
                           <span className="font-bold">{stopThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
@@ -1088,123 +1129,140 @@ const Control = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP
-                        </div>
-
-                        <p className="text-gray-600 mb-2">
-                          Pump speed control{" "}
-                          <span className="font-bold">{frequencyPump}Hz</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${
-                                frequencyPump * 2
-                              }%, #ccc ${frequencyPump * 2}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="text-right w-1/5"
-                          />
-                          Hz
-                          <button
-                            onClick={handleSaveFrequencyPumpClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="p-4 h-5/6 w-full  ">
                 <div className=" h-full w-full">
-                  <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 rounded-3xl shadow-md">
-                    <h1 className="text-3xl font-bold mb-6 text-gray-700">
-                      Pump Control
-                    </h1>
-                    <div
-                      className={`flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
-                        pump ? "bg-gray-200" : ""
-                      }`}
-                    >
-                      <span
-                        className={`text-lg font-medium ${
-                          pump ? "text-blue-600" : "text-gray-600"
-                        }`}
-                      >
-                        {" "}
-                        Pump : {pump ? "ON" : "OFF"}
-                      </span>
-                      <button
-                        onClick={() => handleClick()}
-                        className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                          pump
-                            ? "bg-red-600 hover:bg-red-700"
-                            : "bg-green-600 hover:bg-green-700"
-                        }`}
-                      >
-                        {pump ? "Turn Off" : "Turn On"}
-                      </button>
-                    </div>
-                    <div className="p-4 relative h-40 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <div class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                          SET FREQUENCY PUMP
-                        </div>
-
-                        <p className="text-gray-600 mb-2">
-                          Pump speed control{" "}
-                          <span className="font-bold">{frequencyPump}Hz</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${
-                                frequencyPump * 2
-                              }%, #ccc ${frequencyPump * 2}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="50"
-                            value={frequencyPump}
-                            onChange={handleFrequencyPumpdChange}
-                            className="text-right w-1/5"
-                          />
-                          Hz
-                          <button
-                            onClick={handleSaveFrequencyPumpClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  <div className="max-w-4xl mx-auto  bg-white border border-gray-300 rounded-3xl shadow-md">
+                    <ul className=" flex justify-center w-full overflow-x-auto ">
+                      <li class="   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
+                        <span
+                          class="ml-2 underline hover:underline-offset-8  "
+                          onClick={() => {
+                            sendMode("manual");
+                          }}
+                        >
+                          Manual
+                        </span>
+                      </li>
+                      <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
+                        <span
+                          class="ml-2 underline hover:underline-offset-8 "
+                          onClick={() => {
+                            sendMode("sequent");
+                          }}
+                        >
+                          Sequent
+                        </span>
+                      </li>
+                    </ul>
+                    <div className="p-4">
+                      {isChecked == "manual" ? (
+                        <div
+                          className={`mt-2 flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
+                            pump ? "bg-gray-200" : ""
+                          }`}
+                        >
+                          <span
+                            className={`text-lg font-medium ${
+                              pump ? "text-blue-600" : "text-gray-600"
+                            }`}
                           >
-                            Save
+                            Pump : {pump ? "ON" : "OFF"}
+                          </span>
+
+                          <button
+                            onClick={openDialog}
+                            className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                              pump
+                                ? "bg-red-600 hover:bg-red-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            } ${
+                              isLocked ? "cursor-not-allowed opacity-50" : ""
+                            }`}
+                            disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
+                          >
+                            {pump ? "Turn Off" : "Turn On"}{" "}
+                            {timerSend > 0
+                              ? `(${minutes}:${
+                                  seconds < 10 ? `0${seconds}` : seconds
+                                })`
+                              : ""}
                           </button>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="mt-2">
+                          <p className=" ml-2 text-sm font-family:Times New Roman">
+                            Chế độ bơm liên tục là chế độ điều khiển máy bơm
+                            theo chu kỳ, trong đó Time On là thời gian máy bơm
+                            hoạt động và Time Off là thời gian máy bơm ngừng
+                            hoạt động (tính bằng phút).
+                          </p>
+                          <br></br>
+                          <p className="ml-2 text-sm font-family:Times New Roman">
+                            Giả sử: Time On = 180 phút và Time Off = 30 phút.
+                            Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết
+                            thời gian hoạt động (Time On), máy bơm sẽ ngừng
+                            trong 30 phút (Time Off) và sau đó tự động khởi động
+                            lại chu kỳ.
+                          </p>
+                          <br></br>
+                          <div
+                            className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                              <path d="M9 12h6" />
+                              <path d="M12 9v6" />
+                            </svg>
+
+                            <input
+                              type="number"
+                              placeholder="Time On"
+                              // value={TimeOn}
+                              onChange={(e) => {
+                                setTimeOn(e.target.value);
+                              }}
+                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                              required
+                            />
+
+                            <input
+                              type="number"
+                              // value={TimeOff}
+                              placeholder="Time Off"
+                              onChange={(e) => {
+                                setTimeOff(e.target.value);
+                              }}
+                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                            />
+                            <button
+                              onClick={openDialog}
+                              className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

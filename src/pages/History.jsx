@@ -25,23 +25,25 @@ const History = () => {
 
   // DATA SENSOR
   useEffect(() => {
-    async function loadData() {
-      const response = await axios.get(
-        url_data + "api/" + `${DataList}` + "/30",
-        {
-          headers: {
-            Authorization: access_token,
-            accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-      const dt1 = response.data;
+    if (!Flag) {
+      async function loadData() {
+        const response = await axios.get(
+          url_data + "api/" + `${DataList}` + "/30",
+          {
+            headers: {
+              Authorization: access_token,
+              accept: "application/json",
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+        const dt1 = response.data;
 
-      setData(dt1);
+        setData(dt1);
+      }
+      loadData();
     }
-    loadData();
-  }, [data1]);
+  }, [data1, Flag]);
   //apply button
   const DateFil = async () => {
     setFlag(false);
@@ -74,7 +76,7 @@ const History = () => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      // console.log("filter",response.data.length);
+      console.log("filter", response.data);
       if (response.data.length == 0) {
         notifyError("Data is null. Please try again!");
       } else {
