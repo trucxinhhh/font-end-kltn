@@ -144,7 +144,7 @@ const History = () => {
                   onFocus={() => setInputType1("date")}
                   onBlur={() => setInputType1("text")}
                   onChange={(e) => setStartDay(e.target.value)}
-                  className="rounded-xl w-28 h-10"
+                  className="rounded-xl w-28 h-10 shadow-lg"
                 />
                 <input
                   type={inputType2}
@@ -152,7 +152,7 @@ const History = () => {
                   onFocus={() => setInputType2("date")}
                   onBlur={() => setInputType2("text")}
                   onChange={(e) => setEndDay(e.target.value)}
-                  className="rounded-xl ml-2 w-28 h-10"
+                  className="rounded-xl ml-2 w-28 h-10 shadow-lg"
                 />
                 <Button
                   className="bg-blue-600 text-white float-right text-xs h-10 ml-2"
@@ -362,7 +362,7 @@ const History = () => {
                 <input
                   type={inputType1}
                   placeholder="   Start Day"
-                  onFocus={() => setInputType1("date")}
+                  onTouchStart={() => setInputType1("date")}
                   onBlur={() => setInputType1("text")}
                   onChange={(e) => setStartDay(e.target.value)}
                   className="rounded-xl w-28 h-10 shadow-lg"
@@ -370,7 +370,7 @@ const History = () => {
                 <input
                   type={inputType2}
                   placeholder="    End Day"
-                  onFocus={() => setInputType2("date")}
+                  onTouchStart={() => setInputType2("date")}
                   onBlur={() => setInputType2("text")}
                   onChange={(e) => setEndDay(e.target.value)}
                   className="rounded-xl ml-2 w-28 h-10 shadow-lg"

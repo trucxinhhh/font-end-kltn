@@ -415,7 +415,7 @@ const Control = () => {
       postMode(mode, data);
     } else {
       const mode = "manual";
-      const data = { status: e.target.checked, timerSend: 0 };
+      const data = { status: e.target.checked };
       postMode(mode, data);
     }
   };
