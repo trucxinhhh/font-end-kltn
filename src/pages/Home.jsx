@@ -253,7 +253,7 @@ function App() {
     datasets: [
       {
         axis: "x",
-        label: "Total in a day",
+        label: "Total in a day (m³)",
 
         data: TotalHour,
         fill: false,
@@ -280,13 +280,6 @@ function App() {
         title: {
           display: true,
           text: "Times in day", // Set the y-axis title with the unit
-        },
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "m³", // Set the y-axis title with the unit
         },
       },
     },

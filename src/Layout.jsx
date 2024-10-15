@@ -317,30 +317,29 @@ const Layout = () => {
   };
   //get mode control
   const GetMode = async () => {
-    const response = await axios.get(url_api + "control_mode", {
+    const response = await axios.get(url_data + "api/motor/1", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    localStorage.setItem(
-      "isChecked",
-      JSON.stringify(response.data["system_mode"])
-    );
+    console.log(response.data[0]["mode"]);
+    localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
   };
   // console.log(rpsNotify);
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
+    GetMode();
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
-      GetMode();
+
       // checkSensorData();
     }, TimeSpamLoadData);
 

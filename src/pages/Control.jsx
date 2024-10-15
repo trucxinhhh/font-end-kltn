@@ -104,13 +104,12 @@ const Control = () => {
   const dateList = getLastSevenDays();
 
   const filteVolume = async (listday, data) => {
-    console.log("aaaaaaaaa");
     const filteredData = data.filter((item) => item.date === listday);
     const maxTotal =
       filteredData.length > 0
         ? Math.max(...filteredData.map((item) => item.total))
         : 0;
-    console.log("Max total for", listday, ":", maxTotal);
+
     return maxTotal;
   };
 
@@ -126,7 +125,7 @@ const Control = () => {
     datasets: [
       {
         axis: "x",
-        label: "Total in a day",
+        label: "m³",
 
         data: totals,
         fill: false,
@@ -152,14 +151,7 @@ const Control = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: "Times in day", // Set the y-axis title with the unit
-        },
-      },
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: "m³", // Set the y-axis title with the unit
+          text: "Day times", // Set the y-axis title with the unit
         },
       },
     },
@@ -319,7 +311,7 @@ const Control = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log("responseVol.data", responseVol.data);
+
     setDataVol(responseVol.data);
   };
 
@@ -330,80 +322,55 @@ const Control = () => {
     getSampleCycle();
     getVol();
   }, []);
-  const controlPanel = async () => {
-    try {
-      const url = url_api + `control/motor`;
-      const response = await axios.post(
-        url,
-        {
-          status: pump,
-        },
-        {
-          headers: {
-            accept: "application/json",
-            Authorization: access_token,
-          },
-        }
-      );
-      if (pump) {
-        notifyInfo(`Pump  is ON`);
-      } else {
-        notifyInfo(`Pump is OFF`);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      notifyError(error);
-    }
+  const resetGateway = async () => {
+    const registerform = {
+      masterusr: localStorage.getItem("username"),
+      masterpwd: PassToCheck,
+    };
+    const response = await axios.post(url_api + "rsgw", registerform, {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: access_token,
+      },
+    });
+
+    notifyInfo(response.data["message"]);
   };
-  const handleClick = async () => {
-    if (role == "admin") {
-      setPumpSend(!valueMotor1);
-      setFlag(true);
-    } else {
-      notifyError("Permission Denied!");
-    }
-  };
-  if (Flag) {
-    controlPanel();
-    setFlag(false);
-  }
 
   const dataMotor = localStorage.getItem("dataMotor");
   const dt1 = JSON.parse(dataMotor);
 
   const postMode = async (mode, data) => {
-    try {
-      const response = await axios.post(url_api + "control/" + mode, data, {
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: access_token,
-        },
-      });
+    const response = await axios.post(url_api + "control/" + mode, data, {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: access_token,
+      },
+    });
+    console.log("response motor", response.data["message"]);
+    notifyInfo(response.data["message"]);
+    const responseMode = await axios.get(url_api + "control_mode", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
-      const responseMode = await axios.get(url_api + "control_mode", {
-        headers: {
-          Authorization: access_token,
-          accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-
-      setIsChecked(responseMode.data["system_mode"]);
-      localStorage.setItem(
-        "isChecked",
-        JSON.stringify(responseMode.data["system_mode"])
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    setIsChecked(responseMode.data["system_mode"]);
+    localStorage.setItem(
+      "isChecked",
+      JSON.stringify(responseMode.data["system_mode"])
+    );
   };
   const sendMode = async (mode) => {
     if (mode == "sequent") {
       const data = { on: TimeOn, off: TimeOff };
       postMode(mode, data);
     } else {
-      const data = { status: true, timerSend: 0 };
+      const data = { status: true, timerSend: 1 };
       postMode(mode, data);
     }
   };
@@ -437,19 +404,20 @@ const Control = () => {
 
   const closeDialog = async () => {
     if (isChecked == "manual") {
+      console.log("cas");
       if (inputTime > 0) {
         setTimer(inputTime * 60);
-        handleClick();
+        // handleClick();
         setIsLocked(true);
       }
       const registerform = {
-        timer: timerSend,
-        status: pump,
+        timer: inputTime,
+        status: !pump,
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      console.log("typeof pump", typeof pump);
-      postMode(isChecked, registerform);
+      console.log("registerform", registerform);
+      postMode("motor", registerform);
       console.log("isLocked", isLocked);
     } else {
       const registerform = {
@@ -477,6 +445,8 @@ const Control = () => {
 
       return () => clearInterval(interval);
     } else if (timerSend === 0 && isLocked) {
+      setTimer(0);
+      setInputTime(0);
       setIsLocked(false);
     }
   }, [timerSend]);
@@ -487,7 +457,7 @@ const Control = () => {
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}
-        onClose={closeDialog}
+        onClose={hiddenDialog}
         className="fixed inset-0 z-10 overflow-y-auto"
       >
         {isChecked === "manual" ? (
@@ -617,11 +587,24 @@ const Control = () => {
                 </div>
               </div>
             </div>
-            <div className=" h-2/3 w-full p-4 mt-3">
+            {/* <div className=" h-2/3 w-full p-4 mt-3">
               <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
                 <div className="ml-15 mt-10" style={{ maxWidth: "4S00px" }}>
-                  {" "}
                   <Bar data={data2} options={optionsBar} />
+                </div>
+              </div>
+            </div> */}
+            <div className="h-2/3 w-full p-4 mt-3">
+              <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
+                <div className="w-full h-full">
+                  <Bar
+                    data={data2}
+                    options={{
+                      ...optionsBar,
+                      responsive: true,
+                      maintainAspectRatio: false,
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -671,7 +654,18 @@ const Control = () => {
                   Save
                 </button>
               </div>
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-red-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  Reset Alarm
+                </div>
 
+                <button
+                  onClick={resetGateway}
+                  className="mt-1 w-2/5 bg-red-500 text-white rounded-3xl "
+                >
+                  Reset
+                </button>
+              </div>
               <div className=" mt-1 flex">
                 <div class="list-none w-3/5 flex items-center text-blue-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
                   {/* {isChecked} */}
@@ -877,7 +871,6 @@ const Control = () => {
                             <input
                               type="number"
                               placeholder="Time On"
-                              // value={TimeOn}
                               onChange={(e) => {
                                 setTimeOn(e.target.value);
                               }}
@@ -887,7 +880,6 @@ const Control = () => {
 
                             <input
                               type="number"
-                              // value={TimeOff}
                               placeholder="Time Off"
                               onChange={(e) => {
                                 setTimeOff(e.target.value);
@@ -980,11 +972,16 @@ const Control = () => {
                 </div>
               </div>
             </div>
-            <div className=" h-2/3 w-full p-4 mt-3">
-              <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl items-center justify-center">
-                <div className="ml-15 mt-10" style={{ maxWidth: "400px" }}>
-                  <Bar data={data2} options={optionsBar} />
-                </div>
+            <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
+              <div className="w-full h-full">
+                <Bar
+                  data={data2}
+                  options={{
+                    ...optionsBar,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -1031,7 +1028,18 @@ const Control = () => {
                   Save
                 </button>
               </div>
+              <div className=" mt-1 flex">
+                <div class="list-none w-3/5 flex items-center text-red-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                  Reset Alarm
+                </div>
 
+                <button
+                  onClick={resetGateway}
+                  className="mt-1 w-2/5 bg-red-500 text-white rounded-3xl "
+                >
+                  Reset
+                </button>
+              </div>
               <div className=" mt-1 flex">
                 <div class="list-none w-3/5 flex items-center text-blue-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
                   {/* {isChecked} */}
@@ -1049,6 +1057,7 @@ const Control = () => {
                 </label>
               </div>
             </div>
+
             {/* End Select mode */}
             {isChecked == "auto" ? (
               <div className="p-4 h-5/6 w-full  ">
