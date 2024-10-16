@@ -349,7 +349,7 @@ const Control = () => {
         Authorization: access_token,
       },
     });
-    console.log("response motor", response.data["message"]);
+    // console.log("response motor", response.data["message"]);
     notifyInfo(response.data["message"]);
     const responseMode = await axios.get(url_api + "control_mode", {
       headers: {
@@ -367,11 +367,14 @@ const Control = () => {
   };
   const sendMode = async (mode) => {
     if (mode == "sequent") {
-      const data = { on: TimeOn, off: TimeOff };
-      postMode(mode, data);
+      // const data = { mode: "sequent" };
+      // postMode(mode, data);
+      setIsChecked("sequent");
     } else {
-      const data = { status: true, timerSend: 1 };
+      // const data = { status: true, timerSend: 1 };
+      const data = { mode: "manual" };
       postMode(mode, data);
+      // setIsChecked("manual");
     }
   };
   const ModeControl = async (e) => {
@@ -390,7 +393,7 @@ const Control = () => {
     const intervalId = setInterval(() => {
       setValueMotor1(JSON.parse(localStorage.getItem("pump1Status")));
       setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
-      setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+      // setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
       calculateTotals();
     }, 1000);
@@ -401,10 +404,10 @@ const Control = () => {
   const openDialog = () => {
     setIsDialogOpen(true);
   };
-
+  // console.log("isChecked", isChecked);
   const closeDialog = async () => {
     if (isChecked == "manual") {
-      console.log("cas");
+      // console.log("cas");
       if (inputTime > 0) {
         setTimer(inputTime * 60);
         // handleClick();
@@ -416,9 +419,9 @@ const Control = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      console.log("registerform", registerform);
+      // console.log("registerform", registerform);
       postMode("motor", registerform);
-      console.log("isLocked", isLocked);
+      // console.log("isLocked", isLocked);
     } else {
       const registerform = {
         on: TimeOn,
@@ -426,7 +429,7 @@ const Control = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      console.log("typeof TimeOff", typeof TimeOff);
+      // console.log("registerform", registerform);
       postMode(isChecked, registerform);
     }
 

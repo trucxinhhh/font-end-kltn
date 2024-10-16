@@ -324,7 +324,7 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log(response.data[0]["mode"]);
+    // console.log(response.data[0]["mode"]);
     localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
   };
   // console.log(rpsNotify);
