@@ -200,7 +200,7 @@ const Control = () => {
             },
           }
         );
-
+        getHumiThresh();
         notifySuccess("Update Thresh for humi success");
       } catch (error) {
         console.error("Error:", error);
@@ -277,6 +277,7 @@ const Control = () => {
       },
     });
     // console.log(response);
+    console.log(response.data["lower"]);
     localStorage.setItem("low", response.data["lower"]);
     localStorage.setItem("up", response.data["upper"]);
   };
@@ -404,13 +405,10 @@ const Control = () => {
   const openDialog = () => {
     setIsDialogOpen(true);
   };
-  // console.log("isChecked", isChecked);
   const closeDialog = async () => {
     if (isChecked == "manual") {
-      // console.log("cas");
       if (inputTime > 0) {
         setTimer(inputTime * 60);
-        // handleClick();
         setIsLocked(true);
       }
       const registerform = {
@@ -419,9 +417,7 @@ const Control = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      // console.log("registerform", registerform);
       postMode("motor", registerform);
-      // console.log("isLocked", isLocked);
     } else {
       const registerform = {
         on: TimeOn,
@@ -429,7 +425,6 @@ const Control = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      // console.log("registerform", registerform);
       postMode(isChecked, registerform);
     }
 

@@ -328,11 +328,25 @@ const Layout = () => {
     localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
   };
   // console.log(rpsNotify);
+  const getHumiThresh = async () => {
+    const response = await axios.get(url_api + "threshold/humi", {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+    // console.log(response);
+    localStorage.setItem("low", response.data["lower"]);
+    localStorage.setItem("up", response.data["upper"]);
+  };
+
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
     GetMode();
+    getHumiThresh();
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
@@ -705,10 +719,9 @@ const Layout = () => {
                     </ul>
                   </div>
                   <div className="p-2 w-46 h-2/5 rounded-r-xl rounded-l-xl bg-white Green_screen">
-                    <p className="ml-4 font-bold pacifico-regular text-center text-3xl mb-4">
+                    <p className="ml-4 font-bold pacifico-regular text-center text-2xl mb-4">
                       Information
                     </p>
-
                     <table className="ml-4 w-4/5">
                       <tbody>
                         <tr>

@@ -174,15 +174,18 @@ function App() {
       case "pH":
         const checkMAX = name + "_MAX";
         const checkMIN = name + "_MIN";
+
+        // console.log("MAX", Thresh.DataMap["Humi_MAX"]);
         if (
           value >= Thresh.DataMap[checkMIN] &&
-          value <= Thresh.DataMap[checkMAX]
+          value < Thresh.DataMap[checkMAX]
         ) {
           return "shadow-cyan-600";
         } else {
+          // console.log(name, value);
           return "shadow-red-600";
         }
-      case "":
+      // case "":
     }
   };
   // rename sensor

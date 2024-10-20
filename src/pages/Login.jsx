@@ -3,9 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {url_api,url_local} from "../Provider.jsx";
+import { url_api, url_local } from "../Provider.jsx";
 function App() {
   const [errorValue, setError] = useState(null);
+  const [usr, setusr] = useState();
+  const [pw, setpw] = useState();
   const navigate = useNavigate();
 
   const setToken = (token) => {
@@ -22,10 +24,10 @@ function App() {
   const postusr = async () => {
     try {
       const response = await axios.post(
-        url_api+"token",
+        url_api + "token",
         new URLSearchParams({
-          username: localStorage.getItem("username"),
-          password: localStorage.getItem("password"),
+          username: usr,
+          password: pw,
         }),
         {
           headers: {
@@ -37,6 +39,9 @@ function App() {
 
       const token = response.data.access_token;
       if (token) {
+        localStorage.setItem("password", usr);
+        localStorage.setItem("username", pw);
+
         setToken(token);
         navigate("/home");
       } else {
@@ -81,7 +86,8 @@ function App() {
             name="username"
             className="login_input mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
             placeholder="Enter account to log in"
-            onChange={(e) => localStorage.setItem("username", e.target.value)}
+            // onChange={(e) => localStorage.setItem("username", e.target.value)}
+            onChange={(e) => setusr(e.target.value)}
           />
 
           <div className="mt-4 inline-flex items-center w-full text-sm font-semibold text-black transition-colors duration-150 cursor-pointer hover:text-green-500">
@@ -108,7 +114,8 @@ function App() {
             name="password"
             className="login_input mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
             placeholder="Password"
-            onChange={(e) => localStorage.setItem("password", e.target.value)}
+            // onChange={(e) => localStorage.setItem("password", e.target.value)}
+            onChange={(e) => setpw(e.target.value)}
           />
 
           <button
