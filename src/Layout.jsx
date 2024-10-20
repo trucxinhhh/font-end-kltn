@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 const TimeDelays = 60 * 30;
-const TimeSpamLoadData = 1 * 1000; //seconds
+const TimeSpamLoadData = 3 * 60 * 1000; // n * 1000 *60 = n (min)
 
 const Layout = () => {
   const location = useLocation();
@@ -148,6 +148,8 @@ const Layout = () => {
   };
   // get data all
   async function loadData() {
+    console.log("dc 3' chua ma zo goi", new Date().toLocaleTimeString());
+
     //get data sensor
     const response = await axios.get(url_data + "api/data/30", {
       headers: {
@@ -341,13 +343,23 @@ const Layout = () => {
     localStorage.setItem("up", response.data["upper"]);
   };
 
+  // //get inf once time
+  // useEffect(() => {
+  //   getInf();
+  //   getIn4();
+  //   GetMode();
+  //   getHumiThresh();
+  //   loadData();
+  // }, [rpsNotify]); // Chỉ chạy một lần khi component mount
+
   //get inf once time
   useEffect(() => {
     getInf();
     getIn4();
     GetMode();
     getHumiThresh();
-  }, [rpsNotify]); // Chỉ chạy một lần khi component mount
+    loadData();
+  }, []); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
     // Thiết lập interval để gọi loadData mỗi giây

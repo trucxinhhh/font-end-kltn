@@ -53,7 +53,6 @@ const Control = () => {
     JSON.parse(localStorage.getItem("pump1Status"))
   );
   const [pump, setPumpSend] = useState(valueMotor1);
-  const [statusToContol, setStatusToContol] = useState();
   //mode in manual
   const [PassToCheck, SetPassCheck] = useState("");
   const [timerSend, setTimer] = useState(0);
@@ -83,9 +82,6 @@ const Control = () => {
   const [cycleSample, setCycleSample] = useState(
     localStorage.getItem("cycleSample")
   );
-
-  // flag to post pump status
-  const [Flag, setFlag] = useState();
 
   const getLastSevenDays = () => {
     const dates = [];
