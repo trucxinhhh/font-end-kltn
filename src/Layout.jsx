@@ -10,8 +10,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-const TimeDelays = 60 * 30;
-const TimeSpamLoadData = 3 * 60 * 1000; // n * 1000 *60 = n (min)
+
+const TimeToSpam = 5; //seconds
+const TimeDelaysNotify = 30; //min
+const TimeSpamLoadData = TimeToSpam * 1000;
+const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
 
 const Layout = () => {
   const location = useLocation();
@@ -51,7 +54,7 @@ const Layout = () => {
   const notify = (message) => {
     toast.warning(message.toString(), {
       position: "top-center", // Position at the top
-      autoClose: 1000, // Auto close after 3 seconds
+      autoClose: 3000, // Auto close after 3 seconds
     });
   };
   const RPSNotify = (message) => {
@@ -147,9 +150,8 @@ const Layout = () => {
     localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
   };
   // get data all
-  async function loadData() {
-    console.log("dc 3' chua ma zo goi", new Date().toLocaleTimeString());
-
+  // async function loadData() {
+  const loadData = async () => {
     //get data sensor
     const response = await axios.get(url_data + "api/data/30", {
       headers: {
@@ -217,7 +219,7 @@ const Layout = () => {
         }
       }
     }
-  }
+  };
   // post and resize avatar
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
@@ -343,15 +345,6 @@ const Layout = () => {
     localStorage.setItem("up", response.data["upper"]);
   };
 
-  // //get inf once time
-  // useEffect(() => {
-  //   getInf();
-  //   getIn4();
-  //   GetMode();
-  //   getHumiThresh();
-  //   loadData();
-  // }, [rpsNotify]); // Chỉ chạy một lần khi component mount
-
   //get inf once time
   useEffect(() => {
     getInf();
@@ -359,17 +352,12 @@ const Layout = () => {
     GetMode();
     getHumiThresh();
     loadData();
-  }, []); // Chỉ chạy một lần khi component mount
+  }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
-    // Thiết lập interval để gọi loadData mỗi giây
     const intervalId = setInterval(() => {
       loadData();
-
-      // checkSensorData();
     }, TimeSpamLoadData);
-
-    // Cleanup function để xóa interval khi component unmount
     return () => clearInterval(intervalId);
   });
 
@@ -384,8 +372,10 @@ const Layout = () => {
           >
             {mode ? (
               <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
-                <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
-                  <h1>Change Information</h1>
+                <div className="relative items-center justify-center bg-white rounded-lg max-w-sm mx-auto p-6">
+                  <h1 className="freeman-regular text-2xl  ">
+                    Change Information
+                  </h1>
                   <div class="relative">
                     <input
                       type="text"
@@ -449,14 +439,14 @@ const Layout = () => {
                   <div className="mt-4 flex justify-end">
                     <button
                       onClick={closeDialog}
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition-colors duration-150"
+                      className="px-4 py-2 bg-[#EC8305] text-white rounded-md hover:bg-red-700 transition-colors duration-150"
                     >
                       Cancel
                     </button>
 
                     <button
                       onClick={() => openDialog(false)}
-                      className="ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+                      className="ml-2 px-4 py-2 bg-[#024CAA] text-white rounded-md hover:bg-green-700 transition-colors duration-150"
                     >
                       Submit
                     </button>
@@ -484,13 +474,13 @@ const Layout = () => {
                   <div className="mt-4 flex justify-end">
                     <button
                       onClick={closeDialog}
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition-colors duration-150"
+                      className="px-4 py-2 bg-[#EC8305] text-white rounded-md hover:bg-red-700 transition-colors duration-150"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={sendChange}
-                      className="ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+                      className="ml-2 px-4 py-2 bg-[#024CAA] text-white rounded-md hover:bg-green-700 transition-colors duration-150"
                     >
                       Submit
                     </button>
@@ -500,6 +490,7 @@ const Layout = () => {
             )}
           </Dialog>
           <ToastContainer />
+          {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
             <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
               <div className=" flex  bg-white bg-opacity-50 h-full rounded-l-3xl rounded-r-3xl">
@@ -521,17 +512,17 @@ const Layout = () => {
                         onChange={handleImageChange}
                       />
                       <div style={{ marginLeft: 10 }}>
-                        <p className="roboto-flex text-2xl">
+                        <p className="playwrite-gb-s  text-2xl">
                           <strong className="font-bold">
                             {localStorage.getItem("full_name")}
                           </strong>
                         </p>
-                        <span className="roboto-flex">{Role}</span>
+                        <span className="playwrite-gb-s ">{Role}</span>
                       </div>
                     </div>
                     <br />
                     <ul className="fmt-5 leading-10 flex flex-col ">
-                      <a className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600">
+                      <a className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="34"
@@ -552,19 +543,19 @@ const Layout = () => {
 
                         <Link to="/home">
                           <span
-                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
+                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
                           >
-                            Dashboard
+                            Trang chủ
                           </span>
                         </Link>
                       </a>
                       {Role === "admin" && (
                         <Link to="/user-management">
                           <a
-                            className="mt-2 inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                            className="mt-2 inline-flex items-center w-full text-lg text-[#091057] font-bold  transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
                             href=""
                           >
                             <svg
@@ -591,19 +582,19 @@ const Layout = () => {
                             </svg>
 
                             <span
-                              className="ml-4 mt-1 archivo text-xl justify-center items-center"
+                              className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
                               onClick={() => {
                                 setDisplay(false);
                               }}
                             >
-                              User Management
+                              Quản lý người dùng
                             </span>
                           </a>
                         </Link>
                       )}
                       <Link to="/control">
                         <a
-                          className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
                           href=""
                         >
                           <svg
@@ -631,18 +622,18 @@ const Layout = () => {
                           </svg>
 
                           <span
-                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
+                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
                           >
-                            Control Panel
+                            Bảng Điều Khiển
                           </span>
                         </a>
                       </Link>
                       <Link to="/history">
                         <a
-                          className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
                           href=""
                         >
                           <svg
@@ -665,18 +656,18 @@ const Layout = () => {
                           </svg>
 
                           <span
-                            className="ml-4 mt-1 archivo text-xl justify-center items-center"
+                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
                             onClick={() => {
                               setDisplay(false);
                             }}
                           >
-                            History
+                            Lịch sử
                           </span>
                         </a>
                       </Link>
                       <Link to="/about-us">
                         <a
-                          className="inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
                           href=""
                         >
                           <svg
@@ -697,13 +688,13 @@ const Layout = () => {
                             <path d="M11 12h1v4h1" />
                           </svg>
 
-                          <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                            About us
+                          <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                            Hướng dẫn sử dụng
                           </span>
                         </a>
                       </Link>
                       <a
-                        className="ml-1 inline-flex items-center w-full text-lg text-green-500 font-bold transition-colors duration-150 cursor-pointer hover:text-teal-600"
+                        className="ml-1 inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
                         href=""
                         onClick={() => goOut()}
                       >
@@ -724,54 +715,70 @@ const Layout = () => {
                           <path d="M9 12h12l-3 -3" />
                           <path d="M18 15l3 -3" />
                         </svg>
-                        <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                          Logout
+                        <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                          Đăng Xuất
                         </span>
                       </a>
                     </ul>
                   </div>
                   <div className="p-2 w-46 h-2/5 rounded-r-xl rounded-l-xl bg-white Green_screen">
-                    <p className="ml-4 font-bold pacifico-regular text-center text-2xl mb-4">
-                      Information
+                    <p className=" mt-1 font-bold freeman-regular text-[#10375C] text-center text-3xl mb-2">
+                      Bảng thông tin
                     </p>
-                    <table className="ml-4 w-4/5">
+                    <table className="ml-7 w-4/5 text-lg text-[#091057]">
                       <tbody>
                         <tr>
-                          <th className="text-left ">Project:</th>
-                          <td className="text-right">{newNameProject}</td>
+                          <th className="text-left  freeman-regular ">
+                            Project:
+                          </th>
+                          <td className="text-right  freeman-regular ">
+                            {newNameProject}
+                          </td>
                         </tr>
                         <tr>
-                          <th className="text-left">Start Day:</th>
-                          <td className="text-right">{newstartDay}</td>
+                          <th className="text-left freeman-regular">
+                            Start Day:
+                          </th>
+                          <td className="text-right freeman-regular">
+                            {newstartDay}
+                          </td>
                         </tr>
                         <tr>
-                          <th className="text-left">Harvest Day:</th>
-                          <td className="text-right">{newHarvestDate}</td>
+                          <th className="text-left freeman-regular">
+                            Harvest Day:
+                          </th>
+                          <td className="text-right freeman-regular">
+                            {newHarvestDate}
+                          </td>
                         </tr>
                         <tr>
-                          <th className="text-left">Stage:</th>
-                          <td className="text-right">{newStage}</td>
+                          <th className="text-left freeman-regular">Stage:</th>
+                          <td className="text-right freeman-regular">
+                            {newStage}
+                          </td>
                         </tr>
                         <tr>
-                          <th className="text-left">Quantity:</th>
-                          <td className="text-right">
+                          <th className="text-left freeman-regular">
+                            Quantity:
+                          </th>
+                          <td className="text-right freeman-regular">
                             {newQuantity} <FontAwesomeIcon icon={faTree} />
                           </td>
                         </tr>
                         <tr>
-                          <th className="text-left">Area:</th>
-                          <td className="text-right">
+                          <th className="text-left freeman-regular">Area:</th>
+                          <td className="text-right freeman-regular">
                             {newArea} m<sup>2</sup>
                           </td>
                         </tr>
                       </tbody>
                     </table>
 
-                    <div className="flex justify-center mt-1">
+                    <div className="flex justify-center mt-2">
                       <button
                         value="create"
                         onClick={() => openDialog(true)}
-                        className="px-4 py-1 button-create-user bg-green-500 transition-colors duration-150 cursor-pointer hover:bg-green-900 text-cyan-50 rounded-full font-bold"
+                        className="px-4 py-1 button-create-user bg-[#EC8305] transition-colors duration-150 cursor-pointer hover:bg-[#024CAA] text-cyan-50 rounded-full font-bold"
                       >
                         Change Project
                       </button>
@@ -779,7 +786,7 @@ const Layout = () => {
                   </div>
                 </div>
                 {/* -------------------------- End List Box----------------------------- */}
-                <div className="p-4 w-4/5">
+                <div className=" w-4/5">
                   <Outlet />
                 </div>
               </div>
@@ -795,7 +802,7 @@ const Layout = () => {
                   <div className=" m-3 w-1/5">
                     <img
                       className="h-16 w-16 rounded-full"
-                      src={imagePath}
+                      src={ImgUsr(localStorage.getItem("username"))}
                       alt={`${localStorage.getItem("role")}`}
                       onClick={handleImageClick}
                     />
@@ -810,7 +817,7 @@ const Layout = () => {
 
                   {/* User Inf*/}
                   <div className=" mt-4 text-white w-3/5">
-                    <p className="roboto-flex">
+                    <p className="freeman-regular">
                       <strong>{localStorage.getItem("full_name")}</strong>
                     </p>
                     <span>{Role}</span>
@@ -849,7 +856,7 @@ const Layout = () => {
               <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#0A6847]">
                 <ul className="fmt-6 leading-10 flex flex-col space-y-4">
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                     to="/home"
                     onClick={() => {
                       setDisplay(false);
@@ -872,13 +879,13 @@ const Layout = () => {
                       <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
                       <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                     </svg>
-                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
+                    <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
                       Dashboard
                     </span>
                   </Link>
                   {Role === "admin" && (
                     <Link
-                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                       to="/user-management"
                       onClick={() => {
                         setDisplay(false);
@@ -902,14 +909,14 @@ const Layout = () => {
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                       </svg>
-                      <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                        User Management
+                      <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                        Quản lý người dùng
                       </span>
                     </Link>
                   )}
                   {/* Control */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                     to="/control"
                     onClick={() => {
                       setDisplay(false);
@@ -938,13 +945,13 @@ const Layout = () => {
                       <path d="M4 18l11 0" />
                       <path d="M19 18l1 0" />
                     </svg>
-                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                      Control Panel
+                    <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                      Bảng Điều Khiển
                     </span>
                   </Link>
                   {/* History */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                     to="/history"
                     onClick={() => {
                       setDisplay(false);
@@ -968,13 +975,13 @@ const Layout = () => {
                       <path d="M9 17h6" />
                       <path d="M9 13h6" />
                     </svg>
-                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                      History
+                    <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                      Lịch sử
                     </span>
                   </Link>
 
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                     to="/about-us"
                     onClick={() => {
                       setDisplay(false);
@@ -996,14 +1003,14 @@ const Layout = () => {
                       <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
                       <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
                     </svg>
-                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                      About Us
+                    <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                      Hướng dẫn sử dụng
                     </span>
                   </Link>
                   {/* Logout */}
 
                   <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-green-500"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
                     onClick={goOut}
                   >
                     <svg
@@ -1023,8 +1030,8 @@ const Layout = () => {
                       <path d="M9 12h12l-3 -3" />
                       <path d="M18 15l3 -3" />
                     </svg>
-                    <span className="ml-4 mt-1 archivo text-xl justify-center items-center">
-                      Logout
+                    <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                      Đăng Xuất
                     </span>
                   </a>
                 </ul>

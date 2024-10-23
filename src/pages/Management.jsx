@@ -148,7 +148,7 @@ const Management = () => {
     }
   }, [Flag]);
   return (
-    <div className="flex  h-full w-full ">
+    <div className="flex p-4 h-full w-full ">
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}
@@ -364,7 +364,7 @@ const Management = () => {
       {/* -------------------------PC View------------------------- */}
 
       <div className="hidden sm:block w-full h-full   ">
-        <div className="h-10 ">
+        {/* <div className="h-10 ">
           <div className="w-3/5 search-bar">
             <label className="relative block">
               <span className="sr-only">Search</span>
@@ -394,10 +394,10 @@ const Management = () => {
               />
             </label>
           </div>
-        </div>
-        <div className="flex h-5/6 mt-4 ">
+        </div> */}
+        <div className="flex p-2">
           <div class="w-2/3 overflow-hidden">
-            <div class="relative h-full overflow-y-auto rounded-3xl mt-3">
+            <div class="relative h-full overflow-y-auto rounded-3xl">
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>

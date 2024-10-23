@@ -822,14 +822,15 @@ const Control = () => {
                         </div>
                       ) : (
                         <div className="mt-2">
-                          <p className=" ml-2 text-sm font-family:Times New Roman">
+                          {/* <p className=" ml-2 text-sm font-family:Times New Roman"> */}
+                          <p className=" ml-2 text-base  playwrite-gb-s">
                             Chế độ bơm liên tục là chế độ điều khiển máy bơm
                             theo chu kỳ, trong đó Time On là thời gian máy bơm
                             hoạt động và Time Off là thời gian máy bơm ngừng
                             hoạt động (tính bằng phút).
                           </p>
                           <br></br>
-                          <p className="ml-2 text-sm font-family:Times New Roman">
+                          <p className="ml-2 text-base  playwrite-gb-s">
                             Giả sử: Time On = 180 phút và Time Off = 30 phút.
                             Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết
                             thời gian hoạt động (Time On), máy bơm sẽ ngừng

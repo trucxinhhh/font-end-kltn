@@ -38,11 +38,15 @@ const DashBoard = [
   "Pressure",
   "motor",
   "Waterpumped",
+  "Humi",
+  "Temp",
+  "Full",
+  "Empty",
 ];
 const Unit = {
   CO2: "ppm",
-  Humi: "%",
-  Temp: "°C",
+  Humi: "% (Đất)",
+  Temp: "°C (Đất)",
   Flowmeters: "m³/s",
   EC: "µS/cm",
   Waterpumped: "m³",
@@ -94,13 +98,13 @@ function App() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-
+    console.log(response.data);
     setPredict(response.data);
   };
   // trang thai icon status
   const HappyColor = (value) => {
     if (value < 35) {
-      return "text-green-400";
+      return "text-[#00FF9C]";
     } else {
       return "text-white";
     }
@@ -163,6 +167,8 @@ function App() {
         }
         return "shadow-red-600";
       case "motor":
+      case "Full":
+      case "Empty":
         if (value == "ON") {
           return "shadow-cyan-600";
         }
@@ -174,15 +180,12 @@ function App() {
       case "pH":
         const checkMAX = name + "_MAX";
         const checkMIN = name + "_MIN";
-
-        // console.log("MAX", Thresh.DataMap["Humi_MAX"]);
         if (
           value >= Thresh.DataMap[checkMIN] &&
           value < Thresh.DataMap[checkMAX]
         ) {
           return "shadow-cyan-600";
         } else {
-          // console.log(name, value);
           return "shadow-red-600";
         }
       // case "":
@@ -199,6 +202,7 @@ function App() {
   };
 
   //chart Line
+
   const options = (title) => ({
     responsive: true,
     plugins: {
@@ -210,7 +214,9 @@ function App() {
         text: change_name(title),
       },
     },
+    animation: false,
   });
+
   const chartData = (lineColor, data_to_draw) => {
     if (data_to_draw == "motor") {
       const labels = recentMotor.map((item) => item.time);
@@ -317,7 +323,7 @@ function App() {
     return () => clearInterval(interval); // Clear interval on component unmount
   });
   return (
-    <div className="flex  h-full  w-full  ">
+    <div className="flex  h-full  w-full  p-4">
       {/* PC View */}
 
       <div className="hidden  w-full sm:block min-w-full ">
@@ -326,13 +332,13 @@ function App() {
           <div className="p-4 w-full md:w-1/2">
             {/*----------Status Project ----------*/}
 
-            <div className="flex left-1">
-              <div className=" flex flex-col  items-center h- w-4/6 p-2 shadow-xl bg-cyan-900 text-white rounded-md mr-2 ">
-                <p className="mt-2 text-2xl font-bold">{today}</p>
-                <p className="mt-2 text-2xl font-bold">{currentTime}</p>
+            <div className="flex left-1 ">
+              <div className=" flex flex-col  items-center h- w-1/3 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
+                <p className="mt-1 text-xl font-bold">{today}</p>
+                <p className="mt-2 text-xl font-bold">{currentTime}</p>
               </div>
-              <div className="flex flex-col items-center  w-4/6 p-2  shadow-xl bg-cyan-900 text-white rounded-md mr-2">
-                <p className="mt-2 text-2xl font-bold">Status Project</p>
+              <div className="flex flex-col items-center  w-1/3 p-2  shadow-xl bg-[#03AED2] text-white rounded-md mr-2">
+                <p className=" text-xl font-bold">Status Project</p>
                 <div className="flex flex-nowrap">
                   <div
                     className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
@@ -341,8 +347,8 @@ function App() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="54"
-                      height="54"
+                      width="34"
+                      height="34"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -365,8 +371,8 @@ function App() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="54"
-                      height="54"
+                      width="34"
+                      height="34"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -390,8 +396,8 @@ function App() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="54"
-                      height="54"
+                      width="34"
+                      height="34"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -416,34 +422,40 @@ function App() {
 
             {/* ---------- Sensor Table ----------*/}
             <div className="flex flex-col sensor_table h-4/5 w-full rounded-r-2xl rounded-l-2xl ">
-              <div className="grid grid-cols-4 gap-2 h-1/5  text-white p-2 ">
-                {DashBoard.map((item) => (
-                  <button
-                    className={`flex text-black bg-white rounded-2xl  shadow ${statusColor(
-                      item,
-                      checkValue(item)
-                    )}`}
-                    onClick={() => {
-                      setSelector(item);
-                    }}
-                  >
-                    <img
-                      src={`src/assets/icon/${item}.jpg`}
-                      class="h-auto w-1/3 object-contain "
-                    />
-                    <h2 className="font-bold text-base mt-2 ">
-                      {checkValue(item)}
-                      {Unit[item]}
-                    </h2>
-                  </button>
-                ))}
+              <div classanme="h-2/5">
+                <div className="grid grid-cols-3 gap-4 h-1/5  text-white p-2 ">
+                  {DashBoard.map((item) => (
+                    <button
+                      className={` flex text-black items-center bg-white rounded-2xl  shadow ${statusColor(
+                        item,
+                        checkValue(item)
+                      )}`}
+                      onClick={() => {
+                        setSelector(item);
+                      }}
+                    >
+                      <img
+                        src={`src/assets/icon/${item}.jpg`}
+                        class="h-auto w-1/4 object-contain "
+                      />
+
+                      <p className=" w-3/4 playwrite-gb-s  text-base">
+                        <strong className="font-bold">
+                          {checkValue(item)}
+                          {Unit[item]}
+                        </strong>
+                      </p>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
+              <br></br>
+              <div className="p-2 h-3/5 bg-[#ffffff] rounded-r-2xl rounded-l-2xl">
                 {selector == "Waterpumped" ? (
                   <Bar data={data2} options={optionsBar} />
                 ) : (
                   <Line
-                    data={chartData("#f15bb5", selector)}
+                    data={chartData("#FF76CE", selector)}
                     options={options(selector)}
                   />
                 )}
@@ -492,7 +504,7 @@ function App() {
                   ? JSON.parse(localStorage.getItem("advices")).map(
                       (sentence, index) => (
                         <p
-                          className="ml-4 font-bold text-[#3C3D37]"
+                          className="ml-4 font-bold text-[#3C3D37] playwrite-gb-s "
                           key={index}
                         >
                           - {sentence.trim()}.

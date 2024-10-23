@@ -5,7 +5,7 @@
 /* ------------------------------------------login------------------------------------------ */
 .gradient-background-login {
   overflow: hidden;
-  background: linear-gradient(62deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+  background: linear-gradient(62deg,  #091057,#024CAA, #F4F6FF );
   animation: gradient 15s ease infinite;
   background-size: 400% 600%;
 
@@ -13,7 +13,7 @@
 
 .gradient-background {
   overflow: hidden;
-  background: linear-gradient(62deg, #23A6D5, #23D5AB);
+  background: linear-gradient(62deg, #4A628A,#7AB2D3,#B9E5E8,#B9E5E8);
   animation: gradient 15s ease infinite;
   background-size: 400% 600%;
 
@@ -59,7 +59,7 @@
   height: 60dvh;
   margin: 0 auto;
   border-radius: 15px;
-  box-shadow: 0 0 10px #134e4a;
+  box-shadow: 0 0 10px #C96868;
   max-width: 400px;
   max-height: 600px;
 }
@@ -71,22 +71,6 @@
   align-items: center;
 }
 
-h1 {
-  font-size: 275%;
-  /* font-weight: 100; */
-  /* text-transform: uppercase; */
-  font-family: "Work Sans", sans-serif;
-  letter-spacing: -3px;
-  transition: 700ms ease;
-  font-variation-settings: "wght" 311;
-  color: rgb(0, 0, 0);
-  text-align: center;
-}
-
-h1:hover {
-  font-variation-settings: "wght" 582;
-  letter-spacing: 1px;
-}
 
 .login_box {
   margin-top: 10%;
@@ -353,11 +337,11 @@ h4 {
 
 /* -------------------------------------------test-------------------------------- */
 
-.grid {
+/* .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
-}
+} */
 
 /* -------------------------------------------loading -------------------------------------------*/
 
@@ -445,31 +429,18 @@ h4 {
 
 
 
-.roboto-flex {
-  font-family: "Roboto Flex", sans-serif;
-  font-optical-sizing: auto;
+
+.freeman-regular {
+  font-family: "Freeman", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "slnt" 0,
-    "wdth" 100,
-    "GRAD" 0,
-    "XOPQ" 96,
-    "XTRA" 468,
-    "YOPQ" 79,
-    "YTAS" 750,
-    "YTDE" -203,
-    "YTFI" 738,
-    "YTLC" 514,
-    "YTUC" 712;
+
 }
 
 
-.archivo {
-  font-family: "Archivo", sans-serif;
+.playwrite-gb-s {
+  font-family: "Playwrite GB S", cursive;
   font-optical-sizing: auto;
-  font-weight: 800;
+  font-weight: 500;
   font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
 }

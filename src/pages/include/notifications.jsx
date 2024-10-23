@@ -1,5 +1,5 @@
 // notifications.js
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 export const notifySuccess = (message) => {
   toast.success(message, {
@@ -21,3 +21,8 @@ export const notifyError = (message) => {
     autoClose: 3000, // Tự động đóng sau 3 giây
   });
 };
+// const [FisrtGet, setFirstGet] = useState(false);
+// const [ResetData, setResetdata] = useState(false);
+// const [DataSensor, setDataSensor] = useState([]);
+// const [DataMotor, setDataMotor] = useState([]);
+// const [DataVol, setDataVol] = useState([]

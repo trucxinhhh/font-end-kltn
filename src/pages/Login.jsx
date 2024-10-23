@@ -39,8 +39,8 @@ function App() {
 
       const token = response.data.access_token;
       if (token) {
-        localStorage.setItem("password", usr);
-        localStorage.setItem("username", pw);
+        localStorage.setItem("password", pw);
+        localStorage.setItem("username", usr);
 
         setToken(token);
         navigate("/home");
@@ -57,8 +57,8 @@ function App() {
   return (
     <div className="flex h-screen w-screen gradient-background-login items-center justify-center">
       <div className="flex flex-col white-box top-1/4 md:top-1/2">
-        <div className="container mt-20">
-          <h1 className="playwrite-cl ">Welcome</h1>
+        <div className="container mt-20  text-center">
+          <h1 className="playwrite-gb-s text-5xl font-bold">Welcome</h1>
         </div>
         <div className="login_box">
           <div className="inline-flex items-center w-full text-sm font-semibold text-black transition-colors duration-150 cursor-pointer hover:text-green-500">
@@ -78,7 +78,7 @@ function App() {
               <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
               <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
             </svg>
-            <h2>Username</h2>
+            <h1 className="text-2xl">Username</h1>
           </div>
 
           <input
@@ -106,8 +106,8 @@ function App() {
               <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" />
               <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
               <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
-            </svg>
-            <h2>Password</h2>
+            </svg>{" "}
+            <h1 className="text-2xl">Password</h1>
           </div>
           <input
             type="password"
