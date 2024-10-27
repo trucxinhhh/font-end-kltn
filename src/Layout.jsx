@@ -17,6 +17,11 @@ const TimeSpamLoadData = TimeToSpam * 1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
 
 const Layout = () => {
+  //time
+  const [currentTime, setCurrentTime] = useState(
+    new Date().toLocaleTimeString()
+  );
+  //notìy
   const location = useLocation();
   const [FlagNotify, setFlagNotify] = useState(false);
   const [displayNotify, setDisplayNotify] = useState(0);
@@ -48,7 +53,12 @@ const Layout = () => {
   const today = new Date().toISOString().slice(0, 10);
   const itemsByHour = Array.from({ length: 24 }, () => []);
   const TotalHour = [];
-
+  // backgroud change on select
+  const [HomeOnClick, setHomeOnClick] = useState(false);
+  const [ManagementOnClick, setManagement] = useState(false);
+  const [ControlOnClick, setControlOnClick] = useState(false);
+  const [HistoryOnClick, setHistoryOnClick] = useState(false);
+  const [DocumentOnClick, setDocumentOnClick] = useState(false);
   //warning report
   const [rpsNotify, setrpsNotify] = useState(null);
   const notify = (message) => {
@@ -265,6 +275,14 @@ const Layout = () => {
       reader.readAsDataURL(file);
     }
   };
+  // set bg false all
+  const setFalseAll = async () => {
+    setHomeOnClick(false);
+    setManagement(false);
+    setControlOnClick(false);
+    setHistoryOnClick(false);
+    setDocumentOnClick(false);
+  };
   // upload avatar user
   const uploadImage = async (file) => {
     const formData = new FormData();
@@ -358,6 +376,9 @@ const Layout = () => {
     const intervalId = setInterval(() => {
       loadData();
     }, TimeSpamLoadData);
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
     return () => clearInterval(intervalId);
   });
 
@@ -492,8 +513,8 @@ const Layout = () => {
           <ToastContainer />
           {/* PC View */}
           <div className="hidden sm:block h-screen w-screen max-h-fit max-ww-fit gradient-background">
-            <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background ">
-              <div className=" flex  bg-white bg-opacity-50 h-full rounded-l-3xl rounded-r-3xl">
+            <div className="p-10 h-screen w-screen max-h-fit max-ww-fit gradient-background mb-2">
+              <div className=" flex   bg-white bg-opacity-50 h-full rounded-l-3xl rounded-r-3xl">
                 {/* ------------------------------List Box-----------------------------*/}
 
                 <div className="p-0 w-1/5 h-full hidden md:block">
@@ -521,42 +542,58 @@ const Layout = () => {
                       </div>
                     </div>
                     <br />
-                    <ul className="fmt-5 leading-10 flex flex-col ">
-                      <a className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="34"
-                          height="34"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="icon icon-tabler icons-tabler-outline icon-tabler-home"
+                    <ul className=" flex flex-col ">
+                      <Link to="/home">
+                        <div
+                          className={` p-1 inline-flex items-center w-full text-lg rounded-xl ${
+                            HomeOnClick
+                              ? "bg-[#EC8305] text-white"
+                              : "text-[#091057] "
+                          }   font-bold `}
+                          onClick={() => {
+                            setFalseAll();
+                            setHomeOnClick(true);
+                          }}
                         >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                        </svg>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="34"
+                            height="34"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="icon icon-tabler icons-tabler-outline icon-tabler-home"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                          </svg>
 
-                        <Link to="/home">
                           <span
-                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
-                            onClick={() => {
-                              setDisplay(false);
-                            }}
+                            className={`ml-4 mt-1 freeman-regular  ${
+                              HomeOnClick ? "bg-[#EC8305] text-white" : ""
+                            } text-xl justify-center items-center`}
                           >
                             Trang chủ
                           </span>
-                        </Link>
-                      </a>
+                        </div>
+                      </Link>
                       {Role === "admin" && (
                         <Link to="/user-management">
-                          <a
-                            className="mt-2 inline-flex items-center w-full text-lg text-[#091057] font-bold  transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
-                            href=""
+                          <div
+                            className={` p-1 inline-flex items-center w-full text-lg rounded-xl ${
+                              ManagementOnClick
+                                ? "bg-[#EC8305] text-white"
+                                : "text-[#091057] "
+                            }   font-bold  `}
+                            onClick={() => {
+                              setFalseAll();
+                              setManagement(true);
+                            }}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -582,20 +619,28 @@ const Layout = () => {
                             </svg>
 
                             <span
-                              className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
-                              onClick={() => {
-                                setDisplay(false);
-                              }}
+                              className={`ml-4 mt-1 freeman-regular  ${
+                                ManagementOnClick
+                                  ? "bg-[#EC8305] text-white"
+                                  : " "
+                              }  text-xl justify-center items-center`}
                             >
                               Quản lý người dùng
                             </span>
-                          </a>
+                          </div>
                         </Link>
                       )}
                       <Link to="/control">
-                        <a
-                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
-                          href=""
+                        <div
+                          className={`p-1 inline-flex  items-center w-full text-base rounded-xl  ${
+                            ControlOnClick
+                              ? "bg-[#EC8305] text-white"
+                              : "text-[#091057] "
+                          }  text-[#091057]  font-bold `}
+                          onClick={() => {
+                            setFalseAll();
+                            setControlOnClick(true);
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -622,19 +667,25 @@ const Layout = () => {
                           </svg>
 
                           <span
-                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
-                            onClick={() => {
-                              setDisplay(false);
-                            }}
+                            className={`ml-4 mt-1 freeman-regular  ${
+                              ControlOnClick ? "bg-[#EC8305] text-white" : ""
+                            }  text-xl justify-center items-center`}
                           >
                             Bảng Điều Khiển
                           </span>
-                        </a>
+                        </div>
                       </Link>
                       <Link to="/history">
-                        <a
-                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
-                          href=""
+                        <div
+                          className={`p-1 inline-flex items-center w-full text-lg rounded-xl  ${
+                            HistoryOnClick
+                              ? "bg-[#EC8305] text-white"
+                              : "text-[#091057] "
+                          } text-[#091057]  font-bold `}
+                          onClick={() => {
+                            setFalseAll();
+                            setHistoryOnClick(true);
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -654,21 +705,26 @@ const Layout = () => {
                             <path d="M9 17h6" />
                             <path d="M9 13h6" />
                           </svg>
-
                           <span
-                            className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center"
-                            onClick={() => {
-                              setDisplay(false);
-                            }}
+                            className={`ml-4 mt-1 freeman-regular  ${
+                              HistoryOnClick ? "bg-[#EC8305] text-white" : ""
+                            }  text-xl justify-center items-center`}
                           >
                             Lịch sử
                           </span>
-                        </a>
+                        </div>
                       </Link>
                       <Link to="/about-us">
-                        <a
-                          className="inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
-                          href=""
+                        <div
+                          className={`p-1 inline-flex items-center w-full text-lg rounded-xl  ${
+                            DocumentOnClick
+                              ? "bg-[#EC8305] text-white"
+                              : "text-[#091057] "
+                          } text-[#091057]  font-bold `}
+                          onClick={() => {
+                            setFalseAll();
+                            setDocumentOnClick(true);
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -688,14 +744,17 @@ const Layout = () => {
                             <path d="M11 12h1v4h1" />
                           </svg>
 
-                          <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                          <span
+                            className={`ml-4 mt-1 freeman-regular  ${
+                              DocumentOnClick ? "bg-[#EC8305] text-white" : ""
+                            }  text-xl justify-center items-center`}
+                          >
                             Hướng dẫn sử dụng
                           </span>
-                        </a>
+                        </div>
                       </Link>
-                      <a
-                        className="ml-1 inline-flex items-center w-full text-lg text-[#091057]  font-bold transition-colors duration-150 cursor-pointer hover:text-[#EC8305]"
-                        href=""
+                      <div
+                        className="p-1 ml-1 inline-flex items-center w-full text-lg text-[#091057]  font-bold "
                         onClick={() => goOut()}
                       >
                         <svg
@@ -715,10 +774,10 @@ const Layout = () => {
                           <path d="M9 12h12l-3 -3" />
                           <path d="M18 15l3 -3" />
                         </svg>
-                        <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
+                        <span className="ml-4 mt-1 freeman-regular  text-xl justify-center items-center">
                           Đăng Xuất
                         </span>
-                      </a>
+                      </div>
                     </ul>
                   </div>
                   <div className="p-2 w-46 h-2/5 rounded-r-xl rounded-l-xl bg-white Green_screen">
@@ -790,6 +849,12 @@ const Layout = () => {
                   <Outlet />
                 </div>
               </div>
+
+              <p className="mt-2 text-center text-base font-bold text-white">
+                <strong>{today}</strong>
+
+                <strong className="ml-5">{currentTime}</strong>
+              </p>
             </div>
           </div>
           {/* Mobile View */}

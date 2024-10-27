@@ -1,10 +1,8 @@
 ---
-
 TẠO SSH CHO MÁY
 ssh-keygen // Tạo ssh
 
 ssh-keygen -t rsa -f C:\Users\trucd\.ssh\id_rsa -C truc -b 2048 // tạo ssh dùng gg
-
 ---
 
 TẠO MÔI TRƯỜNG ẢO
@@ -82,6 +80,7 @@ npm install @material-tailwind/react
 npm i react-phone-input-2
 npm install react-icons
 npm install @fontsource/pacifico
+npm install socket.io
 
 B6: Cai thu vien ho tro Server
 pip install "passlib[bcrypt]"
@@ -115,8 +114,6 @@ https://mambaui.com/components/input
 https://tabler.io/icons
 https://flowbite.com/docs/forms/toggle/
 https://flowbite.com/docs/forms/floating-label/
-https://mui.com/material-ui/react-toggle-button/	
+https://mui.com/material-ui/react-toggle-button/
 
 ---
-
-

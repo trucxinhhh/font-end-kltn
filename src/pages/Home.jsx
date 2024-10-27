@@ -41,7 +41,6 @@ const DashBoard = [
   "Humi",
   "Temp",
   "Full",
-  "Empty",
 ];
 const Unit = {
   CO2: "ppm",
@@ -60,6 +59,25 @@ const TimeHour = [
 ];
 
 function App() {
+  //Websocket
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const ws = useRef(null);
+
+  useEffect(() => {
+    // Khởi tạo kết nối WebSocket và lưu vào ws.current
+    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
+
+    // Lắng nghe sự kiện onmessage từ WebSocket
+    ws.current.onmessage = (event) => {
+      setMessages((prevMessages) => [...prevMessages, event.data]);
+    };
+
+    // Đóng kết nối WebSocket khi component bị unmount
+    return () => {
+      ws.current.close();
+    };
+  }, []);
   //khai báo biến sử dụng
   const [Display, setDisplay] = useState(true);
   const [recentMotor, setRecentMotor] = useState([]);
@@ -186,7 +204,7 @@ function App() {
         ) {
           return "shadow-cyan-600";
         } else {
-          return "shadow-red-600";
+          return "shadow-red-600 bg-red-500";
         }
       // case "":
     }
@@ -323,21 +341,21 @@ function App() {
     return () => clearInterval(interval); // Clear interval on component unmount
   });
   return (
-    <div className="flex  h-full  w-full  p-4">
+    <div className="flex  h-full  w-full ">
       {/* PC View */}
 
-      <div className="hidden  w-full sm:block min-w-full ">
+      <div className="hidden  w-full sm:block min-w-full  p-4">
         <div className="flex  h-full w-full ">
           {/*------------------------------Status Box------------------------------*/}
           <div className="p-4 w-full md:w-1/2">
             {/*----------Status Project ----------*/}
 
-            <div className="flex left-1 ">
-              <div className=" flex flex-col  items-center h- w-1/3 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
-                <p className="mt-1 text-xl font-bold">{today}</p>
-                <p className="mt-2 text-xl font-bold">{currentTime}</p>
-              </div>
-              <div className="flex flex-col items-center  w-1/3 p-2  shadow-xl bg-[#03AED2] text-white rounded-md mr-2">
+            <div className="flex left-6 ">
+              {/* <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
+                <p className="mt-1 text-xs font-bold">{today}</p>
+                <p className="mt-2 text-xs font-bold">{currentTime}</p>
+              </div> */}
+              {/* <div className="flex flex-col items-center  w-1/3 p-2  shadow-xl bg-[#03AED2] text-white rounded-md mr-2">
                 <p className=" text-xl font-bold">Status Project</p>
                 <div className="flex flex-nowrap">
                   <div
@@ -416,13 +434,44 @@ function App() {
                     </svg>
                   </div>
                 </div>
+              </div> */}
+              <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#ffffff] text-white rounded-md  ">
+                <p className=" text-red-600 font-bold text-xs text-left">
+                  Ngày trồng
+                </p>
+                <p className="mt-2 text-red-600 font-bold text-3xl text-left">
+                  {Predict["days"] > 75 ? "Null" : Predict["days"]}
+                </p>
+              </div>
+              <div className="ml-3 flex flex-col   w-full p-2 shadow-xl bg-white rounded-md mr-2 ">
+                {/* <strong className="text-gray-600 font-bold text-center roboto-flex text-3xl">
+                  Quy trình chăm sóc
+                </strong> */}
+                <p className="flex roboto-flex  ">
+                  <strong className="font-bold  text-xl ml-8">
+                    Quy trình chăm sóc
+                  </strong>
+                </p>
+
+                {ciuspe
+                  ? JSON.parse(localStorage.getItem("advices")).map(
+                      (sentence, index) => (
+                        <p
+                          className="ml-4 font-bold text-[#3C3D37] roboto-thin "
+                          key={index}
+                        >
+                          - {sentence.trim()}.
+                        </p>
+                      )
+                    )
+                  : null}
               </div>
             </div>
             {/*--------End Status Project --------*/}
 
             {/* ---------- Sensor Table ----------*/}
-            <div className="flex flex-col sensor_table h-4/5 w-full rounded-r-2xl rounded-l-2xl ">
-              <div classanme="h-2/5">
+            <div className="">
+              <div className=" sensor_table h-screen w-full rounded-r-2xl rounded-l-2xl ">
                 <div className="grid grid-cols-3 gap-4 h-1/5  text-white p-2 ">
                   {DashBoard.map((item) => (
                     <button
@@ -439,35 +488,37 @@ function App() {
                         class="h-auto w-1/4 object-contain "
                       />
 
-                      <p className=" w-3/4 playwrite-gb-s  text-base">
-                        <strong className="font-bold">
-                          {checkValue(item)}
-                          {Unit[item]}
-                        </strong>
+                      <p className=" w-3/4 roboto-thin font-bold   text-xl">
+                        {checkValue(item)}
+                        {Unit[item]}
                       </p>
                     </button>
                   ))}
                 </div>
-              </div>
-              <br></br>
-              <div className="p-2 h-3/5 bg-[#ffffff] rounded-r-2xl rounded-l-2xl">
-                {selector == "Waterpumped" ? (
-                  <Bar data={data2} options={optionsBar} />
-                ) : (
-                  <Line
-                    data={chartData("#FF76CE", selector)}
-                    options={options(selector)}
-                  />
-                )}
+                <br></br>
+                <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
+                  {selector == "Waterpumped" ? (
+                    // <div>0</div>
+                    <Bar data={data2} options={optionsBar} />
+                  ) : (
+                    <Line
+                      data={chartData("#f15bb5", selector)}
+                      options={options(selector)}
+                    />
+                  )}
+                </div>
               </div>
             </div>
+
             {/*--------End Sensor Project --------*/}
           </div>
           {/*--------------------------End Status Box--------------------------*/}
 
           {/*--------------------------------Chart + Time ---------------------------------*/}
 
-          <div className=" p-4 w-1/2 m rounded-r-3xl hidden md:block ">
+          {/*--------------------------------End ChartTime ---------------------------------*/}
+          <div className="p-4 w-full md:w-1/2">
+            {/*----------Status Project ----------*/}
             <div class="bg-white h-24 w-full rounded-3xl p-4 flex flex-row justify-center items-center space-x-4 gap-20">
               <img
                 src="src/assets/logo/iuh.jpg"
@@ -485,48 +536,104 @@ function App() {
                 class="h-auto w-20 object-contain"
               />
             </div>
-            {/*----------Recomment Box ----------*/}
-            <div className="mt-4 h-22/5 flex left-1">
-              <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
-                {/* <strong className="text-gray-600 font-bold text-center roboto-flex text-3xl">
-                  Quy trình chăm sóc
-                </strong> */}
-                <p className="flex roboto-flex ">
-                  <strong className="font-bold  text-xl text-center ">
-                    Quy trình chăm sóc
-                  </strong>
-                  <p className="ml-2 text-red-600 font-bold text-lg text-left">
-                    DAY {Predict["days"]}:
-                  </p>
-                </p>
+            <br></br>
+            <div className="flex left-6 ">
+              {/* <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
+                <p className="mt-1 text-xs font-bold">{today}</p>
+                <p className="mt-2 text-xs font-bold">{currentTime}</p>
+              </div> */}
+              {/* <div className="flex flex-col items-center  w-1/3 p-2  shadow-xl bg-[#03AED2] text-white rounded-md mr-2">
+                <p className=" text-xl font-bold">Status Project</p>
+                <div className="flex flex-nowrap">
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="34"
+                      height="34"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+                      <path d="M9 10h-.01" />
+                      <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
+                      <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
+                    </svg>
+                  </div>
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="34"
+                      height="34"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                      <path d="M9 10l.01 0" />
+                      <path d="M15 10l.01 0" />
+                      <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
+                    </svg>
+                  </div>
 
-                {ciuspe
-                  ? JSON.parse(localStorage.getItem("advices")).map(
-                      (sentence, index) => (
-                        <p
-                          className="ml-4 font-bold text-[#3C3D37] playwrite-gb-s "
-                          key={index}
-                        >
-                          - {sentence.trim()}.
-                        </p>
-                      )
-                    )
-                  : null}
-              </div>
+                  <div
+                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
+                      stt_Project
+                    )}`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="34"
+                      height="34"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                      <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
+                      <path d="M8 9l2 2" />
+                      <path d="M10 9l-2 2" />
+                      <path d="M14 9l2 2" />
+                      <path d="M16 9l-2 2" />
+                    </svg>
+                  </div>
+                </div>
+              </div> */}
             </div>
-            {/*----------End Recomment Box ----------*/}
-            {/* -----------------------Mo Hinh Nha Kinh------------------------------ */}
-            <div class="bg-white h-3/5 mt-4 w-full rounded-3xl p-4 flex flex-row  bg-opacity-50 justify-center items-center space-x-4">
-              <img src="src/assets/logo/MoHinhNhaKinh-removebg-preview.png" />
-            </div>
-            {/* ----------------------- End Mo Hinh Nha Kinh------------------------------ */}
+            {/*--------End Status Project --------*/}
+
+            {/* ---------- Sensor Table ----------*/}
+
+            {/*--------End Sensor Project --------*/}
           </div>
-
-          {/*--------------------------------End ChartTime ---------------------------------*/}
         </div>
       </div>
       {/* Mobile View */}
-      <div className="sm:hidden h-screen w-screen  ">
+      <div className="sm:hidden h-screen w-screen ">
+        {" "}
         <ul className=" p-2 flex justify-center w-full overflow-x-auto ">
           <li class="p-4   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
             <span

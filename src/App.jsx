@@ -19,7 +19,8 @@ const Home = lazy(() => delayForDemo(import("./pages/Home")));
 import Control from "./pages/Control";
 import History from "./pages/History";
 import AboutUs from "./pages/AboutUs.jsx";
-import Draft from "./draft.jsx"
+import Draft from "./pages/draft.jsx";
+import WebSocketChat from "./WebSocket.jsx";
 
 const App = () => {
   return (
@@ -71,11 +72,10 @@ const App = () => {
             }
           />
           <Route path="/test" element={<Draft />} />
+          <Route path="/ws" element={<WebSocketChat />} />
         </Route>
-        <Route path="/test-out" element={<Draft />} />
       </Routes>
     </BrowserRouter>
   );
 };
 export default App;
-
