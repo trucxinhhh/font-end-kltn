@@ -55,8 +55,10 @@ export const paragraph_2_US =
 export const paragraph_3_US =
   " P3US - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique saepe exercitationem numquam, labore necessitatibus deleniti quasi. Illo porro nihil necessitatibus debitis delectus aperiam, fuga impedit assumenda odit, velit eveniet est.";
 
-export const auto_1 = "";
-export const auto_2 = "";
+export const auto_1 =
+  "Chế độ bơm tự động là chế độ bơm theo ngưỡng độ ẩm của đất. Độ ẩm được chia thành hai ngưỡng. Ở ngưỡng độ ẩm thấp, máy bơm sẽ được bật để bù ẩm. Ở ngưỡng độ ẩm cao, máy bơm sẽ tự động tắt để tránh úng cho cây. Các ngưỡng cao và thấp có thể tuỳ chỉnh.  ";
+export const auto_2 =
+  "Giả sử: Đặt ngưỡng độ ẩm thấp là 28% và ngưỡng độ ẩm cao là 35%. Khi độ ẩm của đất <28% máy bơm sẽ được bật hoặc khi độ ẩm >=35% thì máy bơm sẽ tắt.";
 export const manual_1 =
   "Chế độ bơm thủ công là chế độ điều khiển trạng thái Bật/Tắt (ON/OFF) của máy bơm tuỳ theo người dùng yêu cầu. ";
 export const manual_2 =

@@ -35,7 +35,7 @@ const MODE_NAME_CHANGE = [
   "Chế độ bơm hẹn giờ",
   "Chế độ bơm tuần tự",
 ];
-const MODE_NAME_GET = ["auto", "manual", "sequent", "schedule"];
+const MODE_NAME_GET = ["auto", "manual", "schedule", "sequent"];
 function formatDateTime(dateTimeString) {
   const date = new Date(dateTimeString);
   const year = date.getFullYear();
@@ -369,6 +369,7 @@ const Draft = () => {
   const dt1 = JSON.parse(dataMotor);
 
   const postMode = async (mode, data) => {
+    console.log(mode);
     const response = await axios.post(url_api + "control/" + mode, data, {
       headers: {
         accept: "application/json",
@@ -376,7 +377,7 @@ const Draft = () => {
         Authorization: access_token,
       },
     });
-    // console.log("response motor", response.data["message"]);
+    console.log("response ", response.data);
     notifyInfo(response.data["message"]);
     const responseMode = await axios.get(url_api + "control_mode", {
       headers: {
@@ -493,6 +494,7 @@ const Draft = () => {
       setIsLocked(false);
     }
   }, [timerSend]);
+
   const minutes = Math.floor(timerSend / 60);
   const seconds = timerSend % 60;
   return (
@@ -604,7 +606,9 @@ const Draft = () => {
                       margin: "5px",
                       padding: "10px",
                       backgroundColor:
-                        selectedMode === mode ? "#024CAA" : "#EC8305",
+                        isChecked === MODE_NAME_GET[index]
+                          ? "#024CAA"
+                          : "#EC8305",
                     }}
                   >
                     {mode}
@@ -684,212 +688,232 @@ const Draft = () => {
                 </div>
               </div>
               <div className="w-2/3 ml-3 p-6">
-                {/* AUTO MODE */}
-                {/* <div className="mt-8 ">
-                  <p className="text-gray-600 mb-2">
-                    Pump START when Humidity less than{" "}
-                    <span className="font-bold">{startThreshold}%</span>
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={startThreshold}
-                      onChange={handleStartThresholdChange}
-                      className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
-                      }}
-                    />
-                    <input
-                      type="text"
-                      min="0"
-                      max="100"
-                      value={startThreshold}
-                      onChange={handleStartThresholdChange}
-                      className="text-right w-1/5"
-                    />
-                    %
-                    <button
-                      onClick={handleSaveClick}
-                      className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                    >
-                      Save
-                    </button>
+                {isChecked == "auto" ? (
+                  <div>
+                    {/* AUTO MODE */}
+                    <div className="mt-8 ">
+                      <p className="text-gray-600 mb-2">
+                        Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
+                        <span className="ml-2 font-bold text-red-500">
+                          {startThreshold}%
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={startThreshold}
+                          onChange={handleStartThresholdChange}
+                          className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
+                          }}
+                        />
+                        <input
+                          type="text"
+                          min="0"
+                          max="100"
+                          value={startThreshold}
+                          onChange={handleStartThresholdChange}
+                          className="text-right w-1/5"
+                        />
+                        %
+                        <button
+                          onClick={handleSaveClick}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                    <div className=" ">
+                      <p className="text-gray-600 mb-2">
+                        Máy bơm sẽ tắt khi ngưỡng nhiệt độ cao hơn
+                        <span className="ml-3 font-bold text-blue-500">
+                          {stopThreshold}%
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={stopThreshold}
+                          onChange={handleStopThresholdChange}
+                          className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
+                          }}
+                        />
+                        <input
+                          type="text"
+                          min="0"
+                          max="100"
+                          value={stopThreshold}
+                          onChange={handleStopThresholdChange}
+                          className="text-right w-1/5"
+                        />
+                        %
+                        <button
+                          onClick={handleSaveClick}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>{" "}
                   </div>
-                </div>
-                <div className=" ">
-                  <p className="text-gray-600 mb-2">
-                    Pump STOP when Humidity greater than
-                    <span className="font-bold">{stopThreshold}%</span>
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={stopThreshold}
-                      onChange={handleStopThresholdChange}
-                      className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
-                      }}
-                    />
-                    <input
-                      type="text"
-                      min="0"
-                      max="100"
-                      value={stopThreshold}
-                      onChange={handleStopThresholdChange}
-                      className="text-right w-1/5"
-                    />
-                    %
-                    <button
-                      onClick={handleSaveClick}
-                      className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                ) : isChecked == "manual" ? (
+                  <div>
+                    {" "}
+                    {/* MANUAL MODE */}{" "}
+                    <div
+                      className={`mt-2 flex w-1/2 items-center justify-between p-4  bg-white border border-gray-300 rounded-md shadow-sm ${
+                        pump ? "bg-gray-200" : ""
+                      }`}
                     >
-                      Save
-                    </button>
-                  </div>
-                </div> */}
-                {/* MANUAL MODE */}
-                {/* <div
-                  className={`mt-2 flex w-1/2 items-center justify-between p-4  bg-white border border-gray-300 rounded-md shadow-sm ${
-                    pump ? "bg-gray-200" : ""
-                  }`}
-                >
-                  <span
-                    className={`text-lg font-medium ${
-                      pump ? "text-blue-600" : "text-gray-600"
-                    }`}
-                  >
-                    Pump : {pump ? "ON" : "OFF"}
-                  </span>
+                      <span
+                        className={`text-lg font-medium ${
+                          pump ? "text-blue-600" : "text-gray-600"
+                        }`}
+                      >
+                        Pump : {pump ? "ON" : "OFF"}
+                      </span>
 
-                  <button
-                    onClick={openDialog}
-                    className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                      pump
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-green-600 hover:bg-green-700"
-                    } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
-                    disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
-                  >
-                    {pump ? "Turn Off" : "Turn On"}{" "}
-                    {timerSend > 0
-                      ? `(${minutes}:${seconds < 10 ? `0${seconds}` : seconds})`
-                      : ""}
-                  </button>
-                </div>
-                <div className="h-2/3 w-full p-4 mt-3">
-                  <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
-                    <div className="w-full h-full">
-                      <Bar
-                        data={data2}
-                        options={{
-                          ...optionsBar,
-                          responsive: true,
-                          maintainAspectRatio: false,
-                        }}
-                      />
+                      <button
+                        onClick={openDialog}
+                        className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                          pump
+                            ? "bg-red-600 hover:bg-red-700"
+                            : "bg-green-600 hover:bg-green-700"
+                        } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                        disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
+                      >
+                        {pump ? "Turn Off" : "Turn On"}{" "}
+                        {timerSend > 0
+                          ? `(${minutes}:${
+                              seconds < 10 ? `0${seconds}` : seconds
+                            })`
+                          : ""}
+                      </button>
+                    </div>
+                    <div className="h-2/3 w-full p-4 mt-3">
+                      <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
+                        <div className="w-full h-full">
+                          <Bar
+                            data={data2}
+                            options={{
+                              ...optionsBar,
+                              responsive: true,
+                              maintainAspectRatio: false,
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div> */}
-                {/* SEQUENT MODE */}
-                {/* <div
-                  className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                    <path d="M9 12h6" />
-                    <path d="M12 9v6" />
-                  </svg>
+                ) : isChecked == "sequent" ? (
+                  <div>
+                    {/* SEQUENT MODE */}
+                    <div
+                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                        <path d="M9 12h6" />
+                        <path d="M12 9v6" />
+                      </svg>
 
-                  <input
-                    type="number"
-                    placeholder="Time On"
-                    onChange={(e) => {
-                      setTimeOn(e.target.value);
-                    }}
-                    className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
-                    required
-                  />
+                      <input
+                        type="number"
+                        placeholder="Time On"
+                        onChange={(e) => {
+                          setTimeOn(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                        required
+                      />
 
-                  <input
-                    type="number"
-                    placeholder="Time Off"
-                    onChange={(e) => {
-                      setTimeOff(e.target.value);
-                    }}
-                    className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
-                  />
-                  <button
-                    onClick={openDialog}
-                    className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
-                  >
-                    Save
-                  </button>
-                </div> */}
-                {/* SCHEDULE MODE */}
-                <div
-                  className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                    <path d="M9 12h6" />
-                    <path d="M12 9v6" />
-                  </svg>
+                      <input
+                        type="number"
+                        placeholder="Time Off"
+                        onChange={(e) => {
+                          setTimeOff(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                      />
+                      <button
+                        onClick={openDialog}
+                        className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                      >
+                        Save
+                      </button>
+                    </div>{" "}
+                  </div>
+                ) : (
+                  <div>
+                    {/* SCHEDULE MODE */}
+                    <div
+                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                        <path d="M9 12h6" />
+                        <path d="M12 9v6" />
+                      </svg>
 
-                  <input
-                    type="datetime-local"
-                    placeholder="Time On"
-                    onChange={(e) => {
-                      setTimeOnSchedule(e.target.value);
-                    }}
-                    className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
-                    required
-                  />
+                      <input
+                        type="datetime-local"
+                        placeholder="Time On"
+                        onChange={(e) => {
+                          setTimeOnSchedule(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                        required
+                      />
 
-                  <input
-                    type="datetime-local"
-                    placeholder="Time Off"
-                    onChange={(e) => {
-                      setTimeOffSchedule(e.target.value);
-                    }}
-                    className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
-                  />
-                  <button
-                    onClick={openDialog}
-                    className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
-                  >
-                    Save
-                  </button>
-                </div>
+                      <input
+                        type="datetime-local"
+                        placeholder="Time Off"
+                        onChange={(e) => {
+                          setTimeOffSchedule(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                      />
+                      <button
+                        onClick={openDialog}
+                        className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1061,7 +1085,7 @@ const Draft = () => {
                         </h1>
 
                         <p className="text-gray-600 mb-2">
-                          Pump START when Humidity less than{" "}
+                          Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
                           <span className="font-bold">{startThreshold}%</span>
                         </p>
                         <div className="flex items-center gap-2">
