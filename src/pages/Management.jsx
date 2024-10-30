@@ -148,7 +148,7 @@ const Management = () => {
     }
   }, [Flag]);
   return (
-    <div className="flex p-4 h-full w-full ">
+    <div className="flex h-full w-full ">
       {/* Dialog*/}
       <Dialog
         open={isDialogOpen}
@@ -395,33 +395,33 @@ const Management = () => {
             </label>
           </div>
         </div> */}
-        <div className="flex p-2">
-          <div class="w-2/3 overflow-hidden">
+        <div className="flex p-4 ">
+          <div class="w-2/3 overflow-hidden ">
             <div class="relative h-full overflow-y-auto rounded-3xl">
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Avartar
+                      Ảnh đại diện
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Full Name
+                      Họ và Tên
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      User Name
+                      Tên đăng nhập
                     </th>
 
                     <th scope="col" class="px-6 py-3 text-center">
-                      Role
+                      Phân quyềm
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Setup
+                      Tuỳ chỉnh
                     </th>
                   </tr>
                 </thead>
-                <tbody className="rounded-b-2xl">
+                <tbody className="">
                   {data1.map((item) => (
-                    <tr class="bg-white dark:bg-gray-800" key={item._id}>
+                    <tr class="bg-white dark:bg-gray-800 " key={item._id}>
                       <td class="px-6 py-4 text-center">
                         <img
                           className="block mx-auto h-16 w-16 rounded-full sm:mx-0 sm:flex-shrink-0"
@@ -441,11 +441,11 @@ const Management = () => {
                               openDialog(e.target.value, item.username)
                             }
                           >
-                            <option elemet="admin">Edit </option>
-                            <option value="password">Change Password</option>
-                            <option value="role">Change Role</option>
-                            <option value="email">Change Email</option>
-                            <option value="delete">Delete User</option>
+                            <option elemet="admin">Chỉnh sửa </option>
+                            <option value="password">Đổi Mật Khẩu</option>
+                            <option value="role">Đổi Phân Quyền</option>
+                            <option value="email">Đổi Email</option>
+                            <option value="delete">Xoá Người dùng</option>
                           </select>
                         </label>
                       </td>
@@ -457,11 +457,11 @@ const Management = () => {
           </div>
           <div class="w-1/3 ml-3">
             <div className="p-4  flex flex-col h-full rounded-3xl  bg-white">
-              <p className="ml-3 font-bold text-center">CREATE ACCOUNT</p>
+              <p className="ml-3 font-bold text-center">TẠO TÀI KHOẢN</p>
               <form className="h-20">
                 <label className="block mb-3 p-4 ">
                   <span className="block text-sm font-bold text-slate-700">
-                    Full Name
+                    Họ và Tên
                   </span>
                   <input
                     type="text"
@@ -477,7 +477,7 @@ const Management = () => {
               <form className="h-20">
                 <label className="block mb-3 p-4">
                   <span className="block text-sm font-bold text-slate-700">
-                    Username
+                    Tên người dùng
                   </span>
                   <input
                     type="text"
@@ -493,7 +493,7 @@ const Management = () => {
               <form className="h-20">
                 <label className="block mb-3 p-4">
                   <span className="block text-sm font-bold text-slate-700">
-                    Password
+                    Mật khẩu
                   </span>
                   <input
                     type="password"
@@ -508,7 +508,7 @@ const Management = () => {
               <form className="h-20">
                 <label className="block mb-3 p-4">
                   <span className="block text-sm font-bold  text-slate-700">
-                    Role
+                    Phân quyền
                   </span>
                   <label className="inline-flex items-center w-full text-sm font-semibold ">
                     <select
@@ -518,7 +518,7 @@ const Management = () => {
                       <option value="Admin">Choice your authority</option>
                       <option value="admin">Admin</option>
                       <option value="user">User</option>
-                      <option value="others">Others</option>
+                      {/* <option value="others">Others</option> */}
                     </select>
                   </label>
                 </label>
@@ -555,7 +555,7 @@ const Management = () => {
               <form className="h-20">
                 <label className="block mb-3 p-4">
                   <span className="block text-sm font-bold text-slate-700">
-                    Phone Number
+                    Số điện thoại
                   </span>
                   <div>
                     <input
@@ -596,224 +596,247 @@ const Management = () => {
 
       {/* -----------------------MObile View----------------------- */}
 
-      <div className=" sm:hidden h-full w-screen ">
-        <ul className=" p-2 flex justify-center w-full overflow-x-auto ">
-          <li class="p-4   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
+      <div className=" sm:hidden  h-full w-full ">
+        {/* <ul className="mt-2 p-1 flex justify-center h-fit  w-full overflow-x-auto ">
+          <li class=" list-none flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305] rounded ">
             <span
               class="ml-2 underline hover:underline-offset-8  "
               onClick={() => {
                 setDisplay("1");
               }}
             >
-              Create Account
+              Tạo tài khoản
             </span>
           </li>
-          <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
+          <li class="list-none flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305] rounded p-4">
             <span
               class="ml-2 underline hover:underline-offset-8 "
               onClick={() => {
                 setDisplay("0");
               }}
             >
-              Management
+              Quản lý
+            </span>
+          </li>
+        </ul> */}
+        <ul className="mt-2 p-1 flex justify-center h-fit  w-full overflow-x-auto ">
+          <li class="p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305]  ">
+            <span
+              class="ml-2 underline hover:underline-offset-8  "
+              onClick={() => {
+                setDisplay("1");
+              }}
+            >
+              Tạo tài khoản
+            </span>
+          </li>
+          <li class="ml-3 p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305] rounded ">
+            <span
+              class="ml-2 underline hover:underline-offset-8 "
+              onClick={() => {
+                setDisplay("0");
+              }}
+            >
+              Quản lý
             </span>
           </li>
         </ul>
-        {Display === "1" && (
-          <div className="p-4  bg-white bg-opacity-75 flex flex-col h-fit w-full rounded-3xl gap-0.75 ">
-            <form className="h-20">
-              <label className="block mb-3 p-4 ">
-                <span className="block text-sm font-bold text-slate-700">
-                  Full Name
-                </span>
-                <input
-                  type="text"
-                  name="fullname"
-                  className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Họ và Tên"
-                  value={CRfullname}
-                  onChange={(e) => setFullname(e.target.value)}
-                />
-              </label>
-            </form>
-
-            <form className="h-20">
-              <label className="block mb-3 p-4">
-                <span className="block text-sm font-bold text-slate-700">
-                  Username
-                </span>
-                <input
-                  type="text"
-                  name="username"
-                  className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Tên dùng để đăng nhập"
-                  value={CRusername}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </label>
-            </form>
-
-            <form className="h-20">
-              <label className="block mb-3 p-4">
-                <span className="block text-sm font-bold text-slate-700">
-                  Password
-                </span>
-                <input
-                  type="password"
-                  className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Đặt mật khẩu có kí tự"
-                  value={CRpassword}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </label>
-            </form>
-
-            <form className="h-20">
-              <label className="block mb-3 p-4">
-                <span className="block text-sm font-bold  text-slate-700">
-                  Role
-                </span>
-                <label className="inline-flex items-center w-full text-sm font-semibold ">
-                  <select
-                    className="text-gray-500 mt-1 h-12 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value="Admin">Phân quyền cho người dùng</option>
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                    <option value="others">Others</option>
-                  </select>
+        <div className="p-4">
+          {Display === "1" && (
+            <div className="p-4  bg-white bg-opacity-75 flex flex-col h-fit w-full rounded-3xl gap-0.75 ">
+              <form className="h-20">
+                <label className="block mb-3 p-4 ">
+                  <span className="block text-sm font-bold text-slate-700">
+                    Họ và Tên
+                  </span>
+                  <input
+                    type="text"
+                    name="fullname"
+                    className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Họ và Tên"
+                    value={CRfullname}
+                    onChange={(e) => setFullname(e.target.value)}
+                  />
                 </label>
-              </label>
-            </form>
+              </form>
 
-            <form className="h-20">
-              <label className="block mb-3 p-4">
-                <span className="block text-sm font-bold text-slate-700">
-                  Email
-                </span>
-                <div>
+              <form className="h-20">
+                <label className="block mb-3 p-4">
+                  <span className="block text-sm font-bold text-slate-700">
+                    Tên đăng nhập
+                  </span>
                   <input
-                    type="email"
+                    type="text"
                     name="username"
-                    className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
-                      errorMail ? "border-red-500" : "focus:border-sky-500"
-                    } ${
-                      errorMail ? "focus:ring-red-500" : "focus:ring-sky-500"
-                    } block w-full rounded-md sm:text-sm focus:ring-1`}
-                    placeholder="abc@gmail.com"
-                    value={CRemail}
-                    onChange={handleEmailChange}
-                    required
+                    className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Tên dùng để đăng nhập"
+                    value={CRusername}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
-                  {errorMail && (
-                    <p className="mt-2 text-pink-600 text-xs italic">
-                      {errorMail}
-                    </p>
-                  )}
-                </div>
-              </label>
-            </form>
-            {errorMail ? <br></br> : ""}
-            <form className="h-20">
-              <label className="block mb-3 p-4">
-                <span className="block text-sm font-bold text-slate-700">
-                  Phone Number
-                </span>
-                <div>
+                </label>
+              </form>
+
+              <form className="h-20">
+                <label className="block mb-3 p-4">
+                  <span className="block text-sm font-bold text-slate-700">
+                    Mật khẩu
+                  </span>
                   <input
-                    type="tel"
-                    name="PhoneNumber"
-                    className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
-                      error ? "border-red-500" : "focus:border-sky-500"
-                    } ${
-                      error ? "focus:ring-red-500" : "focus:ring-sky-500"
-                    } block w-full rounded-md sm:text-sm focus:ring-1`}
-                    placeholder="0xxxxxxxxx"
-                    value={CRphone}
-                    onChange={handlePhoneChange}
-                    // onBlur={handleBlur}
-                    required
+                    type="password"
+                    className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Đặt mật khẩu có kí tự"
+                    value={CRpassword}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
-                  {error && (
-                    <p className="mt-2 text-pink-600 text-xs italic">{error}</p>
-                  )}
-                </div>
-              </label>
-            </form>
-            <div className="flex justify-center mt-8">
-              <button
-                value="create"
-                onClick={(e) => openDialog(e.target.value, null)}
-                className="px-4 py-2 button-create-user bg-green-500 transition-colors duration-150 cursor-pointer hover:bg-green-900 text-cyan-50 rounded-full font-bold"
-              >
-                Create
-              </button>
+                </label>
+              </form>
+
+              <form className="h-20">
+                <label className="block mb-3 p-4">
+                  <span className="block text-sm font-bold  text-slate-700">
+                    Phân quyền
+                  </span>
+                  <label className="inline-flex items-center w-full text-sm font-semibold ">
+                    <select
+                      className="text-gray-500 mt-1 h-12 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
+                      onChange={(e) => setRole(e.target.value)}
+                    >
+                      <option value="Admin">Phân quyền cho người dùng</option>
+                      <option value="admin">Admin</option>
+                      <option value="user">User</option>
+                      {/* <option value="others">Others</option> */}
+                    </select>
+                  </label>
+                </label>
+              </form>
+
+              <form className="h-20">
+                <label className="block mb-3 p-4">
+                  <span className="block text-sm font-bold text-slate-700">
+                    Email
+                  </span>
+                  <div>
+                    <input
+                      type="email"
+                      name="username"
+                      className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
+                        errorMail ? "border-red-500" : "focus:border-sky-500"
+                      } ${
+                        errorMail ? "focus:ring-red-500" : "focus:ring-sky-500"
+                      } block w-full rounded-md sm:text-sm focus:ring-1`}
+                      placeholder="abc@gmail.com"
+                      value={CRemail}
+                      onChange={handleEmailChange}
+                      required
+                    />
+                    {errorMail && (
+                      <p className="mt-2 text-pink-600 text-xs italic">
+                        {errorMail}
+                      </p>
+                    )}
+                  </div>
+                </label>
+              </form>
+              {errorMail ? <br></br> : ""}
+              <form className="h-20">
+                <label className="block mb-3 p-4">
+                  <span className="block text-sm font-bold text-slate-700">
+                    Số điện thoại
+                  </span>
+                  <div>
+                    <input
+                      type="tel"
+                      name="PhoneNumber"
+                      className={` mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none ${
+                        error ? "border-red-500" : "focus:border-sky-500"
+                      } ${
+                        error ? "focus:ring-red-500" : "focus:ring-sky-500"
+                      } block w-full rounded-md sm:text-sm focus:ring-1`}
+                      placeholder="0xxxxxxxxx"
+                      value={CRphone}
+                      onChange={handlePhoneChange}
+                      // onBlur={handleBlur}
+                      required
+                    />
+                    {error && (
+                      <p className="mt-2 text-pink-600 text-xs italic">
+                        {error}
+                      </p>
+                    )}
+                  </div>
+                </label>
+              </form>
+              <div className="flex justify-center mt-8">
+                <button
+                  value="create"
+                  onClick={(e) => openDialog(e.target.value, null)}
+                  className="px-4 py-2 button-create-user bg-green-500 transition-colors duration-150 cursor-pointer hover:bg-green-900 text-cyan-50 rounded-full font-bold"
+                >
+                  Create
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-        {Display === "0" && (
-          <div class=" w-full overflow-hidden">
-            <div class="relative h-full overflow-y-auto  mt-3">
-              <table class="w-full text-sm text-left rtl:text-right text-gray-500  dark:text-gray-400">
-                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
-                  <tr>
-                    <th scope="col" class="px-2 py-2 text-center">
-                      Avartar
-                    </th>
-                    <th scope="col" class="px-2 py-2 text-center">
-                      Full Name
-                    </th>
-                    <th scope="col" class="px-2 py-2 text-center">
-                      User Name
-                    </th>
-                    <th scope="col" class="px-2 py-2 text-center">
-                      Role
-                    </th>
-                    <th scope="col" class="px-2 py-2 text-center">
-                      Setup
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="rounded-b-2xl">
-                  {data1.map((item) => (
-                    <tr class="bg-white dark:bg-gray-800" key={item._id}>
-                      <td class="px-2 py-2 text-center">
-                        <img
-                          class="block mx-auto h-16 w-16 rounded-full sm:mx-0 sm:flex-shrink-0"
-                          src={ImgUsr(item.username)}
-                        />
-                      </td>
-                      <td class="px-2 py-2 text-center">{item.full_name}</td>
-                      <td class="px-2 py-2 text-center sm:hidden md:table-cell">
-                        {item.username}
-                      </td>
-                      <td class="px-2 py-2 text-center">{item.role}</td>
-                      <td class="px-2 py-2 text-center">
-                        <label class="inline-flex w-6 items-center text-sm font-semibold  ">
-                          <select
-                            class="w-6"
-                            name="data-list"
-                            id="data-list"
-                            onChange={(e) =>
-                              openDialog(e.target.value, item.username)
-                            }
-                          >
-                            <option value="null"></option>
-                            <option value="password">Change Password</option>
-                            <option value="role">Change Role</option>
-                            <option value="email">Change Email</option>
-                            <option value="delete">Delete User</option>
-                          </select>
-                        </label>
-                      </td>
+          )}
+          {Display === "0" && (
+            <div class="w-fit overflow-hidden ">
+              <div class="relative h-full overflow-y-auto rounded-3xl">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
+                  <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 text-center">
+                        Ảnh đại diện
+                      </th>
+
+                      <th scope="col" class="px-6 py-3 text-center">
+                        Tên đăng nhập
+                      </th>
+
+                      <th scope="col" class="px-6 py-3 text-center">
+                        Phân quyềm
+                      </th>
+                      <th scope="col" class="px-6 py-3 text-center">
+                        Tuỳ chỉnh
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="">
+                    {data1.map((item) => (
+                      <tr class="bg-white dark:bg-gray-800" key={item._id}>
+                        <td class="px-4 py-2 text-center">
+                          <img
+                            className="block mx-auto h-auto w-16 rounded-full sm:mx-0 sm:flex-shrink-0 "
+                            src={ImgUsr(item.username)}
+                          ></img>
+                        </td>
+
+                        <td class="px-6 py-4 text-center">{item.username}</td>
+                        <td class="px-6 py-4 text-center">{item.role}</td>
+                        <td class="px-6 py-4 text-center">
+                          <label className="inline-flex items-center text-sm font-semibold overflow-auto ">
+                            <select
+                              className="text-gray-500 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
+                              name="data-list"
+                              id="data-list"
+                              onChange={(e) =>
+                                openDialog(e.target.value, item.username)
+                              }
+                            >
+                              <option elemet="admin"> </option>
+                              <option value="password">Đổi Mật Khẩu</option>
+                              <option value="role">Đổi Phân Quyền</option>
+                              <option value="email">Đổi Email</option>
+                              <option value="delete">Xoá Người dùng</option>
+                            </select>
+                          </label>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -30,10 +30,10 @@ ChartJS.register(
   Legend
 );
 const MODE_NAME_CHANGE = [
-  "Chế độ bơm tự động",
-  "Chế độ bơm thủ công",
-  "Chế độ bơm hẹn giờ",
-  "Chế độ bơm tuần tự",
+  "Bơm tự động",
+  "Bơm thủ công",
+  "Bơm hẹn giờ",
+  "Bơm tuần tự",
 ];
 const MODE_NAME_GET = ["auto", "manual", "schedule", "sequent"];
 function formatDateTime(dateTimeString) {
@@ -57,7 +57,7 @@ const Draft = () => {
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
-  // const [isChecked, setIsChecked] = useState("auto");
+
   const [selectedMode, setSelectedMode] = useState(null);
   const [StatusSwitchMode, setStatusSwitchMode] = useState();
   const modeIndex = MODE_NAME_GET.indexOf(isChecked);
@@ -369,7 +369,7 @@ const Draft = () => {
   const dt1 = JSON.parse(dataMotor);
 
   const postMode = async (mode, data) => {
-    console.log(mode);
+    console.log("MODE BF send", mode);
     const response = await axios.post(url_api + "control/" + mode, data, {
       headers: {
         accept: "application/json",
@@ -379,24 +379,27 @@ const Draft = () => {
     });
     console.log("response ", response.data);
     notifyInfo(response.data["message"]);
-    const responseMode = await axios.get(url_api + "control_mode", {
+    const responseMode = await axios.get(url_api + "api/motor/1", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-
-    setIsChecked(responseMode.data["system_mode"]);
+    console.log(
+      "assssssssssssss",
+      JSON.stringify(responseMode.data[0]["mode"])
+    );
+    setIsChecked(responseMode.data[0]["mode"]);
     localStorage.setItem(
       "isChecked",
-      JSON.stringify(responseMode.data["system_mode"])
+      JSON.stringify(responseMode.data[0]["mode"])
     );
   };
   const sendMode = async (mode) => {
     if (mode == "sequent") {
-      // const data = { mode: "sequent" };
-      // postMode(mode, data);
+      const data = { mode: "sequent" };
+      postMode(mode, data);
       setIsChecked("sequent");
     } else {
       // const data = { status: true, timerSend: 1 };
@@ -423,6 +426,7 @@ const Draft = () => {
       setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
+      // setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       calculateTotals();
     }, 1000);
 
@@ -445,7 +449,7 @@ const Draft = () => {
     if (role == "admin") {
       setSelectedMode(MODE_NAME_CHANGE[index]);
       console.log("Chế độ đã chọn:", MODE_NAME_GET[index]);
-      let data = { mode: "manual" };
+      let data = { mode: "" };
       postMode(MODE_NAME_GET[index], data);
     } else {
       notifyError("Permission Denied!");
@@ -594,14 +598,14 @@ const Draft = () => {
             <div className="flex flex-col h-fit w-2/5 bg-white border-2 border-[#4CC9FE] p-2  rounded-xl ">
               <div className="flex">
                 <strong className="w-1/2">TRẠNG THÁI HIỆN TẠI: </strong>
-                <strong className="w-1/2 text-red-500">{displayName}</strong>
+                <strong className="w-1/2 text-red-500 ">{displayName}</strong>
               </div>
               <div className=" mt-1 flex">
                 {MODE_NAME_CHANGE.map((mode, index) => (
                   <button
                     key={index}
                     onClick={() => handleButtonClickMode(index)}
-                    className=" text-white rounded-2xl"
+                    className=" text-white rounded-2xl "
                     style={{
                       margin: "5px",
                       padding: "10px",
@@ -611,7 +615,7 @@ const Draft = () => {
                           : "#EC8305",
                     }}
                   >
-                    {mode}
+                    Chế độ {mode}
                   </button>
                 ))}
               </div>
@@ -921,379 +925,337 @@ const Draft = () => {
       </div>
 
       {/* -----------------------Mobile View----------------------- */}
-      <div className="sm:hidden h-screen w-screen ">
-        <ul className=" p-2 flex justify-center w-full overflow-x-auto ">
-          <li class="p-4   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
-            <span
-              class="ml-2 underline hover:underline-offset-8  "
-              onClick={() => {
-                setDisplay("1");
-              }}
-            >
-              Pump View
-            </span>
-          </li>
-          <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
-            <span
-              class="ml-2 underline hover:underline-offset-8 "
-              onClick={() => {
-                setDisplay("0");
-              }}
-            >
-              Pump Control
-            </span>
-          </li>
-        </ul>
-        {Display === "1" && (
-          <div className=" ">
-            <h1 className="ml-4 font-bold text-center mb-4 ">PUMP VIEW</h1>
-            <div className="flex left-1 gap-3 items-center justify-center">
-              <div className=" flex flex-col  items-center h-1/6 w-36 p-2  shadow-xl bg-white text-black rounded-md mr-2 ">
-                <div class="flex justify-between text-black">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-engine"
+      <div className="sm:hidden h-screen w-screen p-4">
+        <div className="flex flex-col  h-full w-full ">
+          {/* Điều khiển chung */}
+          <div className=" flex  h-fit w-fullrounded-3xl ">
+            {/* Thay đổi chế độ điều khiển */}
+            <div className="flex flex-col h-fit w-full bg-white border-2 border-[#4CC9FE] p-2  rounded-xl ">
+              <div className="flex">
+                <strong className="w-3/5 text-sm">TRẠNG THÁI HIỆN TẠI: </strong>
+                <strong className="w-2/5 text-red-500">{displayName}</strong>
+              </div>
+              <div className=" mt-1 flex">
+                {MODE_NAME_CHANGE.map((mode, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleButtonClickMode(index)}
+                    className=" text-white rounded-2xl"
+                    style={{
+                      margin: "5px",
+                      padding: "10px",
+                      backgroundColor:
+                        isChecked === MODE_NAME_GET[index]
+                          ? "#024CAA"
+                          : "#EC8305",
+                    }}
                   >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M3 10v6" />
-                    <path d="M12 5v3" />
-                    <path d="M10 5h4" />
-                    <path d="M5 13h-2" />
-                    <path d="M6 10h2l2 -2h3.382a1 1 0 0 1 .894 .553l1.448 2.894a1 1 0 0 0 .894 .553h1.382v-2h2a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-2v-2h-3v2a1 1 0 0 1 -1 1h-3.465a1 1 0 0 1 -.832 -.445l-1.703 -2.555h-2v-6z" />
-                  </svg>
-                  <p className="text-left">
-                    <b>Motor 1</b>
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* END Thay đổi chế độ điều khiển */}
+          </div>
+          {/* Bảng điều khiển tần số */}
+          <div className="  mt-2 flex flex-col h-fit w-full bg-white  p-2 border-2 border-[#4CC9FE] rounded-xl ">
+            <div className=" mt-1 flex">
+              <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                Tần số hoạt động của máy bơm (Hz)
+              </div>
+              <input
+                type="text"
+                value={frequencyPump}
+                onChange={handleFrequencyPumpdChange}
+                className="text-center w-1/5  border-2 border-gray-700"
+              />
+
+              <button
+                onClick={handleSaveFrequencyPumpClick}
+                className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+            </div>
+            <div className=" mt-1 flex">
+              <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                Chu kì lấy mẫu cảm biến (Giây)
+              </div>
+              <input
+                type="text"
+                value={cycleSample}
+                onChange={(event) => setCycleSample(event.target.value)}
+                className=" text-center w-1/5  border-2 border-gray-700 "
+              />
+
+              <button
+                onClick={handleSaveCycleSample}
+                className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+            </div>
+            <div className=" mt-1 flex">
+              <div class="list-none w-3/5 flex items-center text-red-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
+                Reset Alarm
+              </div>
+
+              <button
+                onClick={resetGateway}
+                className="mt-1 w-2/5 bg-red-500 text-white rounded-3xl "
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+          {/* END Bảng điều khiển tần số */}
+          {/* hướng dẫn sử dụng và bảng điều khiển */}
+          <div className="mt-2  flex  h-4/5 w-full rounded-3xl  ">
+            <div className=" w-full bg-white  border-2 border-[#4CC9FE] rounded-xl">
+              {/* HƯỚNG DẪN SỬ DỤNG */}
+              <div className="w-full border-r-2 border-gray-300 ml-3  p-2">
+                <h4 className="text-center">{displayName}</h4>
+                {/* <div className="mt-2">
+                  <p className=" mt-2 ml-2 text-base  playwrite-gb-s">
+                    {UserManual[`${isChecked}_1`]}
                   </p>
-                </div>
-
-                <div class="ml-2 w-full flex-1">
-                  <div class="mt-1 text-base text-gray-600">
-                    Status : <span>{valueMotor1 ? "ON" : "OFF"}</span>
-                  </div>
-                  {/* <div class="mt-1 text-base text-gray-600">
-                    Time : {timeDayMotor1}h
-                  </div> */}
-                  <div class="mt-1 text-base text-gray-600">
-                    Flow : {VolumeDayMotor1 + "  lits"}
-                  </div>
-                </div>
+                  <br></br>
+                  <p className="ml-2 text-base  playwrite-gb-s">
+                    {UserManual[`${isChecked}_2`]}
+                  </p>
+                  <br></br>
+                </div> */}
               </div>
-            </div>
-            <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
-              <div className="w-full h-full">
-                <Bar
-                  data={data2}
-                  options={{
-                    ...optionsBar,
-                    responsive: true,
-                    maintainAspectRatio: false,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-        {Display === "0" && (
-          <div className=" ">
-            <h1 className="ml-4 font-bold text-center mb-4"> Control Pump</h1>
-            {/* Select mode */}
-
-            <div className=" flex flex-col bg-white bg-opacity-50 p-2  rounded-xl ">
-              <div className=" mt-1 flex">
-                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                  SET FREQUENCY PUMP (Hz)
-                </div>
-                <input
-                  type="text"
-                  value={frequencyPump}
-                  onChange={handleFrequencyPumpdChange}
-                  className="text-center w-1/5  border-2 border-gray-700"
-                />
-
-                <button
-                  onClick={handleSaveFrequencyPumpClick}
-                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Save
-                </button>
-              </div>
-              <div className=" mt-1 flex">
-                <div class="list-none w-3/5 flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                  SAMPLE CYCLE (Seconds)
-                </div>
-                <input
-                  type="text"
-                  value={cycleSample}
-                  onChange={(event) => setCycleSample(event.target.value)}
-                  className=" text-center w-1/5  border-2 border-gray-700 "
-                />
-
-                <button
-                  onClick={handleSaveCycleSample}
-                  className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Save
-                </button>
-              </div>
-              <div className=" mt-1 flex">
-                <div class="list-none w-3/5 flex items-center text-red-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                  Reset Alarm
-                </div>
-
-                <button
-                  onClick={resetGateway}
-                  className="mt-1 w-2/5 bg-red-500 text-white rounded-3xl "
-                >
-                  Reset
-                </button>
-              </div>
-              <div className=" mt-1 flex">
-                <div class="list-none w-3/5 flex items-center text-blue-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-2">
-                  {/* {isChecked} */}
-                  {isChecked == "auto" ? "Auto" : "Manual"}
-                </div>
-
-                <label class="ml-1 mt-2 inline-flex font-bold cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={StatusSwitchMode}
-                    onChange={(e) => ModeControl(e)}
-                  />
-                  <div class="relative w-10 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                </label>
-              </div>
-            </div>
-
-            {/* End Select mode */}
-            {isChecked == "auto" ? (
-              <div className="p-4 h-5/6 w-full  ">
-                <div className=" h-full w-full">
-                  <div class="flex flex-col gap-3">
-                    <div className="p-4 relative h-72 mt-2 bg-white border-2 border-blue-500 rounded-2xl ">
-                      <div className="mb-4">
-                        <h1 className="text-3xl font-bold mb-6 text-gray-700">
-                          Auto Mode
-                        </h1>
-
-                        <p className="text-gray-600 mb-2">
-                          Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
-                          <span className="font-bold">{startThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={startThreshold}
-                            onChange={handleStartThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
-                            }}
-                          />
-                          <input
-                            type="text"
-                            min="0"
-                            max="100"
-                            value={startThreshold}
-                            onChange={handleStartThresholdChange}
-                            className="text-right w-1/5"
-                          />
-                          %
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
-                        </div>
+              <div className="w-full ml-3 p-2">
+                {isChecked == "auto" ? (
+                  <div>
+                    {/* AUTO MODE */}
+                    <div className="mt-1 ">
+                      <p className="text-gray-600 mb-2">
+                        Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
+                        <span className="ml-2 font-bold text-red-500">
+                          {startThreshold}%
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={startThreshold}
+                          onChange={handleStartThresholdChange}
+                          className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, red, green ${startThreshold}%, #ccc ${startThreshold}%)`,
+                          }}
+                        />
+                        <input
+                          type="text"
+                          min="0"
+                          max="100"
+                          value={startThreshold}
+                          onChange={handleStartThresholdChange}
+                          className="text-right w-1/5"
+                        />
+                        %
+                        <button
+                          onClick={handleSaveClick}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
                       </div>
+                    </div>
+                    <div className=" ">
+                      <p className="text-gray-600 mb-2">
+                        Máy bơm sẽ tắt khi ngưỡng nhiệt độ cao hơn
+                        <span className="ml-3 font-bold text-blue-500">
+                          {stopThreshold}%
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={stopThreshold}
+                          onChange={handleStopThresholdChange}
+                          className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
+                          }}
+                        />
+                        <input
+                          type="text"
+                          min="0"
+                          max="100"
+                          value={stopThreshold}
+                          onChange={handleStopThresholdChange}
+                          className="text-right w-1/5"
+                        />
+                        %
+                        <button
+                          onClick={handleSaveClick}
+                          className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>{" "}
+                  </div>
+                ) : isChecked == "manual" ? (
+                  <div>
+                    {/* MANUAL MODE */}
+                    <div
+                      className={`ml-1 flex w-11/12 items-center justify-between p-2 bg-white border border-gray-300 rounded-md shadow-sm ${
+                        pump ? "bg-gray-200" : ""
+                      }`}
+                    >
+                      <span
+                        className={`text-lg font-medium ${
+                          pump ? "text-blue-600" : "text-gray-600"
+                        }`}
+                      >
+                        Pump : {pump ? "ON" : "OFF"}
+                      </span>
 
-                      <div>
-                        <p className="text-gray-600 mb-2">
-                          Pump STOP when Humidity greater than
-                          <span className="font-bold">{stopThreshold}%</span>
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={stopThreshold}
-                            onChange={handleStopThresholdChange}
-                            className="w-2/3 appearance-none h-3 bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-                            style={{
-                              background: `linear-gradient(to right, green, red ${stopThreshold}%, #ccc ${stopThreshold}%)`,
+                      <button
+                        onClick={openDialog}
+                        className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
+                          pump
+                            ? "bg-red-600 hover:bg-red-700"
+                            : "bg-green-600 hover:bg-green-700"
+                        } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                        disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
+                      >
+                        {pump ? "Turn Off" : "Turn On"}{" "}
+                        {timerSend > 0
+                          ? `(${minutes}:${
+                              seconds < 10 ? `0${seconds}` : seconds
+                            })`
+                          : ""}
+                      </button>
+                    </div>
+                    <div className=" w-full mr-2 mt-3 ">
+                      <div className="mr-6  h-full  bg-white border-2 border-blue-500 rounded-2xl flex ">
+                        <div className="w-full h-full">
+                          <Bar
+                            data={data2}
+                            options={{
+                              ...optionsBar,
+                              responsive: true,
+                              maintainAspectRatio: false,
                             }}
                           />
-                          <input
-                            type="text"
-                            min="0"
-                            max="100"
-                            value={stopThreshold}
-                            onChange={handleStopThresholdChange}
-                            className="text-right w-1/5"
-                          />
-                          %
-                          <button
-                            onClick={handleSaveClick}
-                            className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                          >
-                            Save
-                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 h-5/6 w-full  ">
-                <div className=" h-full w-full">
-                  <div className="max-w-4xl mx-auto  bg-white border border-gray-300 rounded-3xl shadow-md">
-                    <ul className=" flex justify-center w-full overflow-x-auto ">
-                      <li class="   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
-                        <span
-                          class="ml-2 underline hover:underline-offset-8  "
-                          onClick={() => {
-                            sendMode("manual");
-                          }}
-                        >
-                          Manual
-                        </span>
-                      </li>
-                      <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
-                        <span
-                          class="ml-2 underline hover:underline-offset-8 "
-                          onClick={() => {
-                            sendMode("sequent");
-                          }}
-                        >
-                          Sequent
-                        </span>
-                      </li>
-                    </ul>
-                    <div className="p-4">
-                      {isChecked == "manual" ? (
-                        <div
-                          className={`mt-2 flex items-center justify-between p-4 mb-4 bg-white border border-gray-300 rounded-md shadow-sm ${
-                            pump ? "bg-gray-200" : ""
-                          }`}
-                        >
-                          <span
-                            className={`text-lg font-medium ${
-                              pump ? "text-blue-600" : "text-gray-600"
-                            }`}
-                          >
-                            Pump : {pump ? "ON" : "OFF"}
-                          </span>
+                ) : isChecked == "sequent" ? (
+                  <div>
+                    {/* SEQUENT MODE */}
+                    <div
+                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                        <path d="M9 12h6" />
+                        <path d="M12 9v6" />
+                      </svg>
 
-                          <button
-                            onClick={openDialog}
-                            className={`px-4 py-2 rounded-md font-medium text-white transition-colors duration-200 ${
-                              pump
-                                ? "bg-red-600 hover:bg-red-700"
-                                : "bg-green-600 hover:bg-green-700"
-                            } ${
-                              isLocked ? "cursor-not-allowed opacity-50" : ""
-                            }`}
-                            disabled={isLocked} // Vô hiệu hóa nút khi đang khóa
-                          >
-                            {pump ? "Turn Off" : "Turn On"}{" "}
-                            {timerSend > 0
-                              ? `(${minutes}:${
-                                  seconds < 10 ? `0${seconds}` : seconds
-                                })`
-                              : ""}
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="mt-2">
-                          <p className=" ml-2 text-sm font-family:Times New Roman">
-                            Chế độ bơm liên tục là chế độ điều khiển máy bơm
-                            theo chu kỳ, trong đó Time On là thời gian máy bơm
-                            hoạt động và Time Off là thời gian máy bơm ngừng
-                            hoạt động (tính bằng phút).
-                          </p>
-                          <br></br>
-                          <p className="ml-2 text-sm font-family:Times New Roman">
-                            Giả sử: Time On = 180 phút và Time Off = 30 phút.
-                            Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết
-                            thời gian hoạt động (Time On), máy bơm sẽ ngừng
-                            trong 30 phút (Time Off) và sau đó tự động khởi động
-                            lại chu kỳ.
-                          </p>
-                          <br></br>
-                          <div
-                            className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
-                            >
-                              <path
-                                stroke="none"
-                                d="M0 0h24v24H0z"
-                                fill="none"
-                              />
-                              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                              <path d="M9 12h6" />
-                              <path d="M12 9v6" />
-                            </svg>
+                      <input
+                        type="number"
+                        placeholder="Time On"
+                        onChange={(e) => {
+                          setTimeOn(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                        required
+                      />
 
-                            <input
-                              type="number"
-                              placeholder="Time On"
-                              // value={TimeOn}
-                              onChange={(e) => {
-                                setTimeOn(e.target.value);
-                              }}
-                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
-                              required
-                            />
+                      <input
+                        type="number"
+                        placeholder="Time Off"
+                        onChange={(e) => {
+                          setTimeOff(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                      />
+                      <button
+                        onClick={openDialog}
+                        className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                      >
+                        Save
+                      </button>
+                    </div>{" "}
+                  </div>
+                ) : (
+                  <div>
+                    {/* SCHEDULE MODE */}
+                    <div
+                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                        <path d="M9 12h6" />
+                        <path d="M12 9v6" />
+                      </svg>
 
-                            <input
-                              type="number"
-                              // value={TimeOff}
-                              placeholder="Time Off"
-                              onChange={(e) => {
-                                setTimeOff(e.target.value);
-                              }}
-                              className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
-                            />
-                            <button
-                              onClick={openDialog}
-                              className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                      <input
+                        type="datetime-local"
+                        placeholder="Time On"
+                        onChange={(e) => {
+                          setTimeOnSchedule(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
+                        required
+                      />
+
+                      <input
+                        type="datetime-local"
+                        placeholder="Time Off"
+                        onChange={(e) => {
+                          setTimeOffSchedule(e.target.value);
+                        }}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                      />
+                      <button
+                        onClick={openDialog}
+                        className="ml-2 w-1/5 px-3 py-1 bg-blue-500 text-white rounded-3xl hover:bg-blue-600"
+                      >
+                        Save
+                      </button>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

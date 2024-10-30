@@ -11,16 +11,17 @@ import "react-toastify/dist/ReactToastify.css";
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 
-const TimeToSpam = 5; //seconds
+const TimeToSpam = 60 * 30; //seconds
 const TimeDelaysNotify = 30; //min
 const TimeSpamLoadData = TimeToSpam * 1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
-
+console.log("TimeSpamLoadData", TimeSpamLoadData);
 const Layout = () => {
   //time
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
   );
+
   //notìy
   const location = useLocation();
   const [FlagNotify, setFlagNotify] = useState(false);
@@ -346,7 +347,7 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    // console.log(response.data[0]["mode"]);
+    console.log(response.data[0]["mode"]);
     localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
   };
   // console.log(rpsNotify);
@@ -373,13 +374,14 @@ const Layout = () => {
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      loadData();
-    }, TimeSpamLoadData);
+    // const intervalId = setInterval(() => {
+    //   loadData();
+    // }, TimeSpamLoadData);
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
     }, 1000);
-    return () => clearInterval(intervalId);
+
+    return () => clearInterval(interval);
   });
 
   return (
@@ -858,9 +860,9 @@ const Layout = () => {
             </div>
           </div>
           {/* Mobile View */}
-          <div className="sm:hidden h-screen w-screen bg-green-100 bg-opacity-50">
+          <div className="sm:hidden h-screen w-screen bg-[#A7E6FF] bg-opacity-50">
             {/* Inf box*/}
-            <div className="h-20 sticky bg-[#059212] top-0">
+            <div className="h-20 sticky bg-[#050C9C] top-0">
               <div className="">
                 <div className="flex  ">
                   {/* Img */}
@@ -882,10 +884,10 @@ const Layout = () => {
 
                   {/* User Inf*/}
                   <div className=" mt-4 text-white w-3/5">
-                    <p className="freeman-regular">
+                    <p className="playwrite-gb-s">
                       <strong>{localStorage.getItem("full_name")}</strong>
                     </p>
-                    <span>{Role}</span>
+                    <span classNme="playwrite-gb-s">{Role}</span>
                   </div>
                   {/*End User Inf*/}
 
@@ -918,7 +920,7 @@ const Layout = () => {
             {/* List Box */}
 
             {displayNavigateBar === "1" && (
-              <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#0A6847]">
+              <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#024CAA]">
                 <ul className="fmt-6 leading-10 flex flex-col space-y-4">
                   <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
@@ -945,7 +947,7 @@ const Layout = () => {
                       <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
                     </svg>
                     <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
-                      Dashboard
+                      Trang chủ
                     </span>
                   </Link>
                   {Role === "admin" && (

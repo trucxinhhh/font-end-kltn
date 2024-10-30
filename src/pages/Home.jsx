@@ -27,6 +27,14 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+import img1 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (1).jpg";
+import img2 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (2).jpg";
+import img3 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (3).jpg";
+import img4 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (4).jpg";
+import img5 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (5).jpg";
+import img6 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (6).jpg";
+import img7 from "/home/truc/font-end-kltn/src/assets/dualuoi/picture (7).jpg";
+const images = [img1, img2, img3, img4, img5, img6, img7];
 
 const DashBoard = [
   "CO2",
@@ -34,12 +42,12 @@ const DashBoard = [
   "Temp",
   "Flowmeters",
   "EC",
-  "pH", // Sal
+  "Salt", // Sal
   "Pressure",
-  "motor",
+  "Motor",
   "Waterpumped",
-  "Humi",
-  "Temp",
+  "AirHumi",
+  "AirTemp",
   "Full",
 ];
 const Unit = {
@@ -49,9 +57,12 @@ const Unit = {
   Flowmeters: "m³/s",
   EC: "µS/cm",
   Waterpumped: "m³",
-  pH: "ppm",
+  Salt: "ppm",
   Pressure: "bar",
-  motor: "",
+  Motor: "",
+  AirHumi: "% (kk)",
+  AirTemp: "°C (Đất)",
+  Full: "",
 };
 const TimeHour = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
@@ -59,25 +70,39 @@ const TimeHour = [
 ];
 
 function App() {
+  //img
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fade, setFade] = useState(true);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false); // Start fading out
+      setTimeout(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        setFade(true); // Start fading in
+      }, 500); // Duration for fade-out
+    }, 10000); // Change image every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [images.length]);
   //Websocket
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const ws = useRef(null);
 
-  useEffect(() => {
-    // Khởi tạo kết nối WebSocket và lưu vào ws.current
-    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
+  // useEffect(() => {
+  //   // Khởi tạo kết nối WebSocket và lưu vào ws.current
+  //   ws.current = new WebSocket("ws://34.126.91.225:1506/data");
 
-    // Lắng nghe sự kiện onmessage từ WebSocket
-    ws.current.onmessage = (event) => {
-      setMessages((prevMessages) => [...prevMessages, event.data]);
-    };
+  //   // Lắng nghe sự kiện onmessage từ WebSocket
+  //   ws.current.onmessage = (event) => {
+  //     setMessages((prevMessages) => [...prevMessages, event.data]);
+  //   };
 
-    // Đóng kết nối WebSocket khi component bị unmount
-    return () => {
-      ws.current.close();
-    };
-  }, []);
+  //   // Đóng kết nối WebSocket khi component bị unmount
+  //   return () => {
+  //     ws.current.close();
+  //   };
+  // }, []);
   //khai báo biến sử dụng
   const [Display, setDisplay] = useState(true);
   const [recentMotor, setRecentMotor] = useState([]);
@@ -144,17 +169,13 @@ function App() {
 
   //chuan hoa gia tri cam bien
   const checkValue = (name) => {
-    switch (name) {
-      case "motor":
-        if (name) {
-          const data = dt2.slice(-1)[0][name];
+    if (!name || dt1.length === 0) return "NaN";
 
-          if (data) {
-            return "ON";
-          } else {
-            return "OFF";
-          }
-        }
+    switch (name) {
+      case "Motor":
+      case "Full":
+        const data = dt2.slice(-1)[0]?.[name];
+        return data ? "ON" : "OFF";
 
       case "CO2":
       case "Humi":
@@ -162,59 +183,58 @@ function App() {
       case "Temp":
       case "Flowmeters":
       case "EC":
-      case "pH":
-        // case "Waterpumped":
-        if (name) {
-          return dt1.slice(-1)[0][name].toFixed(1);
-        }
+      case "Salt":
+        const value = dt1.slice(-1)[0]?.[name];
+        return value !== undefined ? value.toFixed(1) : "NaN";
+
       case "Waterpumped":
-        if (name) {
-          // return dt1.slice(-1)[0][name].toFixed(1);
-          return 20;
-        }
+        return 20;
+
+      default:
+        return "NaN";
     }
   };
+
   // bg-color-button-sensor-thresh
   const statusColor = (name, value) => {
     switch (name) {
       case "Pressure":
       case "Waterpumped":
       case "Flowmeters":
-        if (value) {
-          return "shadow-cyan-600";
+        if (value != undefined) {
+          return "shadow-cyan-600 bg-white ";
         }
-        return "shadow-red-600";
-      case "motor":
+        return "shadow-red-600 bg-red-100";
+      case "Motor":
       case "Full":
-      case "Empty":
         if (value == "ON") {
-          return "shadow-cyan-600";
+          return "shadow-cyan-600 bg-white ";
         }
-        return "shadow-red-600";
+        return "shadow-red-600 bg-red-100";
       case "CO2":
       case "Humi":
       case "Temp":
+      case "AirHumi":
+      case "AirTemp":
       case "EC":
-      case "pH":
+      case "Salt":
         const checkMAX = name + "_MAX";
         const checkMIN = name + "_MIN";
         if (
           value >= Thresh.DataMap[checkMIN] &&
           value < Thresh.DataMap[checkMAX]
         ) {
-          return "shadow-cyan-600";
+          return "shadow-cyan-600 bg-white ";
         } else {
-          return "shadow-red-600 bg-red-500";
+          return "shadow-red-600 text-black bg-red-100";
         }
       // case "":
     }
   };
   // rename sensor
   const change_name = (nameChange) => {
-    if (nameChange == "pH") {
+    if (nameChange == "Salt") {
       return "Salinity";
-    } else if (nameChange == "motor") {
-      return "MOTOR";
     }
     return nameChange;
   };
@@ -344,7 +364,7 @@ function App() {
     <div className="flex  h-full  w-full ">
       {/* PC View */}
 
-      <div className="hidden  w-full sm:block min-w-full  p-4">
+      <div className="hidden  w-full sm:block min-w-full p-4 ">
         <div className="flex  h-full w-full ">
           {/*------------------------------Status Box------------------------------*/}
           <div className="p-4 w-full md:w-1/2">
@@ -475,7 +495,7 @@ function App() {
                 <div className="grid grid-cols-3 gap-4 h-1/5  text-white p-2 ">
                   {DashBoard.map((item) => (
                     <button
-                      className={` flex text-black items-center bg-white rounded-2xl  shadow ${statusColor(
+                      className={` flex object-contain items-center text-black  rounded-2xl  shadow ${statusColor(
                         item,
                         checkValue(item)
                       )}`}
@@ -484,8 +504,8 @@ function App() {
                       }}
                     >
                       <img
-                        src={`src/assets/icon/${item}.jpg`}
-                        class="h-auto w-1/4 object-contain "
+                        src={`src/assets/icon_svg/${item}.svg`}
+                        class=" p-1 h-auto w-1/4 object-contain text-black"
                       />
 
                       <p className=" w-3/4 roboto-thin font-bold   text-xl">
@@ -537,6 +557,18 @@ function App() {
               />
             </div>
             <br></br>
+            <div className="h-4/5 bg-[#C4DAD2] p-4">
+              <img
+                src={images[currentImageIndex]}
+                alt={`Slideshow ${currentImageIndex + 1}`}
+                style={{
+                  opacity: fade ? 1 : 0,
+                  transition: "opacity 0.5s ease-in-out",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
             <div className="flex left-6 ">
               {/* <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
                 <p className="mt-1 text-xs font-bold">{today}</p>
@@ -632,34 +664,33 @@ function App() {
         </div>
       </div>
       {/* Mobile View */}
-      <div className="sm:hidden h-screen w-screen ">
-        {" "}
-        <ul className=" p-2 flex justify-center w-full overflow-x-auto ">
-          <li class="p-4   list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded ">
+      <div className="sm:hidden h-full w-full ">
+        <ul className="mt-2 p-1 flex justify-center h-fit  w-full overflow-x-auto ">
+          <li class="p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305]  ">
             <span
               class="ml-2 underline hover:underline-offset-8  "
               onClick={() => {
                 setDisplay(true);
               }}
             >
-              Information
+              Thông tin chung
             </span>
           </li>
-          <li class="list-none flex items-center text-green-500 font-bold cursor-pointer  hover:text-yellow-500 rounded p-4">
+          <li class="ml-3 p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305] rounded ">
             <span
               class="ml-2 underline hover:underline-offset-8 "
               onClick={() => {
                 setDisplay(false);
               }}
             >
-              Monitor
+              Giám sát
             </span>
           </li>
         </ul>
         {Display ? (
           <div>
             <div className="p-2 w-screen h-screen md:w-1/2 ">
-              <div className=" p-2 w-full m rounded-r-3xl  ">
+              <div className="   mr-2 rounded-r-3xl  ">
                 <div class="bg-white h-24 w-full rounded-3xl p-4 flex flex-row justify-center items-center space-x-4 gap-12">
                   <img
                     src="src/assets/logo/iuh.jpg"
@@ -679,7 +710,7 @@ function App() {
                 </div>
               </div>
               {/*----------Status Project ----------*/}
-              <div className="flex left-1 h-28 w-full  p-2">
+              {/* <div className="flex left-1 h-28 w-full  p-2">
                 <div className=" flex flex-col  items-center h-full w-4/6 p-2 shadow-xl bg-[#65B741] text-white rounded-md mr-2 ">
                   <h3 className="mt-2 text-2xl font-bold">{today}</h3>
                   <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
@@ -764,12 +795,12 @@ function App() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/*--------End Status Project --------*/}
               {/*----------Recomment Box ----------*/}
-              <div className="mt-4 h-22/5 flex left-1">
-                <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
+              <div className="mt-4  h-auto  flex left-1">
+                {/* <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
                   <p className="text-gray-600 font-bold text-center text-xl">
                     Quy trình chăm sóc
                   </p>
@@ -788,23 +819,63 @@ function App() {
                         )
                       )
                     : null}
+                </div> */}
+                <div className=" flex flex-col  items-center h- w-1/5 p-4 shadow-xl bg-[#ffffff] text-white rounded-md  ">
+                  <p className=" text-red-600 font-bold text-xs text-center">
+                    Ngày trồng
+                  </p>
+                  <p className="mt-2 text-red-600 font-bold text-3xl text-left">
+                    {Predict["days"] > 75 ? "Null" : Predict["days"]}
+                  </p>
+                </div>
+                <div className="ml-3 flex flex-col   w-full p-2 shadow-xl bg-white rounded-md mr-2 ">
+                  {/* <strong className="text-gray-600 font-bold text-center roboto-flex text-3xl">
+                  Quy trình chăm sóc
+                </strong> */}
+                  <p className="flex roboto-flex  ">
+                    <strong className="font-bold  text-xl ml-8">
+                      Quy trình chăm sóc
+                    </strong>
+                  </p>
+
+                  {ciuspe
+                    ? JSON.parse(localStorage.getItem("advices")).map(
+                        (sentence, index) => (
+                          <p
+                            className="ml-4 font-bold text-[#3C3D37] roboto-thin "
+                            key={index}
+                          >
+                            - {sentence.trim()}.
+                          </p>
+                        )
+                      )
+                    : null}
                 </div>
               </div>
               {/*----------End Recomment Box ----------*/}
               {/* -----------------------Mo Hinh Nha Kinh------------------------------ */}
-              <div class="bg-white h-3/5  w-full rounded-3xl p-4 flex flex-row  bg-opacity-50 justify-center items-center space-x-4">
-                <img src="src/assets/logo/MoHinhNhaKinh-removebg-preview.png" />
+              <div class="bg-white mt-2 w-full rounded-3xl p-4 flex flex-row  bg-opacity-50 justify-center items-center space-x-4">
+                <img
+                  src={images[currentImageIndex]}
+                  alt={`Slideshow ${currentImageIndex + 1}`}
+                  style={{
+                    opacity: fade ? 1 : 0,
+                    transition: "opacity 0.5s ease-in-out",
+                    height: "80%",
+                    objectFit: "cover",
+                  }}
+                />
               </div>
               {/* ----------------------- End Mo Hinh Nha Kinh------------------------------ */}
             </div>
           </div>
         ) : (
           <div className="">
-            <div className=" sensor_table h-screen w-full rounded-r-2xl rounded-l-2xl ">
-              <div className="grid grid-cols-4 gap-2 h-20 text-white p-2 ">
+            <div className=" h-screen w-full rounded-r-2xl rounded-l-2xl p-4">
+              <div className="grid grid-cols-2 gap-2 h-20 text-white p-2 ">
                 {DashBoard.map((item) => (
                   <button
-                    className={`flex text-black bg-white rounded-2xl  shadow ${statusColor(
+                    className={`flex text-black rounded-2xl  shadow ${statusColor(
                       item,
                       checkValue(item)
                     )}`}
@@ -813,8 +884,8 @@ function App() {
                     }}
                   >
                     <img
-                      src={`src/assets/icon/${item}.jpg`}
-                      class="h-auto w-1/3 object-contain "
+                      src={`src/assets/icon_svg/${item}.svg`}
+                      class="h-auto w-1/3 object-contain p-1 "
                     />
                     <h2 className="font-bold text-base mt-2 ">
                       {checkValue(item)}
@@ -826,7 +897,7 @@ function App() {
               <br></br>
               <br></br>
               <br></br>
-              <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
+              {/* <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
                 {selector == "Waterpumped" ? (
                   // <div>0</div>
                   <Bar data={data2} options={optionsBar} />
@@ -836,7 +907,7 @@ function App() {
                     options={options(selector)}
                   />
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         )}

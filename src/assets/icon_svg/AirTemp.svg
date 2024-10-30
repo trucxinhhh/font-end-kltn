@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="24px" height="24px" fill="#5f6368">
+  <!-- Mái nhà -->
+  <line x1="26" y1="80" x2="99" y2="30" stroke="#5f6368" stroke-width="16" />
+  <line x1="90" y1="30" x2="160" y2="80" stroke="#5f6368" stroke-width="16" />
+  <!-- Tường nhà -->
+  <line x1="30" y1="75" x2="30" y2="180" stroke="#5f6368" stroke-width="16" />
+  <line x1="157" y1="75" x2="157" y2="181" stroke="#5f6368" stroke-width="16" />
+  <line x1="23" y1="173" x2="150" y2="173" stroke="#5f6368" stroke-width="16" />
+  
+  <!-- Biểu tượng nhiệt độ -->
+<!-- <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-80q-83 0-141.5-58.5T280-280q0-48 21-89.5t59-70.5v-320q0-50 35-85t85-35q50 0 85 35t35 85v320q38 29 59 70.5t21 89.5q0 83-58.5 141.5T480-80Zm-40-440h80v-40h-40v-40h40v-80h-40v-40h40v-40q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240Z"/></svg> -->
+ <svg x="32" y="50" width="120px" height="120px" xmlns="http://www.w3.org/2000/svg" fill="#5f6368" viewBox="0 -960 960 960">
+    <path d="M480-80q-83 0-141.5-58.5T280-280q0-48 21-89.5t59-70.5v-320q0-50 35-85t85-35q50 0 85 35t35 85v320q38 29 59 70.5t21 89.5q0 83-58.5 141.5T480-80Zm-40-440h80v-40h-40v-40h40v-80h-40v-40h40v-40q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240Z"/>
+  </svg>
+</svg>

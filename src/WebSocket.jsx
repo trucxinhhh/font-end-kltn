@@ -12,14 +12,26 @@ function WebSocketChat() {
     // Lắng nghe sự kiện onmessage từ WebSocket
     ws.current.onmessage = (event) => {
       setMessages((prevMessages) => [...prevMessages, event.data]);
-      console.log(event.data);
+      console.log(JSON.parse(event.data).data);
+      console.log(JSON.parse(event.data).motor);
+      if (
+        JSON.parse(event.data).motor == undefined &&
+        JSON.parse(event.data).data == undefined
+      ) {
+        console.log("hong coa di het chon");
+      } else if (JSON.parse(event.data).motor == undefined) {
+        console.log("get data");
+        console.log(JSON.parse(event.data).data);
+      } else {
+        console.log("get mode");
+        console.log(JSON.parse(event.data).mode);
+      }
     };
 
     // Đóng kết nối WebSocket khi component bị unmount
     return () => {
       ws.current.close();
     };
-    s;
   }, []);
 
   const sendMessage = (event) => {

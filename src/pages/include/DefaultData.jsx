@@ -67,8 +67,19 @@ export const sequent_1 =
   " Chế độ bơm liên tục là chế độ điều khiển máy bơm theo chu kỳ, trong đó Time On là thời gian máy bơm hoạt động và Time Off là thời gian máy bơm ngừng hoạt động (tính bằng phút).";
 export const sequent_2 =
   "Giả sử: Time On = 180 phút và Time Off = 30 phút. Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết thời gian hoạt động (Time On), máy bơm sẽ ngừng trong 30 phút (Time Off) và sau đó tự động khởi động lại chu kỳ.";
-export const schedule_1 = "";
-export const schedule_2 = "";
+export const schedule_1 =
+  "Chế độ bơm tuần tự là chế độ điều khiển máy bơm theo thời gian trong ngày với hai mốc thời gian Bật/Tắt (ON/OFF) do người dùng tuỳ chỉnh. Thời gian đặt hẹn giờ theo cấu trúc YYYY-MM-DD HH:MM:SS (Năm-Tháng-Ngày Giờ : Phút : Giây). Có thể hẹn nhiều khung giờ trong ngày";
+export const schedule_2 = (
+  <>
+    <strong>Giả sử:</strong>
+    <br />
+    Với thời gian BẬT (TimeOn): 2024-02-24 08:00:00, thời gian TẮT (TimeOff):
+    2024-02-24 08:30:00.
+    <br />
+    Vậy đến lúc 8h00 trong cùng ngày, máy bơm sẽ được bật và giữ trạng thái đến
+    8h30 cùng ngày sẽ dừng bơm.
+  </>
+);
 
 export const DataMap = {
   CO2_MIN,
