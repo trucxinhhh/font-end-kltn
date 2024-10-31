@@ -30,23 +30,28 @@ const Layout = () => {
     // Lắng nghe sự kiện onmessage từ WebSocket
     ws.current.onmessage = (event) => {
       setMessages((prevMessages) => [...prevMessages, event.data]);
-      console.log("event.data", JSON.parse(event.data));
+      // console.log("event.data", JSON.parse(event.data));
       if (
         JSON.parse(event.data).motor == undefined &&
         JSON.parse(event.data).data == undefined
       ) {
         console.log("hong coa di het chon");
       } else if (JSON.parse(event.data).motor == undefined) {
-        console.log("get data");
-        console.log(JSON.parse(event.data).data);
+        // console.log("get data");
+        // console.log(JSON.parse(event.data).data);
         let data = JSON.parse(event.data).data;
         AllData[-1].push(data);
       } else {
-        console.log("get mode");
+        // console.log("get mode");
         let modeControl = JSON.parse(event.data).motor["mode"];
-        console.log(modeControl);
+        // console.log(modeControl);
         localStorage.setItem("isChecked", JSON.stringify(modeControl));
         let motorStatus = JSON.parse(event.data).motor;
+        console.log(motorStatus["motor"]);
+        localStorage.setItem(
+          "pump1Status",
+          JSON.stringify(motorStatus["motor"])
+        );
         DataMotor[-1].push(motorStatus);
       }
     };
@@ -391,7 +396,7 @@ const Layout = () => {
     });
 
     setModeControl(response.data[0]["mode"]);
-    localStorage.setItem("isChecked", JSON.stringify(modeControl));
+    localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
   };
   // console.log(rpsNotify);
   const getHumiThresh = async () => {
@@ -424,13 +429,11 @@ const Layout = () => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
       localStorage.setItem("dataSensor", JSON.stringify(AllData));
-
-      console.log("local", JSON.parse(localStorage.getItem("isChecked")));
       localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
-      if (DataMotor.length > 1) {
-        let lastPump = DataMotor[29]["motor"];
-        localStorage.setItem("pump1Status", JSON.stringify(lastPump));
-      }
+      // if (DataMotor.length > 1) {
+      //   let lastPump = DataMotor[29]["motor"];
+      //   localStorage.setItem("pump1Status", JSON.stringify(lastPump));
+      // }
     }, 1000);
 
     return () => clearInterval(interval);

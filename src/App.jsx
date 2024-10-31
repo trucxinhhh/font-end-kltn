@@ -73,6 +73,7 @@ const App = () => {
           />
           <Route path="/test" element={<Draft />} />
           <Route path="/ws" element={<WebSocketChat />} />
+          <Route path="/load" element={<Loading />} />
         </Route>
       </Routes>
     </BrowserRouter>

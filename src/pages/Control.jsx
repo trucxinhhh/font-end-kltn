@@ -298,8 +298,7 @@ const Draft = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    // console.log(response);
-    console.log(response.data["lower"]);
+
     localStorage.setItem("low", response.data["lower"]);
     localStorage.setItem("up", response.data["upper"]);
   };
@@ -369,32 +368,31 @@ const Draft = () => {
   const dt1 = JSON.parse(dataMotor);
 
   const postMode = async (mode, data) => {
-    console.log("MODE BF send", mode);
-    const response = await axios.post(url_api + "control/" + mode, data, {
+    let link = url_api + "control/" + mode;
+    if (mode == "motor" || (mode == "sequent" && data["mode"] != "")) {
+      link = url_api + "control_motor";
+    }
+    if (mode == "schedule" && data["mode"] != "") {
+      link = url_api + "schedule";
+      console.log("form schedule", data);
+    }
+
+    console.log(link);
+
+    const response = await axios.post(link, data, {
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
         Authorization: access_token,
       },
     });
+    if (response.status === 200 && mode == "sequent") {
+      console.log("Request succeeded:", response.data);
+    } else {
+      console.log("Request failed with status:", response.status);
+    }
     console.log("response ", response.data);
     notifyInfo(response.data["message"]);
-    const responseMode = await axios.get(url_api + "api/motor/1", {
-      headers: {
-        Authorization: access_token,
-        accept: "application/json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-    console.log(
-      "assssssssssssss",
-      JSON.stringify(responseMode.data[0]["mode"])
-    );
-    setIsChecked(responseMode.data[0]["mode"]);
-    localStorage.setItem(
-      "isChecked",
-      JSON.stringify(responseMode.data[0]["mode"])
-    );
   };
   const sendMode = async (mode) => {
     if (mode == "sequent") {
@@ -427,7 +425,7 @@ const Draft = () => {
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
-      console.log(JSON.parse(localStorage.getItem("isChecked")));
+      // console.log(JSON.parse(localStorage.getItem("isChecked")));
       calculateTotals();
     }, 1000);
 
@@ -460,26 +458,29 @@ const Draft = () => {
     if (isChecked == "manual") {
       const registerform = {
         status: !pump,
-        masterusr: localStorage.getItem("username"),
-        masterpwd: PassToCheck,
-      };
-      postMode(isChecked, registerform);
-    } else if (isChecked == "schedule") {
-      const registerform = {
-        timer: inputTime,
-        status: !pump,
-        masterusr: localStorage.getItem("username"),
-        masterpwd: PassToCheck,
-      };
-      postMode(isChecked, registerform);
-    } else {
-      const registerform = {
-        start: TimeOnSchedule,
-        stop: TimeOffSchedule,
+        mode: isChecked,
         // masterusr: localStorage.getItem("username"),
         // masterpwd: PassToCheck,
       };
-      postMode(isChecked, registerform);
+      postMode("motor", registerform);
+    } else if (isChecked == "sequent") {
+      const registerform = {
+        mode: isChecked,
+        on: TimeOn,
+        off: TimeOff,
+        masterusr: localStorage.getItem("username"),
+        masterpwd: PassToCheck,
+      };
+      postMode("sequent", registerform);
+    } else {
+      const registerform = {
+        start: formatDateTime(TimeOnSchedule),
+        stop: formatDateTime(TimeOffSchedule),
+        // masterusr: localStorage.getItem("username"),
+        // masterpwd: PassToCheck,
+      };
+      // console.lo;
+      postMode("schedule", registerform);
     }
 
     setIsDialogOpen(false);
