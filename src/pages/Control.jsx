@@ -43,9 +43,9 @@ function formatDateTime(dateTimeString) {
   const day = String(date.getDate()).padStart(2, "0");
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = "00"; // Assuming seconds are always zero
+  const seconds = String(date.getSeconds()).padStart(2, "0"); // Assuming seconds are always zero
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return ` ${hours}:${minutes}:${seconds}`;
 }
 const Draft = () => {
   // Lấy token
@@ -57,7 +57,7 @@ const Draft = () => {
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
-
+  // console.log("mode CT", JSON.parse(localStorage.getItem("isChecked")));
   const [selectedMode, setSelectedMode] = useState(null);
   const [StatusSwitchMode, setStatusSwitchMode] = useState();
   const modeIndex = MODE_NAME_GET.indexOf(isChecked);
@@ -87,6 +87,9 @@ const Draft = () => {
   //mode schedule
   const [TimeOnSchedule, setTimeOnSchedule] = useState(0);
   const [TimeOffSchedule, setTimeOffSchedule] = useState(0);
+  const [DataSchedule, setDataSchedule] = useState(
+    JSON.parse(localStorage.getItem("dataSchedule"))
+  );
   // volume in week
   const [totalPump1, setTotalPump1] = useState();
   const [VolumeDayMotor1, setVolumeDayMotor1] = useState(
@@ -108,10 +111,10 @@ const Draft = () => {
   const [cycleSample, setCycleSample] = useState(
     localStorage.getItem("cycleSample")
   );
+  const today = new Date().toISOString().slice(0, 10);
 
   const getLastSevenDays = () => {
     const dates = [];
-    const today = new Date().toISOString().slice(0, 10);
 
     for (let i = 0; i < 7; i++) {
       const date = new Date();
@@ -343,6 +346,7 @@ const Draft = () => {
     getFrequencyPump();
     getSampleCycle();
     getVol();
+    // console.log(today);
   }, []);
   const resetGateway = async () => {
     if (role == "admin") {
@@ -425,7 +429,8 @@ const Draft = () => {
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
-      // console.log(JSON.parse(localStorage.getItem("isChecked")));
+      setDataSchedule(JSON.parse(localStorage.getItem("dataSchedule")));
+      // console.log("CONTROL", JSON.parse(localStorage.getItem("dataSchedule")));
       calculateTotals();
     }, 1000);
 
@@ -433,10 +438,6 @@ const Draft = () => {
     return () => clearInterval(intervalId);
   });
   const openDialog = () => {
-    console.log(
-      formatDateTime(TimeOnSchedule),
-      formatDateTime(TimeOffSchedule)
-    );
     if (role == "admin") {
       setIsDialogOpen(true);
     } else {
@@ -447,7 +448,7 @@ const Draft = () => {
   const handleButtonClickMode = (index) => {
     if (role == "admin") {
       setSelectedMode(MODE_NAME_CHANGE[index]);
-      console.log("Chế độ đã chọn:", MODE_NAME_GET[index]);
+      // console.log("Chế độ đã chọn:", MODE_NAME_GET[index]);
       let data = { mode: "" };
       postMode(MODE_NAME_GET[index], data);
     } else {
@@ -474,8 +475,8 @@ const Draft = () => {
       postMode("sequent", registerform);
     } else {
       const registerform = {
-        start: formatDateTime(TimeOnSchedule),
-        stop: formatDateTime(TimeOffSchedule),
+        start: today + "T" + TimeOnSchedule + ":00",
+        stop: today + "T" + TimeOffSchedule + ":00",
         // masterusr: localStorage.getItem("username"),
         // masterpwd: PassToCheck,
       };
@@ -503,7 +504,21 @@ const Draft = () => {
       setIsLocked(false);
     }
   }, [timerSend]);
+  const DeleteSchedule = async (index) => {
+    const response = await axios.delete(
+      url_api + "schedule/" + index,
 
+      {
+        headers: {
+          accept: "application/json",
+          // "Content-Type": "application/json",
+          // Authorization: access_token,
+        },
+      }
+    );
+    console.log(url_api + "schedule/" + index);
+    notifySuccess(response.status);
+  };
   const minutes = Math.floor(timerSend / 60);
   const seconds = timerSend % 60;
   return (
@@ -775,8 +790,7 @@ const Draft = () => {
                   </div>
                 ) : isChecked == "manual" ? (
                   <div>
-                    {" "}
-                    {/* MANUAL MODE */}{" "}
+                    {/* MANUAL MODE */}
                     <div
                       className={`mt-2 flex w-1/2 items-center justify-between p-4  bg-white border border-gray-300 rounded-md shadow-sm ${
                         pump ? "bg-gray-200" : ""
@@ -807,20 +821,39 @@ const Draft = () => {
                           : ""}
                       </button>
                     </div>
-                    <div className="h-2/3 w-full p-4 mt-3">
-                      <div className="relative p-4 h-full mt-2 bg-white border-2 border-blue-500 rounded-2xl flex items-center justify-center">
-                        <div className="w-full h-full">
-                          <Bar
-                            data={data2}
-                            options={{
-                              ...optionsBar,
-                              responsive: true,
-                              maintainAspectRatio: false,
-                            }}
-                          />
-                        </div>
+
+                    {DataSchedule.map((items, index) => (
+                      <div
+                        key={index}
+                        className="mt-4 flex p-4 items-center justify-between mb-4 bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow"
+                      >
+                        <span className="ml-2 text-center h-fit w-1/4 p-2 border border-gray-300 rounded-md bg-gray-50">
+                          {formatDateTime(items["start"])}
+                        </span>
+
+                        <span className="ml-2 text-center h-fit w-1/4 p-2 border border-gray-300 rounded-md bg-gray-50">
+                          {formatDateTime(items["stop"])}
+                        </span>
+
+                        <span
+                          className={`ml-2 text-center h-fit w-1/4 p-2 border text-white border-gray-300 rounded-md ${
+                            items["status"] === "Completed!"
+                              ? "bg-green-700"
+                              : items["status"] === "wait"
+                              ? "bg-yellow-500"
+                              : "bg-gray-50"
+                          }`}
+                        >
+                          {items["status"] === "Completed!"
+                            ? "Đã hoàn thành!"
+                            : "Chờ đến hẹn"}
+                        </span>
+
+                        <button className="ml-2 w-1/6 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">
+                          Delete
+                        </button>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 ) : isChecked == "sequent" ? (
                   <div>
@@ -875,9 +908,7 @@ const Draft = () => {
                 ) : (
                   <div>
                     {/* SCHEDULE MODE */}
-                    <div
-                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
-                    >
+                    <div className="flex p-2 h-1/5 items-center justify-between mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -885,10 +916,10 @@ const Draft = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="icon icon-tabler icon-tabler-circle-plus text-gray-300"
                       >
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
@@ -897,22 +928,18 @@ const Draft = () => {
                       </svg>
 
                       <input
-                        type="datetime-local"
+                        type="time"
                         placeholder="Time On"
-                        onChange={(e) => {
-                          setTimeOnSchedule(e.target.value);
-                        }}
+                        onChange={(e) => setTimeOnSchedule(e.target.value)}
                         className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
                         required
                       />
 
                       <input
-                        type="datetime-local"
+                        type="time"
                         placeholder="Time Off"
-                        onChange={(e) => {
-                          setTimeOffSchedule(e.target.value);
-                        }}
-                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                        onChange={(e) => setTimeOffSchedule(e.target.value)}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
                       />
                       <button
                         onClick={openDialog}
@@ -920,6 +947,48 @@ const Draft = () => {
                       >
                         Save
                       </button>
+                    </div>
+
+                    <div
+                      className="schedule-container mt-6 shadow-xl"
+                      style={{ maxHeight: "350px", overflowY: "auto" }}
+                    >
+                      <ul>
+                        {DataSchedule.map((item, index) => (
+                          <li key={index}>
+                            <div className="flex p-1 items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm">
+                              <span className="text-center w-1/5 p-1 text-sm border border-gray-300 rounded-md bg-gray-50">
+                                {formatDateTime(item.start)}
+                              </span>
+
+                              <span className="text-center w-1/5 p-1 text-sm border border-gray-300 rounded-md bg-gray-50">
+                                {formatDateTime(item.stop)}
+                              </span>
+
+                              <span
+                                className={`text-center w-1/4 p-1 text-sm text-white rounded-md ${
+                                  item.status === "Completed!"
+                                    ? "bg-green-700"
+                                    : item.status === "waiting..."
+                                    ? "bg-yellow-500"
+                                    : "bg-blue-400"
+                                }`}
+                              >
+                                {item.status === "Completed!"
+                                  ? "Đã hoàn thành!"
+                                  : "Chờ đến hẹn"}
+                              </span>
+
+                              <button
+                                className="w-1/6 px-2 py-1 text-sm bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                onClick={() => DeleteSchedule(item._id)}
+                              >
+                                Xoá
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -1210,9 +1279,7 @@ const Draft = () => {
                 ) : (
                   <div>
                     {/* SCHEDULE MODE */}
-                    <div
-                      className={` flex p-2 items-center justify-between  mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm `}
-                    >
+                    <div className="flex p-2 h-1/5 items-center justify-between mr-6 mb-4 bg-white border border-gray-300 rounded-3xl shadow-sm">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -1220,10 +1287,10 @@ const Draft = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="icon icon-tabler icons-tabler-outline icon-tabler-circle-plus text-gray-300"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="icon icon-tabler icon-tabler-circle-plus text-gray-300"
                       >
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
@@ -1232,22 +1299,18 @@ const Draft = () => {
                       </svg>
 
                       <input
-                        type="datetime-local"
+                        type="time"
                         placeholder="Time On"
-                        onChange={(e) => {
-                          setTimeOnSchedule(e.target.value);
-                        }}
+                        onChange={(e) => setTimeOnSchedule(e.target.value)}
                         className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
                         required
                       />
 
                       <input
-                        type="datetime-local"
+                        type="time"
                         placeholder="Time Off"
-                        onChange={(e) => {
-                          setTimeOffSchedule(e.target.value);
-                        }}
-                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300 "
+                        onChange={(e) => setTimeOffSchedule(e.target.value)}
+                        className="ml-2 text-center w-2/5 border-2 border-gray-400 placeholder-slate-300"
                       />
                       <button
                         onClick={openDialog}
@@ -1255,6 +1318,45 @@ const Draft = () => {
                       >
                         Save
                       </button>
+                    </div>
+                    <div
+                      className="schedule-container mr-6"
+                      style={{ maxHeight: "400px", overflowY: "auto" }}
+                    >
+                      <ul>
+                        {DataSchedule.map((item, index) => (
+                          <li className="mt-2" key={index}>
+                            <div className="flex p-1 items-center justify-between bg-white border border-gray-200 rounded-xl shadow-sm">
+                              <span className="text-center w-1/4 p-1 text-sm border border-gray-300 rounded-md bg-gray-50">
+                                {formatDateTime(item.start)}
+                              </span>
+
+                              <span className="text-center w-1/4 p-1 text-sm border border-gray-300 rounded-md bg-gray-50">
+                                {formawtDateTime(item.stop)}
+                              </span>
+
+                              <span
+                                className={`text-center w-1/4 p-1 text-sm text-white rounded-md ${
+                                  item.status === "Đã hoàn thành!"
+                                    ? "bg-green-700"
+                                    : item.status === "Chờ đến hẹn"
+                                    ? "bg-yellow-500"
+                                    : "bg-blue-400"
+                                }`}
+                              >
+                                {item.status}
+                              </span>
+
+                              <button
+                                className="w-1/6 px-2 py-1 text-sm bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                onClick={() => DeleteSchedule(item._id)}
+                              >
+                                Xoá
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 )}
