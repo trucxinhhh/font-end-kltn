@@ -24,7 +24,7 @@ function WebSocketChat() {
         console.log(JSON.parse(event.data).data);
       } else {
         console.log("get mode");
-        console.log(JSON.parse(event.data).mode);
+        console.log(JSON.parse(event.data).motor["mode"]);
       }
     };
 

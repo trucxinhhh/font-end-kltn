@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,8 +15,47 @@ const TimeToSpam = 60 * 30; //seconds
 const TimeDelaysNotify = 30; //min
 const TimeSpamLoadData = TimeToSpam * 1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
-console.log("TimeSpamLoadData", TimeSpamLoadData);
 const Layout = () => {
+  const [AllData, setAllData] = useState([]);
+  const [ModeControl, setModeControl] = useState("");
+  const [DataMotor, setDataMotor] = useState([]);
+  //Websocket
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const ws = useRef(null);
+  useEffect(() => {
+    // Khởi tạo kết nối WebSocket và lưu vào ws.current
+    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
+
+    // Lắng nghe sự kiện onmessage từ WebSocket
+    ws.current.onmessage = (event) => {
+      setMessages((prevMessages) => [...prevMessages, event.data]);
+      console.log("event.data", JSON.parse(event.data));
+      if (
+        JSON.parse(event.data).motor == undefined &&
+        JSON.parse(event.data).data == undefined
+      ) {
+        console.log("hong coa di het chon");
+      } else if (JSON.parse(event.data).motor == undefined) {
+        console.log("get data");
+        console.log(JSON.parse(event.data).data);
+        let data = JSON.parse(event.data).data;
+        AllData[-1].push(data);
+      } else {
+        console.log("get mode");
+        let modeControl = JSON.parse(event.data).motor["mode"];
+        console.log(modeControl);
+        localStorage.setItem("isChecked", JSON.stringify(modeControl));
+        let motorStatus = JSON.parse(event.data).motor;
+        DataMotor[-1].push(motorStatus);
+      }
+    };
+
+    // Đóng kết nối WebSocket khi component bị unmount
+    return () => {
+      ws.current.close();
+    };
+  }, []);
   //time
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
@@ -172,7 +211,8 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-    localStorage.setItem("dataSensor", JSON.stringify(dt1));
+
+    setAllData(dt1);
 
     //get volume
     const responseVol = await axios.get(url_data + "api/volume/300", {
@@ -199,13 +239,15 @@ const Layout = () => {
       },
     });
     const dt2 = responseMotor.data;
+
     if (dt2) {
+      setDataMotor(dt2);
       localStorage.setItem(
         "pump1Status",
         JSON.stringify(dt2.slice(-1)[0]["motor"])
       );
     }
-    localStorage.setItem("dataMotor", JSON.stringify(dt2));
+
     var listSensorData = ["CO2", "Humi", "Temp"];
     for (var i = 0; i < listSensorData.length; i++) {
       var val = dt1.slice(-1)[0][listSensorData[i]];
@@ -347,8 +389,9 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log(response.data[0]["mode"]);
-    localStorage.setItem("isChecked", JSON.stringify(response.data[0]["mode"]));
+
+    setModeControl(response.data[0]["mode"]);
+    localStorage.setItem("isChecked", JSON.stringify(modeControl));
   };
   // console.log(rpsNotify);
   const getHumiThresh = async () => {
@@ -371,14 +414,23 @@ const Layout = () => {
     GetMode();
     getHumiThresh();
     loadData();
+
+    localStorage.setItem("dataSensor", JSON.stringify(AllData));
+    localStorage.setItem("isChecked", JSON.stringify(ModeControl));
+    localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
   }, [rpsNotify]); // Chỉ chạy một lần khi component mount
 
   useEffect(() => {
-    // const intervalId = setInterval(() => {
-    //   loadData();
-    // }, TimeSpamLoadData);
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
+      localStorage.setItem("dataSensor", JSON.stringify(AllData));
+
+      console.log("local", JSON.parse(localStorage.getItem("isChecked")));
+      localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
+      if (DataMotor.length > 1) {
+        let lastPump = DataMotor[29]["motor"];
+        localStorage.setItem("pump1Status", JSON.stringify(lastPump));
+      }
     }, 1000);
 
     return () => clearInterval(interval);
@@ -1106,14 +1158,13 @@ const Layout = () => {
             )}
 
             {/* End List Box */}
-            <div className="flex  h-full w-screen flex-col md:flex-row ">
+            <div className="w-full h-fit">
               {/* Outletx*/}
-              <div className=" w-full md:w-4/5  bg-opacity-50">
-                <Outlet />
-              </div>
 
-              {/* End Outletx*/}
+              <Outlet />
             </div>
+
+            {/* End Outletx*/}
           </div>
         </div>
       )}

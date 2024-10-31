@@ -426,7 +426,8 @@ const Draft = () => {
       setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
-      // setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+      setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+      console.log(JSON.parse(localStorage.getItem("isChecked")));
       calculateTotals();
     }, 1000);
 
@@ -457,23 +458,26 @@ const Draft = () => {
   };
   const closeDialog = async () => {
     if (isChecked == "manual") {
-      if (inputTime > 0) {
-        setTimer(inputTime * 60);
-        setIsLocked(true);
-      }
+      const registerform = {
+        status: !pump,
+        masterusr: localStorage.getItem("username"),
+        masterpwd: PassToCheck,
+      };
+      postMode(isChecked, registerform);
+    } else if (isChecked == "schedule") {
       const registerform = {
         timer: inputTime,
         status: !pump,
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
-      postMode("motor", registerform);
+      postMode(isChecked, registerform);
     } else {
       const registerform = {
-        on: TimeOn,
-        off: TimeOff,
-        masterusr: localStorage.getItem("username"),
-        masterpwd: PassToCheck,
+        start: TimeOnSchedule,
+        stop: TimeOffSchedule,
+        // masterusr: localStorage.getItem("username"),
+        // masterpwd: PassToCheck,
       };
       postMode(isChecked, registerform);
     }
@@ -513,7 +517,7 @@ const Draft = () => {
           <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
             <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
               <div className="text-lg font-bold text-red-600">Notification</div>
-              <div className="mt-2 text-sm font-bold  text-gray-500">
+              {/* <div className="mt-2 text-sm font-bold  text-gray-500">
                 Set timer to turn {valueMotor1 ? "off" : "on"}.
               </div>
 
@@ -523,7 +527,7 @@ const Draft = () => {
                 placeholder="Skip if not set a timer (min)."
                 className="mt-4 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring focus:ring-green-500 focus:ring-opacity-50"
                 onChange={(e) => setInputTime(e.target.value)}
-              />
+              /> */}
 
               <div className=" text-sm font-bold  text-gray-500">
                 Please enter a password to proceed.
@@ -925,8 +929,8 @@ const Draft = () => {
       </div>
 
       {/* -----------------------Mobile View----------------------- */}
-      <div className="sm:hidden h-screen w-screen p-4">
-        <div className="flex flex-col  h-full w-full ">
+      <div className="sm:hidden  h-full w-full p-4">
+        <div className="flex flex-col h-full  w-full ">
           {/* Điều khiển chung */}
           <div className=" flex  h-fit w-fullrounded-3xl ">
             {/* Thay đổi chế độ điều khiển */}
@@ -1010,8 +1014,8 @@ const Draft = () => {
           </div>
           {/* END Bảng điều khiển tần số */}
           {/* hướng dẫn sử dụng và bảng điều khiển */}
-          <div className="mt-2  flex  h-4/5 w-full rounded-3xl  ">
-            <div className=" w-full bg-white  border-2 border-[#4CC9FE] rounded-xl">
+          <div className="mt-2  flex  h-fit w-full rounded-3xl  ">
+            <div className=" w-full h-fit bg-white  border-2 border-[#4CC9FE] rounded-xl ">
               {/* HƯỚNG DẪN SỬ DỤNG */}
               <div className="w-full border-r-2 border-gray-300 ml-3  p-2">
                 <h4 className="text-center">{displayName}</h4>
@@ -1150,6 +1154,7 @@ const Draft = () => {
                         </div>
                       </div>
                     </div>
+                    <br></br>
                   </div>
                 ) : isChecked == "sequent" ? (
                   <div>

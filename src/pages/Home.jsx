@@ -184,6 +184,8 @@ function App() {
       case "Flowmeters":
       case "EC":
       case "Salt":
+      case "AirHumi":
+      case "AirTemp":
         const value = dt1.slice(-1)[0]?.[name];
         return value !== undefined ? value.toFixed(1) : "NaN";
 
@@ -664,7 +666,7 @@ function App() {
         </div>
       </div>
       {/* Mobile View */}
-      <div className="sm:hidden h-full w-full ">
+      <div className="sm:hidden  w-full ">
         <ul className="mt-2 p-1 flex justify-center h-fit  w-full overflow-x-auto ">
           <li class="p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305]  ">
             <span
