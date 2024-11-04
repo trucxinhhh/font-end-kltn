@@ -84,25 +84,7 @@ function App() {
 
     return () => clearInterval(interval);
   }, [images.length]);
-  //Websocket
-  const [messages, setMessages] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const ws = useRef(null);
 
-  // useEffect(() => {
-  //   // Khởi tạo kết nối WebSocket và lưu vào ws.current
-  //   ws.current = new WebSocket("ws://34.126.91.225:1506/data");
-
-  //   // Lắng nghe sự kiện onmessage từ WebSocket
-  //   ws.current.onmessage = (event) => {
-  //     setMessages((prevMessages) => [...prevMessages, event.data]);
-  //   };
-
-  //   // Đóng kết nối WebSocket khi component bị unmount
-  //   return () => {
-  //     ws.current.close();
-  //   };
-  // }, []);
   //khai báo biến sử dụng
   const [Display, setDisplay] = useState(true);
   const [recentMotor, setRecentMotor] = useState([]);
@@ -122,12 +104,9 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-  const { dataSensor, dataMotor } = {
-    dataMotor: localStorage.getItem("dataMotor"),
-    dataSensor: localStorage.getItem("dataSensor"),
-  };
-  const dt1 = JSON.parse(dataSensor);
-  const dt2 = JSON.parse(dataMotor);
+  const dt1 = JSON.parse(localStorage.getItem("dataSensor"));
+  const dt2 = JSON.parse(localStorage.getItem("dataMotor"));
+
   const dataVol = JSON.parse(localStorage.getItem("dataVol"));
   const TotalHour = JSON.parse(localStorage.getItem("TotalHour"));
   // console.log("TotalHour", TotalHour);
@@ -141,7 +120,7 @@ function App() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log(response.data);
+    // console.log(response.data);
     setPredict(response.data);
   };
   // trang thai icon status
@@ -186,7 +165,9 @@ function App() {
       case "Salt":
       case "AirHumi":
       case "AirTemp":
-        const value = dt1.slice(-1)[0]?.[name];
+        const value = dt1.slice(-1)[0][name];
+        // console.log("HOME", dt1);
+        // console.log(typeof name);
         return value !== undefined ? value.toFixed(1) : "NaN";
 
       case "Waterpumped":
@@ -258,9 +239,10 @@ function App() {
   });
 
   const chartData = (lineColor, data_to_draw) => {
-    if (data_to_draw == "motor") {
+    if (data_to_draw == "Motor") {
       const labels = recentMotor.map((item) => item.time);
-      const data = recentMotor.map((item) => item[data_to_draw]);
+      const data = recentMotor.map((item) => item["motor"]);
+
       return {
         labels: labels,
         datasets: [
@@ -672,7 +654,7 @@ function App() {
             <span
               class="ml-2 underline hover:underline-offset-8  "
               onClick={() => {
-                setDisplay(true);
+                setDisplay("tt");
               }}
             >
               Thông tin chung
@@ -682,15 +664,25 @@ function App() {
             <span
               class="ml-2 underline hover:underline-offset-8 "
               onClick={() => {
-                setDisplay(false);
+                setDisplay("gs");
               }}
             >
               Giám sát
             </span>
           </li>
+          <li class="ml-3 p-1 flex items-center text-[#050C9C] font-bold cursor-pointer  hover:text-[#EC8305] rounded ">
+            <span
+              class="ml-2 underline hover:underline-offset-8 "
+              onClick={() => {
+                setDisplay("chart");
+              }}
+            >
+              Đồ thị
+            </span>
+          </li>
         </ul>
-        {Display ? (
-          <div>
+        {Display == "tt" ? (
+          <div className="flẽ">
             <div className="p-2 w-screen h-screen md:w-1/2 ">
               <div className="   mr-2 rounded-r-3xl  ">
                 <div class="bg-white h-24 w-full rounded-3xl p-4 flex flex-row justify-center items-center space-x-4 gap-12">
@@ -869,6 +861,48 @@ function App() {
                 />
               </div>
               {/* ----------------------- End Mo Hinh Nha Kinh------------------------------ */}
+            </div>
+          </div>
+        ) : Display == "chart" ? (
+          // <div className="">
+          //   <div className=" h-screen w-full rounded-r-2xl rounded-l-2xl p-4">
+          //     <div className="p-2  bg-white rounded-r-2xl rounded-l-2xl">
+          //       {DashBoard.map((item, index) => (
+          //         <div
+          //           className="mt-4"
+          //           key={index}
+          //           style={{ marginBottom: "20px" }}
+          //         >
+          //           {item === "Waterpumped" ? (
+          //             <Bar data={data2} options={optionsBar} />
+          //           ) : (
+          //             <Line
+          //               data={chartData("#f15bb5", item)}
+          //               options={options(item)}
+          //             />
+          //           )}
+          //         </div>
+          //       ))}
+          //     </div>
+          //   </div>
+          // </div>
+          <div className="flex flex-col items-center h-screen overflow-y-auto bg-gray-100 p-2">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-2 shadow-lg">
+              {DashBoard.map((item, index) => (
+                <div key={index} className="mb-4">
+                  <div className="w-full">
+                    {item === "Waterpumped" ? (
+                      <Bar data={data2} options={optionsBar} height={150} />
+                    ) : (
+                      <Line
+                        data={chartData("#f15bb5", item)}
+                        options={options(item)}
+                        height={150} // Chiều cao tối ưu cho điện thoại
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ) : (

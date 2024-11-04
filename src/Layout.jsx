@@ -42,10 +42,9 @@ const Layout = () => {
         JSON.parse(event.data).motor == undefined &&
         JSON.parse(event.data).schedule == undefined
       ) {
-        // console.log("get data");
-        // console.log(JSON.parse(event.data).data);
         let data = JSON.parse(event.data).data;
-        AllData[-1].push(data);
+        loadData();
+        // AllData[-1].push(data);
       } else if (
         JSON.parse(event.data).data == undefined &&
         JSON.parse(event.data).motor == undefined
@@ -216,6 +215,7 @@ const Layout = () => {
     itemsByHour.filter((item, index) => {
       TotalHour[index] = item.reduce((a, b) => a + b, 0);
     });
+    console.log("today", today);
     localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
   };
   // get data all
@@ -230,7 +230,7 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-
+    console.log(dt1);
     setAllData(dt1);
 
     //get volume
@@ -408,7 +408,7 @@ const Layout = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-    console.log(response.data[0]["mode"]);
+    // console.log(response.data[0]["mode"]);
     setModeControl(response.data[0]["mode"]);
   };
   const GetSchedule = async () => {
@@ -449,8 +449,6 @@ const Layout = () => {
       await getHumiThresh();
       await GetSchedule();
       await loadData();
-      localStorage.setItem("dataSensor", JSON.stringify(AllData));
-      localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
     };
 
     fetchData();
@@ -464,10 +462,12 @@ const Layout = () => {
   }, [ModeControl]);
   useEffect(() => {
     localStorage.setItem("dataSensor", JSON.stringify(AllData));
+    console.log(AllData);
   }, [AllData]);
   useEffect(() => {
-    localStorage.setItem("dataSensor", JSON.stringify(DataMotor));
+    localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
   }, [DataMotor]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());

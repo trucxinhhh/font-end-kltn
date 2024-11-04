@@ -967,16 +967,14 @@ const Draft = () => {
 
                               <span
                                 className={`text-center w-1/4 p-1 text-sm text-white rounded-md ${
-                                  item.status === "Completed!"
+                                  item.status === "Đã hoàn thành!"
                                     ? "bg-green-700"
-                                    : item.status === "waiting..."
+                                    : item.status === "Chờ đến hẹn"
                                     ? "bg-yellow-500"
                                     : "bg-blue-400"
                                 }`}
                               >
-                                {item.status === "Completed!"
-                                  ? "Đã hoàn thành!"
-                                  : "Chờ đến hẹn"}
+                                {item.status}
                               </span>
 
                               <button
@@ -1332,7 +1330,7 @@ const Draft = () => {
                               </span>
 
                               <span className="text-center w-1/4 p-1 text-sm border border-gray-300 rounded-md bg-gray-50">
-                                {formawtDateTime(item.stop)}
+                                {formatDateTime(item.stop)}
                               </span>
 
                               <span
