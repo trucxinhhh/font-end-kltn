@@ -1015,7 +1015,7 @@ const Layout = () => {
               <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#024CAA]">
                 <ul className="fmt-6 leading-10 flex flex-col space-y-4">
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                     to="/home"
                     onClick={() => {
                       setDisplay(false);
@@ -1044,7 +1044,7 @@ const Layout = () => {
                   </Link>
                   {Role === "admin" && (
                     <Link
-                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                       to="/user-management"
                       onClick={() => {
                         setDisplay(false);
@@ -1075,7 +1075,7 @@ const Layout = () => {
                   )}
                   {/* Control */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                     to="/control"
                     onClick={() => {
                       setDisplay(false);
@@ -1110,7 +1110,7 @@ const Layout = () => {
                   </Link>
                   {/* History */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                     to="/history"
                     onClick={() => {
                       setDisplay(false);
@@ -1140,7 +1140,7 @@ const Layout = () => {
                   </Link>
 
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                     to="/about-us"
                     onClick={() => {
                       setDisplay(false);
@@ -1169,7 +1169,7 @@ const Layout = () => {
                   {/* Logout */}
 
                   <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#15B392]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
                     onClick={goOut}
                   >
                     <svg
