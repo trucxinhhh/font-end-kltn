@@ -11,8 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 
-const TimeToSpam = 60 * 30; //seconds
-const TimeDelaysNotify = 30; //min
+const TimeToSpam = 5; //seconds
+const TimeDelaysNotify = 10; //min
 const TimeSpamLoadData = TimeToSpam * 1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
 const Layout = () => {
@@ -20,6 +20,7 @@ const Layout = () => {
   const [ModeControl, setModeControl] = useState("");
   const [DataMotor, setDataMotor] = useState([]);
   const [DataSchedule, setDataSchedule] = useState([]);
+  const [DataVol, setDataVol] = useState([]);
   //Websocket
   const [messages, setMessages] = useState([]);
 
@@ -44,29 +45,39 @@ const Layout = () => {
       ) {
         let data = JSON.parse(event.data).data;
         loadData();
-        // AllData[-1].push(data);
       } else if (
         JSON.parse(event.data).data == undefined &&
         JSON.parse(event.data).motor == undefined
       ) {
-        // console.log("get data");
-        // console.log(JSON.parse(event.data).data);
         let data = JSON.parse(event.data).schedule;
-        console.log(data.status);
         GetSchedule();
       } else {
-        // console.log("get mode");
         let modeControl = JSON.parse(event.data).motor["mode"];
-        // console.log(modeControl);
         localStorage.setItem("isChecked", JSON.stringify(modeControl));
         let motorStatus = JSON.parse(event.data).motor;
-        // console.log(motorStatus["motor"]);
         localStorage.setItem(
           "pump1Status",
           JSON.stringify(motorStatus["motor"])
         );
         DataMotor[-1].push(motorStatus);
       }
+
+      // switch (JSON.parse(event.data)) {
+      //   // console.log()
+      //   case "motor":
+      //     let modeControl = JSON.parse(event.data).motor["mode"];
+      //     localStorage.setItem("isChecked", JSON.stringify(modeControl));
+      //     let motorStatus = JSON.parse(event.data).motor;
+      //     localStorage.setItem(
+      //       "pump1Status",
+      //       JSON.stringify(motorStatus["motor"])
+      //     );
+      //     DataMotor[-1].push(motorStatus);
+      //   case "schedule":
+      //     GetSchedule();
+      //   case "data":
+      //     loadData();
+      // }
     };
 
     // Đóng kết nối WebSocket khi component bị unmount
@@ -215,7 +226,7 @@ const Layout = () => {
     itemsByHour.filter((item, index) => {
       TotalHour[index] = item.reduce((a, b) => a + b, 0);
     });
-    console.log("today", today);
+    // console.log("today", today);
     localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
   };
   // get data all
@@ -230,7 +241,7 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-    console.log(dt1);
+
     setAllData(dt1);
 
     //get volume
@@ -242,7 +253,8 @@ const Layout = () => {
       },
     });
     const dataVol = responseVol.data;
-    // console.log(dataVol.slice(-1)[0]["total"]);
+    setDataVol(dataVol.slice(-1)[0]["total"]);
+
     filteVolume(dataVol);
     localStorage.setItem("volume", JSON.stringify(dataVol));
     localStorage.setItem(
@@ -275,14 +287,13 @@ const Layout = () => {
       if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
         if (FlagNotify && displayNotify == 2) {
           setCount(count + 1);
-          // console.log(count);
+          console.log(count);
           if (count == TimeDelays) {
             setFlagNotify(false);
             setCount(0);
           }
         } else {
           setDisplayNotify(displayNotify + 1);
-
           notify(`Warning ${listSensorData[i]} over threshold`);
           if (displayNotify == 2) {
             setDisplayNotify(0);
@@ -454,7 +465,6 @@ const Layout = () => {
     fetchData();
   }, [rpsNotify]);
   useEffect(() => {
-    console.log(DataSchedule.length);
     localStorage.setItem("dataSchedule", JSON.stringify(DataSchedule));
   }, [DataSchedule]);
   useEffect(() => {
@@ -462,11 +472,15 @@ const Layout = () => {
   }, [ModeControl]);
   useEffect(() => {
     localStorage.setItem("dataSensor", JSON.stringify(AllData));
-    console.log(AllData);
+    // console.log("update sensor success");
+    // console.log(JSON.parse(localStorage.getItem("dataSensor")));
   }, [AllData]);
   useEffect(() => {
     localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
   }, [DataMotor]);
+  useEffect(() => {
+    localStorage.setItem("dataVol", JSON.stringify(DataVol));
+  }, [DataVol]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -489,9 +503,10 @@ const Layout = () => {
               <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
                 <div className="relative items-center justify-center bg-white rounded-lg max-w-sm mx-auto p-6">
                   <h1 className="freeman-regular text-2xl  ">
-                    Change Information
+                    Cập nhập thông tin mùa vụ mới
                   </h1>
-                  <div class="relative">
+                  <br></br>
+                  <div class="mt-2 relative">
                     <input
                       type="text"
                       id="floating_outlined"
@@ -503,7 +518,7 @@ const Layout = () => {
                       for="floating_outlined"
                       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
                     >
-                      Project Name
+                      Tên mùa vụ
                     </label>
                   </div>
                   <div class="relative mt-3">
@@ -518,7 +533,7 @@ const Layout = () => {
                       for="floating_outlined"
                       class="absolute text-sm   w-32 text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1 peer-focus:w-fit"
                     >
-                      Start Day
+                      Ngày bắt đầu
                     </label>
                   </div>
                   <div class="relative mt-3">
@@ -533,7 +548,7 @@ const Layout = () => {
                       for="floating_outlined"
                       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
                     >
-                      Quantity
+                      Số lượng cây
                     </label>
                   </div>
                   <div class="relative mt-3">
@@ -548,7 +563,7 @@ const Layout = () => {
                       for="floating_outlined"
                       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
                     >
-                      Area
+                      Diện tích nhà màng
                     </label>
                   </div>
                   <div className="mt-4 flex justify-end">
@@ -556,14 +571,14 @@ const Layout = () => {
                       onClick={closeDialog}
                       className="px-4 py-2 bg-[#EC8305] text-white rounded-md hover:bg-red-700 transition-colors duration-150"
                     >
-                      Cancel
+                      Huỷ
                     </button>
 
                     <button
                       onClick={() => openDialog(false)}
                       className="ml-2 px-4 py-2 bg-[#024CAA] text-white rounded-md hover:bg-green-700 transition-colors duration-150"
                     >
-                      Submit
+                      Đồng ý
                     </button>
                   </div>
                 </div>
@@ -572,10 +587,11 @@ const Layout = () => {
               <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
                 <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
                   <div className="text-lg font-bold text-gray-900">
-                    Enter Password
+                    Nhập mật khẩu
                   </div>
                   <div className="mt-2 text-sm text-gray-500">
-                    Please enter a password to proceed.
+                    Vui lòng nhập mật khẩu để xác nhận danh tính và đồng ý thay
+                    đổi dữ liệu!
                   </div>
 
                   <input
@@ -591,13 +607,13 @@ const Layout = () => {
                       onClick={closeDialog}
                       className="px-4 py-2 bg-[#EC8305] text-white rounded-md hover:bg-red-700 transition-colors duration-150"
                     >
-                      Cancel
+                      HUỶ
                     </button>
                     <button
                       onClick={sendChange}
                       className="ml-2 px-4 py-2 bg-[#024CAA] text-white rounded-md hover:bg-green-700 transition-colors duration-150"
                     >
-                      Submit
+                      Đồng ý
                     </button>
                   </div>
                 </div>
@@ -933,7 +949,7 @@ const Layout = () => {
                         onClick={() => openDialog(true)}
                         className="px-4 py-1 button-create-user bg-[#EC8305] transition-colors duration-150 cursor-pointer hover:bg-[#024CAA] text-cyan-50 rounded-full font-bold"
                       >
-                        Change Project
+                        Thay đổi
                       </button>
                     </div>
                   </div>
@@ -1015,7 +1031,7 @@ const Layout = () => {
               <aside className="p-4 fixed inset-y-0 z-20 right-0 flex-shrink-0 w-3/5 mt-20 overflow-y-auto  bg-[#024CAA]">
                 <ul className="fmt-6 leading-10 flex flex-col space-y-4">
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     to="/home"
                     onClick={() => {
                       setDisplay(false);
@@ -1044,7 +1060,7 @@ const Layout = () => {
                   </Link>
                   {Role === "admin" && (
                     <Link
-                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                      className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                       to="/user-management"
                       onClick={() => {
                         setDisplay(false);
@@ -1075,7 +1091,7 @@ const Layout = () => {
                   )}
                   {/* Control */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     to="/control"
                     onClick={() => {
                       setDisplay(false);
@@ -1110,7 +1126,7 @@ const Layout = () => {
                   </Link>
                   {/* History */}
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     to="/history"
                     onClick={() => {
                       setDisplay(false);
@@ -1140,7 +1156,7 @@ const Layout = () => {
                   </Link>
 
                   <Link
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     to="/about-us"
                     onClick={() => {
                       setDisplay(false);
@@ -1169,7 +1185,7 @@ const Layout = () => {
                   {/* Logout */}
 
                   <a
-                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FFEEA9]"
+                    className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     onClick={goOut}
                   >
                     <svg

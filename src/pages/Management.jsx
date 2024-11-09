@@ -467,7 +467,7 @@ const Management = () => {
                     type="text"
                     name="fullname"
                     className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="First and last name"
+                    placeholder="Họ và tên người dùng"
                     value={CRfullname}
                     onChange={(e) => setFullname(e.target.value)}
                   />
@@ -483,7 +483,7 @@ const Management = () => {
                     type="text"
                     name="username"
                     className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="The name used to log in"
+                    placeholder="Tên sử dụng để đăng nhập"
                     value={CRusername}
                     onChange={(e) => setUsername(e.target.value)}
                   />
@@ -498,7 +498,7 @@ const Management = () => {
                   <input
                     type="password"
                     className=" mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="Enter your passwork"
+                    placeholder="Nhập mật khẩu "
                     value={CRpassword}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -515,7 +515,9 @@ const Management = () => {
                       className="text-gray-500 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
                       onChange={(e) => setRole(e.target.value)}
                     >
-                      <option value="Admin">Choice your authority</option>
+                      <option value="Admin">
+                        Chọn phân quyền cho người dùng
+                      </option>
                       <option value="admin">Admin</option>
                       <option value="user">User</option>
                       {/* <option value="others">Others</option> */}

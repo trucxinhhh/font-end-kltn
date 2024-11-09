@@ -821,39 +821,20 @@ const Draft = () => {
                           : ""}
                       </button>
                     </div>
-
-                    {DataSchedule.map((items, index) => (
-                      <div
-                        key={index}
-                        className="mt-4 flex p-4 items-center justify-between mb-4 bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow"
-                      >
-                        <span className="ml-2 text-center h-fit w-1/4 p-2 border border-gray-300 rounded-md bg-gray-50">
-                          {formatDateTime(items["start"])}
-                        </span>
-
-                        <span className="ml-2 text-center h-fit w-1/4 p-2 border border-gray-300 rounded-md bg-gray-50">
-                          {formatDateTime(items["stop"])}
-                        </span>
-
-                        <span
-                          className={`ml-2 text-center h-fit w-1/4 p-2 border text-white border-gray-300 rounded-md ${
-                            items["status"] === "Completed!"
-                              ? "bg-green-700"
-                              : items["status"] === "wait"
-                              ? "bg-yellow-500"
-                              : "bg-gray-50"
-                          }`}
-                        >
-                          {items["status"] === "Completed!"
-                            ? "Đã hoàn thành!"
-                            : "Chờ đến hẹn"}
-                        </span>
-
-                        <button className="ml-2 w-1/6 px-3 py-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">
-                          Delete
-                        </button>
+                    <div className=" w-full mr-2 mt-3 ">
+                      <div className="mr-6  h-4/5  bg-white border-2 border-blue-500 rounded-2xl flex ">
+                        <div className="w-full h-full">
+                          <Bar
+                            data={data2}
+                            options={{
+                              ...optionsBar,
+                              responsive: true,
+                              maintainAspectRatio: false,
+                            }}
+                          />
+                        </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
                 ) : isChecked == "sequent" ? (
                   <div>

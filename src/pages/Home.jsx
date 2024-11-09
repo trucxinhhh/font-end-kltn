@@ -61,7 +61,7 @@ const Unit = {
   Pressure: "bar",
   Motor: "",
   AirHumi: "% (kk)",
-  AirTemp: "°C (Đất)",
+  AirTemp: "°C (kk)",
   Full: "",
 };
 const TimeHour = [
@@ -104,11 +104,18 @@ function App() {
   // lấy ngày giờ
   let today = new Date().toLocaleDateString();
 
-  const dt1 = JSON.parse(localStorage.getItem("dataSensor"));
-  const dt2 = JSON.parse(localStorage.getItem("dataMotor"));
+  const [dt1, setDT1] = useState(
+    JSON.parse(localStorage.getItem("dataSensor"))
+  );
+  const [dt2, setDT2] = useState(JSON.parse(localStorage.getItem("dataMotor")));
 
-  const dataVol = JSON.parse(localStorage.getItem("dataVol"));
-  const TotalHour = JSON.parse(localStorage.getItem("TotalHour"));
+  const [dataVol, setDataVol] = useState(
+    JSON.parse(localStorage.getItem("dataVol"))
+  );
+
+  const [TotalHour, setTotalHour] = useState(
+    JSON.parse(localStorage.getItem("TotalHour"))
+  );
   // console.log("TotalHour", TotalHour);
   //get predict
   const getPredict = async () => {
@@ -160,7 +167,7 @@ function App() {
       case "Humi":
       case "Pressure":
       case "Temp":
-      case "Flowmeters":
+
       case "EC":
       case "Salt":
       case "AirHumi":
@@ -169,9 +176,10 @@ function App() {
         // console.log("HOME", dt1);
         // console.log(typeof name);
         return value !== undefined ? value.toFixed(1) : "NaN";
-
+      case "Flowmeters":
+        return 10;
       case "Waterpumped":
-        return 20;
+        return dataVol;
 
       default:
         return "NaN";
@@ -339,6 +347,12 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
+
+      setDT1(JSON.parse(localStorage.getItem("dataSensor")));
+      setDT2(JSON.parse(localStorage.getItem("dataMotor")));
+      setDataVol(JSON.parse(localStorage.getItem("dataVol")));
+      setTotalHour(JSON.parse(localStorage.getItem("TotalHour")));
+      // console.log(dt1);
       setRecentMotor(dt2.slice(-30));
       setRecentData(dt1.slice(-30));
     }, 1000);

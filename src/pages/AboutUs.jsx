@@ -7,7 +7,7 @@ const AboutUs = () => {
   // Create an array of numbers to loop through for each section
   const sections = [1, 2, 3];
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full p-5">
       {/* PC View */}
       <div className="hidden w-full bg-white sm:flex rounded-3xl">
         <div className="w-1/4 border-r-2 border-gray-300 p-4 ml-3 mt-10">
@@ -40,7 +40,9 @@ const AboutUs = () => {
         <div className="w-3/4 mt-6 ml-3">
           <div className="">
             <span className="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-pink-500 relative inline-block mt-5">
-              <span className="relative text-white text-5xl pacifico-regular">{ParaGraph[`nameTitle_${display}`]}</span>
+              <span className="relative text-white text-5xl pacifico-regular">
+                {ParaGraph[`nameTitle_${display}`]}
+              </span>
             </span>
             <ul className="p-4 lg:p-8 dark:bg-gray-100 dark:text-gray-800">
               {sections.map((section) => (
