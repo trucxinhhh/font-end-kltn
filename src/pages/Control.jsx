@@ -45,7 +45,7 @@ function formatDateTime(dateTimeString) {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   const seconds = String(date.getSeconds()).padStart(2, "0"); // Assuming seconds are always zero
 
-  return ` ${hours}:${minutes}:${seconds}`;
+  return ` ${hours}:${minutes}`;
 }
 const Draft = () => {
   // Lấy token
@@ -85,6 +85,9 @@ const Draft = () => {
   const [TimeOn, setTimeOn] = useState(0);
   const [TimeOff, setTimeOff] = useState(0);
   //mode schedule
+  const [FlagDeleteSchedule, setFlagDeleteSchedule] = useState(false);
+  const [TimeToDelete, setTimeToDelete] = useState([]);
+  const [IndexSchedule, setIndexSchedule] = useState(0);
   const [TimeOnSchedule, setTimeOnSchedule] = useState(0);
   const [TimeOffSchedule, setTimeOffSchedule] = useState(0);
   const [DataSchedule, setDataSchedule] = useState(
@@ -354,6 +357,7 @@ const Draft = () => {
         masterusr: localStorage.getItem("username"),
         masterpwd: PassToCheck,
       };
+
       const response = await axios.post(url_api + "rsgw", registerform, {
         headers: {
           accept: "application/json",
@@ -378,10 +382,10 @@ const Draft = () => {
     }
     if (mode == "schedule" && data["mode"] != "") {
       link = url_api + "schedule";
-      console.log("form schedule", data);
+      // console.log("form schedule", data);
     }
 
-    console.log(link);
+    // console.log(link);
 
     const response = await axios.post(link, data, {
       headers: {
@@ -390,26 +394,10 @@ const Draft = () => {
         Authorization: access_token,
       },
     });
-    if (response.status === 200 && mode == "sequent") {
-      console.log("Request succeeded:", response.data);
-    } else {
-      console.log("Request failed with status:", response.status);
-    }
-    console.log("response ", response.data);
+    // console.log("response ", response.data);
     notifyInfo(response.data["message"]);
   };
-  const sendMode = async (mode) => {
-    if (mode == "sequent") {
-      const data = { mode: "sequent" };
-      postMode(mode, data);
-      setIsChecked("sequent");
-    } else {
-      // const data = { status: true, timerSend: 1 };
-      const data = { mode: "manual" };
-      postMode(mode, data);
-      // setIsChecked("manual");
-    }
-  };
+
   const ModeControl = async (e) => {
     setStatusSwitchMode(e.target.checked);
     if (e.target.checked) {
@@ -477,10 +465,10 @@ const Draft = () => {
       const registerform = {
         start: today + "T" + TimeOnSchedule + ":00",
         stop: today + "T" + TimeOffSchedule + ":00",
-        // masterusr: localStorage.getItem("username"),
-        // masterpwd: PassToCheck,
+        masterusr: localStorage.getItem("username"),
+        masterpwd: PassToCheck,
       };
-      // console.lo;
+      // console.log("registerform", registerform);
       postMode("schedule", registerform);
     }
 
@@ -505,6 +493,7 @@ const Draft = () => {
     }
   }, [timerSend]);
   const DeleteSchedule = async (index) => {
+    // console.log("TimeToDelete", TimeToDelete);
     const response = await axios.delete(
       url_api + "schedule/" + index,
 
@@ -516,7 +505,7 @@ const Draft = () => {
         },
       }
     );
-    console.log(url_api + "schedule/" + index);
+    // console.log(url_api + "schedule/" + index);
     notifySuccess(response.status);
   };
   const minutes = Math.floor(timerSend / 60);
@@ -529,7 +518,37 @@ const Draft = () => {
         onClose={hiddenDialog}
         className="fixed inset-0 z-10 overflow-y-auto"
       >
-        {isChecked === "manual" ? (
+        {FlagDeleteSchedule ? (
+          <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
+            <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
+              <div className="text-lg font-bold text-red-600">Cảnh báo</div>
+
+              <div className=" text-sm font-bold  text-gray-500">
+                Bạn có chắc muốn xoá khung giờ tự động
+                <span className="text-red-500">{`${TimeToDelete[0]} - ${TimeToDelete[1]}`}</span>{" "}
+                này?
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={hiddenDialog}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition-colors duration-150"
+                >
+                  Huỷ
+                </button>
+                <button
+                  onClick={() => {
+                    DeleteSchedule(IndexSchedule);
+                    setIsDialogOpen(false);
+                  }}
+                  className="ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+                >
+                  Đồng ý
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : isChecked === "manual" ? (
           <div className="flex items-center bg-opacity-75 bg-black justify-center min-h-screen px-4">
             <div className="relative bg-white rounded-lg max-w-sm mx-auto p-6">
               <div className="text-lg font-bold text-red-600">Notification</div>
@@ -702,12 +721,12 @@ const Draft = () => {
                 <h4 className="text-center">{displayName}</h4>
                 <div className="mt-2">
                   <p className=" mt-2 ml-2 text-base  playwrite-gb-s">
-                    {UserManual[`${isChecked}_1`]}
+                    {UserManual[isChecked]}
                   </p>
-                  <br></br>
-                  <p className="ml-2 text-base  playwrite-gb-s">
+                  {/* <br></br> */}
+                  {/* <p className="ml-2 text-base  playwrite-gb-s">
                     {UserManual[`${isChecked}_2`]}
-                  </p>
+                  </p> */}
                   <br></br>
                 </div>
               </div>
@@ -960,7 +979,15 @@ const Draft = () => {
 
                               <button
                                 className="w-1/6 px-2 py-1 text-sm bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                                onClick={() => DeleteSchedule(item._id)}
+                                onClick={() => {
+                                  setIndexSchedule(item._id);
+                                  setTimeToDelete([
+                                    formatDateTime(item.start),
+                                    formatDateTime(item.stop),
+                                  ]);
+                                  setIsDialogOpen(true);
+                                  setFlagDeleteSchedule(true);
+                                }}
                               >
                                 Xoá
                               </button>
@@ -1328,7 +1355,15 @@ const Draft = () => {
 
                               <button
                                 className="w-1/6 px-2 py-1 text-sm bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                                onClick={() => DeleteSchedule(item._id)}
+                                onClick={() => {
+                                  setIndexSchedule(item._id);
+                                  setTimeToDelete([
+                                    formatDateTime(item.start),
+                                    formatDateTime(item.stop),
+                                  ]);
+                                  setIsDialogOpen(true);
+                                  setFlagDeleteSchedule(true);
+                                }}
                               >
                                 Xoá
                               </button>

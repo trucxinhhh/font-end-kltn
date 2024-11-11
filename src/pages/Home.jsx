@@ -40,7 +40,7 @@ const DashBoard = [
   "CO2",
   "Humi",
   "Temp",
-  "Flowmeters",
+  "flow",
   "EC",
   "Salt", // Sal
   "Pressure",
@@ -54,7 +54,7 @@ const Unit = {
   CO2: "ppm",
   Humi: "% (Đất)",
   Temp: "°C (Đất)",
-  Flowmeters: "m³/s",
+  flow: "m³/s",
   EC: "µS/cm",
   Waterpumped: "m³",
   Salt: "ppm",
@@ -172,12 +172,12 @@ function App() {
       case "Salt":
       case "AirHumi":
       case "AirTemp":
+      case "flow":
         const value = dt1.slice(-1)[0][name];
         // console.log("HOME", dt1);
         // console.log(typeof name);
         return value !== undefined ? value.toFixed(1) : "NaN";
-      case "Flowmeters":
-        return 10;
+22220
       case "Waterpumped":
         return dataVol;
 
@@ -191,7 +191,7 @@ function App() {
     switch (name) {
       case "Pressure":
       case "Waterpumped":
-      case "Flowmeters":
+      case "flow":
         if (value != undefined) {
           return "shadow-cyan-600 bg-white ";
         }

@@ -55,29 +55,71 @@ export const paragraph_2_US =
 export const paragraph_3_US =
   " P3US - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique saepe exercitationem numquam, labore necessitatibus deleniti quasi. Illo porro nihil necessitatibus debitis delectus aperiam, fuga impedit assumenda odit, velit eveniet est.";
 
-export const auto_1 =
-  "Chế độ bơm tự động là chế độ bơm theo ngưỡng độ ẩm của đất. Độ ẩm được chia thành hai ngưỡng. Ở ngưỡng độ ẩm thấp, máy bơm sẽ được bật để bù ẩm. Ở ngưỡng độ ẩm cao, máy bơm sẽ tự động tắt để tránh úng cho cây. Các ngưỡng cao và thấp có thể tuỳ chỉnh.  ";
-export const auto_2 =
-  "Giả sử: Đặt ngưỡng độ ẩm thấp là 28% và ngưỡng độ ẩm cao là 35%. Khi độ ẩm của đất <28% máy bơm sẽ được bật hoặc khi độ ẩm >=35% thì máy bơm sẽ tắt.";
-export const manual_1 =
-  "Chế độ bơm thủ công là chế độ điều khiển trạng thái Bật/Tắt (ON/OFF) của máy bơm tuỳ theo người dùng yêu cầu. ";
-export const manual_2 =
-  "Để thay đổi trạng thái của máy bơm, người dùng thực hiện nhấn vào nút điều khiển sau đó nhập mật khẩu người dùng để xác nhận thao tác thay đổi trạng thái máy bơm. Chờ trong vài giây để hoàn tất thay đổi trạng thái máy bơm. ";
-export const sequent_1 =
-  " Chế độ bơm liên tục là chế độ điều khiển máy bơm theo chu kỳ, trong đó Time On là thời gian máy bơm hoạt động và Time Off là thời gian máy bơm ngừng hoạt động (tính bằng phút).";
-export const sequent_2 =
-  "Giả sử: Time On = 180 phút và Time Off = 30 phút. Máy bơm sẽ hoạt động trong 180 phút. Sau khi hết thời gian hoạt động (Time On), máy bơm sẽ ngừng trong 30 phút (Time Off) và sau đó tự động khởi động lại chu kỳ.";
-export const schedule_1 =
-  "Chế độ bơm tuần tự là chế độ điều khiển máy bơm theo thời gian trong ngày với hai mốc thời gian Bật/Tắt (ON/OFF) do người dùng tuỳ chỉnh. Thời gian đặt hẹn giờ theo cấu trúc YYYY-MM-DD HH:MM:SS (Năm-Tháng-Ngày Giờ : Phút : Giây). Có thể hẹn nhiều khung giờ trong ngày";
-export const schedule_2 = (
+export const auto = (
   <>
+    Chế độ này giúp duy trì độ ẩm đất ở mức phù hợp bằng cách bật hoặc tắt máy
+    bơm theo ngưỡng cài đặt.
+    <br />
+    <strong>Ngưỡng độ ẩm thấp:</strong> Khi độ ẩm đất xuống dưới ngưỡng này, máy
+    bơm sẽ bật để bổ sung độ ẩm cho cây.
+    <br />
+    <strong>Ngưỡng độ ẩm cao: </strong>Khi độ ẩm đất đạt hoặc vượt quá ngưỡng
+    này, máy bơm sẽ tắt để tránh tình trạng đất quá ẩm, gây hại cho cây
+    <br />
+    <strong className="text-red-500 ">Giả sử:</strong> Ngưỡng độ ẩm thấp là{" "}
+    <strong>28%</strong> và ngưỡng cao là <strong>35%</strong>. <br />
+    Khi độ ẩm của đất <strong className="text-red-500 ">&lt; 28%</strong>, máy
+    bơm sẽ bật. Khi độ ẩm đạt{" "}
+    <strong className="text-red-500 ">&gt;= 35%</strong>, máy bơm sẽ tự động
+    tắt.
+  </>
+);
+
+export const manual = (
+  <>
+    <strong>Chế độ bơm thủ công:</strong> Người dùng điều khiển trạng thái
+    Bật/Tắt (ON/OFF) của máy bơm theo yêu cầu. Chế độ này phù hợp khi người dùng
+    muốn điều chỉnh trực tiếp. Để thay đổi trạng thái của máy bơm, người dùng
+    nhấn vào nút điều khiển, sau đó nhập mật khẩu để xác nhận thao tác.
+    <br />
+    <strong>Cách thao tác:</strong>
+    <br />
+    <strong>1. Nhấn vào nút điều khiển</strong>để thay đổi trạng thái máy bơm
+    (Bật/Tắt).
+    <br />
+    <strong>2. Nhập mật khẩu </strong>để xác nhận thao tác, đảm bảo chỉ những
+    người có quyền mới có thể điều khiển máy bơm.
+    <br />
+    <strong>3. Chờ vài giây</strong>để thay đổi trạng thái máy bơm (Bật/Tắt).
+  </>
+);
+
+export const sequent = (
+  <>
+    <strong>Chế độ bơm liên tục:</strong> Máy bơm hoạt động theo chu kỳ, gồm
+    thời gian hoạt động (<strong>Time On</strong>) và thời gian ngừng hoạt động
+    (<strong>Time Off</strong>), tính bằng phút.
     <strong>Giả sử:</strong>
     <br />
-    Với thời gian BẬT (TimeOn): 2024-02-24 08:00:00, thời gian TẮT (TimeOff):
-    2024-02-24 08:30:00.
+    Time On = 180 phút và Time Off = 30 phút. Máy bơm hoạt động trong 180 phút,
+    sau đó ngừng 30 phút rồi khởi động lại chu kỳ.
+  </>
+);
+
+export const schedule = (
+  <>
+    <strong>Chế độ bơm hẹn giờ </strong>cho phép người dùng thiết lập thời gian
+    cụ thể trong ngày để tự động bật và tắt máy bơm.
     <br />
-    Vậy đến lúc 8h00 trong cùng ngày, máy bơm sẽ được bật và giữ trạng thái đến
-    8h30 cùng ngày sẽ dừng bơm.
+    <br />
+    Đúng thời gian Bật (TimeOn), máy bơm sẽ tự động khởi động. Máy bơm sẽ giữ
+    trạng thái bật cho đến khi đạt thời gian Tắt (TimeOff) và sau đó tự động
+    dừng.
+    <br />
+    <strong>Cách thao tác:</strong>
+    <br />
+    Người dùng thiết lập các <strong>mốc thời gian bật và tắt</strong> máy bơm
+    dưới định dạng <strong className="text-red-500">HH:MM</strong>.
   </>
 );
 
@@ -122,12 +164,8 @@ export const ParaGraph = {
 };
 
 export const UserManual = {
-  auto_1,
-  auto_2,
-  manual_1,
-  manual_2,
-  sequent_1,
-  sequent_2,
-  schedule_1,
-  schedule_2,
+  auto,
+  manual,
+  sequent,
+  schedule,
 };

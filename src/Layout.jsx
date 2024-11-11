@@ -10,7 +10,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { url_data, url_api, url_local } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
-
+import {
+  notifySuccess,
+  notifyInfo,
+  notifyError,
+  notifyWarning,
+} from "./pages/include/notifications.jsx";
 const TimeToSpam = 5; //seconds
 const TimeDelaysNotify = 10; //min
 const TimeSpamLoadData = TimeToSpam * 1000;
@@ -25,66 +30,36 @@ const Layout = () => {
   const [messages, setMessages] = useState([]);
 
   const ws = useRef(null);
+
   useEffect(() => {
-    // Khởi tạo kết nối WebSocket và lưu vào ws.current
     ws.current = new WebSocket("ws://34.126.91.225:1506/data");
 
-    // Lắng nghe sự kiện onmessage từ WebSocket
     ws.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // console.log("event.data", data);
       setMessages((prevMessages) => [...prevMessages, event.data]);
-      console.log("event.data", JSON.parse(event.data));
-      if (
-        JSON.parse(event.data).motor == undefined &&
-        JSON.parse(event.data).data == undefined &&
-        JSON.parse(event.data).schedule == undefined
-      ) {
-        console.log("hong coa di het chon");
-      } else if (
-        JSON.parse(event.data).motor == undefined &&
-        JSON.parse(event.data).schedule == undefined
-      ) {
-        let data = JSON.parse(event.data).data;
-        loadData();
-      } else if (
-        JSON.parse(event.data).data == undefined &&
-        JSON.parse(event.data).motor == undefined
-      ) {
-        let data = JSON.parse(event.data).schedule;
-        GetSchedule();
-      } else {
-        let modeControl = JSON.parse(event.data).motor["mode"];
-        localStorage.setItem("isChecked", JSON.stringify(modeControl));
-        let motorStatus = JSON.parse(event.data).motor;
-        localStorage.setItem(
-          "pump1Status",
-          JSON.stringify(motorStatus["motor"])
-        );
-        DataMotor[-1].push(motorStatus);
-      }
 
-      // switch (JSON.parse(event.data)) {
-      //   // console.log()
-      //   case "motor":
-      //     let modeControl = JSON.parse(event.data).motor["mode"];
-      //     localStorage.setItem("isChecked", JSON.stringify(modeControl));
-      //     let motorStatus = JSON.parse(event.data).motor;
-      //     localStorage.setItem(
-      //       "pump1Status",
-      //       JSON.stringify(motorStatus["motor"])
-      //     );
-      //     DataMotor[-1].push(motorStatus);
-      //   case "schedule":
-      //     GetSchedule();
-      //   case "data":
-      //     loadData();
-      // }
+      if (!data.motor && !data.data && !data.schedule && !data.err) {
+        console.log("hong coa di het chon");
+      } else if (data.data && !data.motor && !data.schedule && !data.err) {
+        loadData();
+      } else if (data.schedule && !data.motor && !data.data && !data.err) {
+        GetSchedule();
+        // } else if (data.err && !data.motor && !data.data && !data.schedule) {
+        //   notifyError(data.err.message);
+      } else if (data.motor) {
+        const { mode, motor } = data.motor;
+        localStorage.setItem("isChecked", JSON.stringify(mode));
+        localStorage.setItem("pump1Status", JSON.stringify(motor));
+        DataMotor[-1].push(data.motor);
+      }
     };
 
-    // Đóng kết nối WebSocket khi component bị unmount
     return () => {
       ws.current.close();
     };
   }, []);
+
   //time
   const [currentTime, setCurrentTime] = useState(
     new Date().toLocaleTimeString()
@@ -120,8 +95,7 @@ const Layout = () => {
 
   // data for volume draw chart
   const today = new Date().toISOString().slice(0, 10);
-  const itemsByHour = Array.from({ length: 24 }, () => []);
-  const TotalHour = [];
+
   // backgroud change on select
   const [HomeOnClick, setHomeOnClick] = useState(false);
   const [ManagementOnClick, setManagement] = useState(false);
@@ -216,9 +190,11 @@ const Layout = () => {
     }
   };
   const filteVolume = async (data) => {
+    const TotalHour = [];
+    const itemsByHour = Array.from({ length: 24 }, () => []);
     const filteredData = data.filter((item) => item.date === today);
     filteredData.filter((item) => {
-      const hour = parseInt(item.time.split(":")[0], 10); // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
+      const hour = parseInt(item.time.split(":")[0], 10) - 1; // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
       const data = item.volume;
       itemsByHour[hour].push(data);
     });
@@ -226,7 +202,7 @@ const Layout = () => {
     itemsByHour.filter((item, index) => {
       TotalHour[index] = item.reduce((a, b) => a + b, 0);
     });
-    // console.log("today", today);
+    // console.log("TotalHour", TotalHour);
     localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
   };
   // get data all
@@ -245,7 +221,7 @@ const Layout = () => {
     setAllData(dt1);
 
     //get volume
-    const responseVol = await axios.get(url_data + "api/volume/300", {
+    const responseVol = await axios.get(url_data + "api/volume/30", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -253,6 +229,7 @@ const Layout = () => {
       },
     });
     const dataVol = responseVol.data;
+
     setDataVol(dataVol.slice(-1)[0]["total"]);
 
     filteVolume(dataVol);
@@ -434,6 +411,7 @@ const Layout = () => {
       }
     );
     const dt = response.data;
+    console.log("aaaaaaa", dt);
     setDataSchedule(dt);
   };
 

@@ -4,22 +4,18 @@ const TimeDelaysNotify = 30; //min
 const TimeSpamLoadData = TimeToSpam * 1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
 function TimerComponent() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCount((prevCount) => prevCount + 1);
-      console.log("Count updated:", count);
-      console.log("Current time:", new Date().toLocaleTimeString());
-    }, TimeSpamLoadData);
-
-    return () => clearInterval(interval); // Cleanup khi component bị unmount
-  }, [count]); // Depend vào count để log giá trị cập nhật mới nhất
+  const [count, setCount] = useState([]);
 
   return (
     <div>
-      <h1>Count: {count}</h1>
-      <p>Cập nhật mỗi 30 phút</p>
+      <h1>Count: {count[0]}</h1>
+      <button
+        onClick={() => setCount(["1", "3"])}
+        className="ml-2 px-4 py-2 bg-[#024CAA] text-white rounded-md hover:bg-green-700 transition-colors duration-150"
+      >
+        Đồng ý
+      </button>
+      s
     </div>
   );
 }

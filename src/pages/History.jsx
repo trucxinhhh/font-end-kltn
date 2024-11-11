@@ -6,13 +6,15 @@ import { url_api, url_local, url_data } from "../Provider.jsx";
 import { notifyInfo, notifyError } from "./include/notifications";
 import { Button } from "@material-tailwind/react";
 
+// console.log(master);
 const History = () => {
   const [data1, setData] = useState([]);
   const [DataList, setDataList] = useState("data");
-
+  const master = localStorage.getItem("username");
   // Lấy token
   const token = localStorage.getItem("token");
   const access_token = "Bearer " + token;
+  // console.log()
   // const reversedData1 = data1.reverse();
   // lấy trạng thái date
   const [inputType1, setInputType1] = useState("text");
@@ -113,6 +115,26 @@ const History = () => {
       notifyError("Please select date again!");
     }
   };
+  // export All
+  const ExportAll = async () => {
+    const Account = {
+      masterusr: localStorage.getItem("username"),
+      masterpwd: localStorage.getItem("password"),
+    };
+    const address_toSend = url_api + `export-file/sensor`;
+
+    const response = axios.post(address_toSend, Account, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    response.then((value) => {
+      console.log(value.data["message"]);
+      notifyInfo(value.data["message"]);
+    });
+  };
   return (
     <div className="flex-col h-full w-full  ">
       {/* PC View */}
@@ -169,6 +191,16 @@ const History = () => {
                   EXPORT FILE
                 </Button>
               </div>
+              {(master === "tai" || master === "truc") && (
+                <div className="w-1/3 mt-1 ml-2">
+                  <Button
+                    className="bg-yellow-600 text-white float-right text-xs h-10"
+                    onClick={() => ExportAll()}
+                  >
+                    EXPORT All
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
           {DataList === "data" && (
