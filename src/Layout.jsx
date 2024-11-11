@@ -51,7 +51,7 @@ const Layout = () => {
         const { mode, motor } = data.motor;
         localStorage.setItem("isChecked", JSON.stringify(mode));
         localStorage.setItem("pump1Status", JSON.stringify(motor));
-        DataMotor[-1].push(data.motor);
+        DataMotor.push(data.motor);
       }
     };
 
@@ -411,7 +411,6 @@ const Layout = () => {
       }
     );
     const dt = response.data;
-    console.log("aaaaaaa", dt);
     setDataSchedule(dt);
   };
 
