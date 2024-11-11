@@ -11,9 +11,14 @@ export const Temp_MAX = 40;
 export const EC_MIN = 0;
 export const EC_MAX = 300;
 
-export const pH_MIN = 0;
-export const pH_MAX = 600;
+export const Salt_MIN = 0;
+export const Salt_MAX = 600;
 
+export const AirHumi_MIN = 0;
+export const AirHumi_MAX = 90;
+
+export const AirTemp_MIN = 0;
+export const AirTemp_MAX = 50;
 // -------------------------OVER VIEW-----------------------
 export const nameTitle_ov = "Over View";
 export const title_1_ov = "TITLE 1";
@@ -132,8 +137,12 @@ export const DataMap = {
   Humi_MAX,
   EC_MIN,
   EC_MAX,
-  pH_MIN,
-  pH_MAX,
+  Salt_MIN,
+  Salt_MAX,
+  AirHumi_MIN,
+  AirHumi_MAX,
+  AirTemp_MIN,
+  AirTemp_MAX,
 };
 
 export const ParaGraph = {

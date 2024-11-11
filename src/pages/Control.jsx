@@ -493,20 +493,23 @@ const Draft = () => {
     }
   }, [timerSend]);
   const DeleteSchedule = async (index) => {
-    // console.log("TimeToDelete", TimeToDelete);
-    const response = await axios.delete(
-      url_api + "schedule/" + index,
+    if (role == "admin") {
+      const response = await axios.delete(
+        url_api + "schedule/" + index,
 
-      {
-        headers: {
-          accept: "application/json",
-          // "Content-Type": "application/json",
-          // Authorization: access_token,
-        },
-      }
-    );
-    // console.log(url_api + "schedule/" + index);
-    notifySuccess(response.status);
+        {
+          headers: {
+            accept: "application/json",
+            // "Content-Type": "application/json",
+            // Authorization: access_token,
+          },
+        }
+      );
+      // console.log(url_api + "schedule/" + index);
+      notifySuccess(response.status);
+    } else {
+      notifyError("Permission Denied!");
+    }
   };
   const minutes = Math.floor(timerSend / 60);
   const seconds = timerSend % 60;
@@ -736,7 +739,7 @@ const Draft = () => {
                     {/* AUTO MODE */}
                     <div className="mt-8 ">
                       <p className="text-gray-600 mb-2">
-                        Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
+                        Máy bơm sẽ bật khi ngưỡng độ ẩm thấp hơn
                         <span className="ml-2 font-bold text-red-500">
                           {startThreshold}%
                         </span>
@@ -772,7 +775,7 @@ const Draft = () => {
                     </div>
                     <div className=" ">
                       <p className="text-gray-600 mb-2">
-                        Máy bơm sẽ tắt khi ngưỡng nhiệt độ cao hơn
+                        Máy bơm sẽ tắt khi ngưỡng độ ẩm cao hơn
                         <span className="ml-3 font-bold text-blue-500">
                           {stopThreshold}%
                         </span>

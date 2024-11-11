@@ -142,7 +142,7 @@ const History = () => {
         <div className="flex-col  h-full w-full data-table-container">
           <div className="h-16 m-3  flex  items-center">
             <div className=" w-2/5">
-              <h1 className="text-5xl font-bold">History</h1>
+              <h1 className="text-5xl font-bold">Lịch Sử</h1>
             </div>
 
             <div className="w-11/12 flex p-4 ">
@@ -153,10 +153,10 @@ const History = () => {
                   id="data-list"
                   onChange={(e) => setDataList(e.target.value)}
                 >
-                  <option value="admin">Choice data</option>
-                  <option value="data">Sensor</option>
-                  <option value="user">User</option>
-                  <option value="warning">Premonition</option>
+                  <option value="admin">Chọn mục </option>
+                  <option value="data">Cảm biến </option>
+                  <option value="user">Người dùng</option>
+                  <option value="warning">Cảnh báo</option>
                 </select>
               </label>
               <div className="flex p-1 ml-2 w-7/12 items-center justify-center ">
@@ -209,37 +209,40 @@ const History = () => {
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Device
+                      Nhà vườn
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Datetime
+                      Ngày
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Time
+                      Thời gian
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       CO2
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Temp
+                      Nhiệt độ Đất
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Humi
+                      Độ ẩm Đất
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Nhiệt độ Không Khí
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Độ ẩm Không Khí
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       EC
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Pressure
+                      Áp suất
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Flowmeters
+                      Lưu lượng
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      High
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      low
+                      Bồn đầy
                     </th>
                   </tr>
                 </thead>
@@ -252,14 +255,13 @@ const History = () => {
                       <td class="px-6 py-4 text-center">{item.CO2}</td>
                       <td class="px-6 py-4 text-center">{item.Temp}</td>
                       <td class="px-6 py-4 text-center">{item.Humi}</td>
+                      <td class="px-6 py-4 text-center">{item.AirTemp}</td>
+                      <td class="px-6 py-4 text-center">{item.AirHumi}</td>
                       <td class="px-6 py-4 text-center">{item.EC}</td>
                       <td class="px-6 py-4 text-center">{item.Pressure}</td>
-                      <td class="px-6 py-4 text-center">{item.Flowmeters}</td>
+                      <td class="px-6 py-4 text-center">{item.flow}</td>
                       <td class="px-6 py-4 text-center">
                         {item.WaterlevelSensor1 ? "ON" : "OFF"}
-                      </td>
-                      <td class="px-6 py-4 text-center">
-                        {item.WaterlevelSensor2 ? "ON" : "OFF"}
                       </td>
                     </tr>
                   ))}
@@ -273,22 +275,22 @@ const History = () => {
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Name
+                      Họ và Tên
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      User Name
+                      Tên đăng nhập
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Phone Number
+                      Số điện thoại
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       Email
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Role
+                      Phân Quyền
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Login at
+                      Lần cuối đăng nhập
                     </th>
                   </tr>
                 </thead>
@@ -362,9 +364,9 @@ const History = () => {
       {/* Mobile View */}
       <div className="sm:hidden h-screen w-screen">
         <div className="flex-col  h-full w-full data-table-container">
-          <div className="h-16 m-3  flex  items-center">
+          <div className="h-16 p-1   flex  items-center">
             <div className=" w-full flex">
-              <label className="inline-flex items-center w-7/12 h-10 text-sm font-semibold ">
+              <label className="inline-flex ml-2 items-center w-7/12 h-10 text-sm font-semibold ">
                 <select
                   className="text-gray-500 mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1select_box"
                   name="data-list"
@@ -380,7 +382,7 @@ const History = () => {
 
               <div className="w-fit  ml-2 ">
                 <Button
-                  className="bg-lime-600 text-white float-right text-sm"
+                  className="bg-lime-600 text-white float-right text-xs"
                   onClick={() => SentMail()}
                 >
                   EXPORT FILE
@@ -388,7 +390,7 @@ const History = () => {
               </div>
             </div>
           </div>
-          <div className="h-16 m-3  flex  items-center">
+          <div className="h-16 p-1 ml-2  flex  items-center">
             <div className=" w-full flex">
               <div className="inline-flex items-center w-7/12 h-10 text-sm font-semibold">
                 <input
@@ -408,9 +410,9 @@ const History = () => {
                   className="rounded-xl ml-2 w-28 h-10 shadow-lg"
                 />
               </div>
-              <div className="w-fit ml-2 ">
+              <div className="w-fit ml-4   ">
                 <Button
-                  className="bg-blue-600 text-white w-36 text-sm h-10 "
+                  className="bg-blue-600 text-white  w-32 text-sm h-10 "
                   onClick={() => DateFil()}
                 >
                   Apply
@@ -425,37 +427,40 @@ const History = () => {
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Device
+                      Nhà vườn
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Datetime
+                      Ngày
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Time
+                      Thời gian
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       CO2
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Temp
+                      Nhiệt độ Đất
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Humi
+                      Độ ẩm Đất
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Nhiệt độ Không Khí
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-center">
+                      Độ ẩm Không Khí
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       EC
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Pressure
+                      Áp suất
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Flowmeters
+                      Lưu lượng
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      high
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      low
+                      Bồn đầy
                     </th>
                   </tr>
                 </thead>
@@ -468,14 +473,13 @@ const History = () => {
                       <td class="px-6 py-4 text-center">{item.CO2}</td>
                       <td class="px-6 py-4 text-center">{item.Temp}</td>
                       <td class="px-6 py-4 text-center">{item.Humi}</td>
+                      <td class="px-6 py-4 text-center">{item.AirTemp}</td>
+                      <td class="px-6 py-4 text-center">{item.AirHumi}</td>
                       <td class="px-6 py-4 text-center">{item.EC}</td>
                       <td class="px-6 py-4 text-center">{item.Pressure}</td>
-                      <td class="px-6 py-4 text-center">{item.Flowmeters}</td>
+                      <td class="px-6 py-4 text-center">{item.flow}</td>
                       <td class="px-6 py-4 text-center">
                         {item.WaterlevelSensor1 ? "ON" : "OFF"}
-                      </td>
-                      <td class="px-6 py-4 text-center">
-                        {item.WaterlevelSensor2 ? "ON" : "OFF"}
                       </td>
                     </tr>
                   ))}
@@ -485,34 +489,35 @@ const History = () => {
           )}
           {DataList === "user" && (
             <div className="relative h-4/5  overflow-x-auto  rounded-3xl mt-3">
-              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Name
+                      Họ và Tên
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      User Name
+                      Tên đăng nhập
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Phone Number
+                      Số điện thoại
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
                       Email
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Role
+                      Phân Quyền
                     </th>
                     <th scope="col" class="px-6 py-3 text-center">
-                      Login at
+                      Lần cuối đăng nhập
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="rounded-b-2xl ">
                   {data1.map((item) => (
                     <tr class="bg-white dark:bg-gray-800" key={item._id}>
                       <td class="px-6 py-4 text-center">{item.full_name}</td>
                       <td class="px-6 py-4 text-center">{item.username}</td>
+
                       <td class="px-6 py-4 text-center">{item.phone}</td>
                       <td class="px-6 py-4 text-center">{item.email}</td>
                       <td class="px-6 py-4 text-center">{item.role}</td>
@@ -531,24 +536,17 @@ const History = () => {
                     STT
                   </th>
                   <th scope="col" class="px-6 py-3 text-center">
-                    Date
-                  </th>
-
-                  <th scope="col" class="px-6 py-3 text-center">
-                    Time
+                    Ngày
                   </th>
                   <th scope="col" class="px-6 py-3 text-center">
-                    Message
+                    Thời gian
                   </th>
                   <th scope="col" class="px-6 py-3 text-center">
-                    level
+                    Thông báo
                   </th>
-                  {/* <th scope="col" class="px-6 py-3 text-center">
-                      Role
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Login at
-                    </th> */}
+                  <th scope="col" class="px-6 py-3 text-center">
+                    Mức độ
+                  </th>
                 </tr>
               </thead>
               <tbody>

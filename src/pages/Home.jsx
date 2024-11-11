@@ -167,7 +167,6 @@ function App() {
       case "Humi":
       case "Pressure":
       case "Temp":
-
       case "EC":
       case "Salt":
       case "AirHumi":
@@ -177,7 +176,7 @@ function App() {
         // console.log("HOME", dt1);
         // console.log(typeof name);
         return value !== undefined ? value.toFixed(1) : "NaN";
-22220
+
       case "Waterpumped":
         return dataVol;
 
