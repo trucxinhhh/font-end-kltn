@@ -71,12 +71,19 @@ export const auto = (
     <strong>Ngưỡng độ ẩm cao: </strong>Khi độ ẩm đất đạt hoặc vượt quá ngưỡng
     này, máy bơm sẽ tắt để tránh tình trạng đất quá ẩm, gây hại cho cây
     <br />
-    <strong className="text-red-500 ">Giả sử:</strong> Ngưỡng độ ẩm thấp là{" "}
-    <strong>28%</strong> và ngưỡng cao là <strong>35%</strong>. <br />
-    Khi độ ẩm của đất <strong className="text-red-500 ">&lt; 28%</strong>, máy
-    bơm sẽ bật. Khi độ ẩm đạt{" "}
-    <strong className="text-red-500 ">&gt;= 35%</strong>, máy bơm sẽ tự động
-    tắt.
+    <strong>Cách thao tác:</strong>
+    <br />
+    {/* <strong>1. Mốc thời gian bật và tắt</strong> được thiết lập theo định dạng
+    HH:MM.
+    <br />
+    <strong>2. Đặt thời gian bật </strong> tại khung rỗng đầu tiên
+    <br />
+    <strong>3. Đặt thời gian tắt </strong> tại khung rỗng thứ hai
+    <br />
+    <strong>4. Cập nhập khung giờ </strong> bằng cách nhấn vào nút "Thêm" và
+    nhập mật khẩu để xác nhận.
+    <br />
+    <strong>5. Chờ vài giây</strong> để cập nhật khung giờ. */}
   </>
 );
 
@@ -104,10 +111,20 @@ export const sequent = (
     <strong>Chế độ bơm liên tục:</strong> Máy bơm hoạt động theo chu kỳ, gồm
     thời gian hoạt động (<strong>Time On</strong>) và thời gian ngừng hoạt động
     (<strong>Time Off</strong>), tính bằng phút.
-    <strong>Giả sử:</strong>
     <br />
-    Time On = 180 phút và Time Off = 30 phút. Máy bơm hoạt động trong 180 phút,
-    sau đó ngừng 30 phút rồi khởi động lại chu kỳ.
+    <br /> <strong>Cách thao tác:</strong>
+    <br />
+    <strong>1. Mốc thời gian bật và tắt</strong> được thiết lập theo định dạng
+    HH:MM.
+    <br />
+    <strong>2. Đặt thời gian bật </strong> tại khung "TimeOn"
+    <br />
+    <strong>3. Đặt thời gian tắt </strong> tại khung "TimeOff"
+    <br />
+    <strong>4. Cập nhập khung giờ </strong> bằng cách nhấn vào nút "Thêm" và
+    nhập mật khẩu để xác nhận.
+    <br />
+    <strong>5. Chờ vài giây</strong> để cập nhật khung giờ.
   </>
 );
 
@@ -115,16 +132,24 @@ export const schedule = (
   <>
     <strong>Chế độ bơm hẹn giờ </strong>cho phép người dùng thiết lập thời gian
     cụ thể trong ngày để tự động bật và tắt máy bơm.
-    <br />
-    <br />
-    Đúng thời gian Bật (TimeOn), máy bơm sẽ tự động khởi động. Máy bơm sẽ giữ
+    {/* Đúng thời gian Bật (TimeOn), máy bơm sẽ tự động khởi động. Máy bơm sẽ giữ
     trạng thái bật cho đến khi đạt thời gian Tắt (TimeOff) và sau đó tự động
-    dừng.
+    dừng. */}
+    <br />
     <br />
     <strong>Cách thao tác:</strong>
     <br />
-    Người dùng thiết lập các <strong>mốc thời gian bật và tắt</strong> máy bơm
-    dưới định dạng <strong className="text-red-500">HH:MM</strong>.
+    <strong>1. Mốc thời gian bật và tắt</strong> được thiết lập theo định dạng
+    HH:MM.
+    <br />
+    <strong>2. Đặt thời gian bật </strong> tại khung rỗng đầu tiên
+    <br />
+    <strong>3. Đặt thời gian tắt </strong> tại khung rỗng thứ hai
+    <br />
+    <strong>4. Cập nhập khung giờ </strong> bằng cách nhấn vào nút "Thêm" và
+    nhập mật khẩu để xác nhận.
+    <br />
+    <strong>5. Chờ vài giây</strong> để cập nhật khung giờ.
   </>
 );
 

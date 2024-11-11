@@ -721,9 +721,9 @@ const Draft = () => {
             <div className="hidden w-full bg-white sm:flex border-2 border-[#185519] rounded-3xl">
               {/* HƯỚNG DẪN SỬ DỤNG */}
               <div className="w-1/3 border-r-2 border-gray-300 ml-3 mt-10 p-2">
-                <h4 className="text-center">{displayName}</h4>
+                <h4 className="text-center text-2xl ">{displayName}</h4>
                 <div className="mt-2">
-                  <p className=" mt-2 ml-2 text-base  playwrite-gb-s">
+                  <p className=" mt-2 ml-2 text-base ">
                     {UserManual[isChecked]}
                   </p>
                   {/* <br></br> */}
@@ -1008,7 +1008,7 @@ const Draft = () => {
       </div>
 
       {/* -----------------------Mobile View----------------------- */}
-      <div className="sm:hidden  h-full w-full p-4">
+      <div className="sm:hidden  h-screen w-full p-4">
         <div className="flex flex-col h-full  w-full ">
           {/* Điều khiển chung */}
           <div className=" flex  h-fit w-fullrounded-3xl ">
@@ -1097,17 +1097,12 @@ const Draft = () => {
             <div className=" w-full h-fit bg-white  border-2 border-[#4CC9FE] rounded-xl ">
               {/* HƯỚNG DẪN SỬ DỤNG */}
               <div className="w-full border-r-2 border-gray-300 ml-3  p-2">
-                <h4 className="text-center">{displayName}</h4>
-                {/* <div className="mt-2">
-                  <p className=" mt-2 ml-2 text-base  playwrite-gb-s">
-                    {UserManual[`${isChecked}_1`]}
+                <h4 className="text-center ">{displayName}</h4>
+                <div className="mt-2">
+                  <p className=" mt-2  text-base  ">
+                    {UserManual[`${isChecked}`]}
                   </p>
-                  <br></br>
-                  <p className="ml-2 text-base  playwrite-gb-s">
-                    {UserManual[`${isChecked}_2`]}
-                  </p>
-                  <br></br>
-                </div> */}
+                </div>
               </div>
               <div className="w-full ml-3 p-2">
                 {isChecked == "auto" ? (

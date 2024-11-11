@@ -1192,7 +1192,7 @@ const Layout = () => {
             )}
 
             {/* End List Box */}
-            <div className="w-full h-fit">
+            <div className="w-full h-screen">
               {/* Outletx*/}
 
               <Outlet />
