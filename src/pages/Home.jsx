@@ -44,7 +44,7 @@ const DashBoard = [
   "EC",
   "Salt", // Sal
   "Pressure",
-  "Motor",
+  "motor",
   "Waterpumped",
   "AirHumi",
   "AirTemp",
@@ -59,7 +59,7 @@ const Unit = {
   Waterpumped: "m³",
   Salt: "ppm",
   Pressure: "bar",
-  Motor: "",
+  motor: "",
   AirHumi: "% (kk)",
   AirTemp: "°C (kk)",
   Full: "",
@@ -158,7 +158,7 @@ function App() {
     if (!name || dt1.length === 0) return "NaN";
 
     switch (name) {
-      case "Motor":
+      case "motor":
       case "Full":
         const data = dt2.slice(-1)[0]?.[name];
         return data ? "ON" : "OFF";
@@ -195,7 +195,7 @@ function App() {
           return "shadow-cyan-600 bg-white ";
         }
         return "shadow-red-600 bg-red-100";
-      case "Motor":
+      case "motor":
       case "Full":
         if (value == "ON") {
           return "shadow-cyan-600 bg-white ";
@@ -246,7 +246,7 @@ function App() {
   });
 
   const chartData = (lineColor, data_to_draw) => {
-    if (data_to_draw == "Motor") {
+    if (data_to_draw == "motor") {
       const labels = recentMotor.map((item) => item.time);
       const data = recentMotor.map((item) => item["motor"]);
 

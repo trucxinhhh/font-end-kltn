@@ -117,3 +117,6 @@ https://flowbite.com/docs/forms/floating-label/
 https://mui.com/material-ui/react-toggle-button/
 
 ---
+
+MO HINH AI
+https://www.javatpoint.com/working-of-rnn-in-tensorflow
