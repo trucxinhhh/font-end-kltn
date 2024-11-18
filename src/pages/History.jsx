@@ -122,8 +122,16 @@ const History = () => {
       masterpwd: localStorage.getItem("password"),
     };
     const address_toSend = url_api + `export-file/sensor`;
+    const address_Vol_toSend = url_api + `export-file/volume`;
 
     const response = axios.post(address_toSend, Account, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    const responseVol = axios.post(address_Vol_toSend, Account, {
       headers: {
         Authorization: access_token,
         accept: "application/json",

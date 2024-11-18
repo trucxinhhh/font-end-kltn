@@ -160,6 +160,7 @@ function App() {
     switch (name) {
       case "motor":
       case "Full":
+        677;
         const data = dt2.slice(-1)[0]?.[name];
         return data ? "ON" : "OFF";
 

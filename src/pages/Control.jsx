@@ -843,8 +843,8 @@ const Draft = () => {
                           : ""}
                       </button>
                     </div>
-                    <div className=" w-full mr-2 mt-3 ">
-                      <div className="mr-6  h-4/5  bg-white border-2 border-blue-500 rounded-2xl flex ">
+                    <div className=" w-full  mr-2 mt-3 ">
+                      <div className="mr-6  h-auto  bg-white border-2 border-blue-500 rounded-2xl flex ">
                         <div className="w-full h-full">
                           <Bar
                             data={data2}

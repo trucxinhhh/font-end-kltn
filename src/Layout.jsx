@@ -33,10 +33,10 @@ const Layout = () => {
 
   useEffect(() => {
     ws.current = new WebSocket("ws://34.126.91.225:1506/data");
-
+    // console.log("event.data", data);
     ws.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // console.log("event.data", data);
+      // const data = JSON.parse(event.data);
+      console.log("event.data", data);
       setMessages((prevMessages) => [...prevMessages, event.data]);
 
       if (!data.motor && !data.data && !data.schedule && !data.err) {
