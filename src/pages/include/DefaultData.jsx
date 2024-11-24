@@ -2,8 +2,8 @@
 export const CO2_MIN = 300;
 export const CO2_MAX = 600;
 
-export const Humi_MIN = localStorage.getItem("low");
-export const Humi_MAX = localStorage.getItem("up");
+export const Humi_MIN = JSON.parse(localStorage.getItem("low"));
+export const Humi_MAX = JSON.parse(localStorage.getItem("up"));
 
 export const Temp_MIN = 25;
 export const Temp_MAX = 40;

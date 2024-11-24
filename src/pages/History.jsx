@@ -5,7 +5,32 @@ import axios from "./checkToken.jsx";
 import { url_api, url_local, url_data } from "../Provider.jsx";
 import { notifyInfo, notifyError } from "./include/notifications";
 import { Button } from "@material-tailwind/react";
-
+const Display = {
+  data: [
+    "Nhà vườn",
+    "Ngày",
+    "Thời gian",
+    "CO2",
+    "Nhiệt độ Đất",
+    "Độ ẩm Đất",
+    "Nhiệt độ Không Khí",
+    "Độ ẩm Không Khí",
+    "EC",
+    "Áp suất",
+    "Lưu lượng",
+    "Bồn đầy",
+  ],
+  volume: ["STT", "Ngày", "Thời gian", "Dung tích"],
+  user: [
+    "Họ và Tên",
+    "Tên đăng nhập",
+    "Số điện thoại",
+    "Email",
+    "Phân Quyền",
+    "	Lần cuối đăng nhập",
+  ],
+  warning: ["STT", "Ngày", "Thời gian", "Nội dung", "Mức độ"],
+};
 // console.log(master);
 const History = () => {
   const [data1, setData] = useState([]);
@@ -163,6 +188,7 @@ const History = () => {
                 >
                   <option value="admin">Chọn mục </option>
                   <option value="data">Cảm biến </option>
+                  <option value="volume">Motor</option>
                   <option value="user">Người dùng</option>
                   <option value="warning">Cảnh báo</option>
                 </select>
@@ -216,42 +242,11 @@ const History = () => {
               <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhà vườn
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Ngày
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Thời gian
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      CO2
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhiệt độ Đất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Độ ẩm Đất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhiệt độ Không Khí
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Độ ẩm Không Khí
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      EC
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Áp suất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Lưu lượng
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Bồn đầy
-                    </th>
+                    {Display.data.map((item) => (
+                      <th scope="col" class="px-6 py-3 text-center">
+                        {item}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="">
@@ -282,24 +277,11 @@ const History = () => {
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Họ và Tên
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Tên đăng nhập
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Số điện thoại
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Email
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Phân Quyền
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Lần cuối đăng nhập
-                    </th>
+                    {Display.user.map((item) => (
+                      <th scope="col" class="px-6 py-3 text-center">
+                        {item}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="rounded-b-2xl ">
@@ -323,27 +305,11 @@ const History = () => {
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      STT
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Date
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Time
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Message
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      level
-                    </th>
-                    {/* <th scope="col" class="px-6 py-3 text-center">
-                      Role
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Login at
-                    </th> */}
+                    {Display.warning.map((item) => (
+                      <th scope="col" class="px-6 py-3 text-center">
+                        {item}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -367,6 +333,20 @@ const History = () => {
               </table>
             </div>
           )}
+          {DataList === "volume" && (
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+                <tr>
+                  {Display.volume.map((item) => (
+                    <th scope="col" class="px-6 py-3 text-center">
+                      {item}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          )}
         </div>
       </div>
       {/* Mobile View */}
@@ -381,10 +361,11 @@ const History = () => {
                   id="data-list"
                   onChange={(e) => setDataList(e.target.value)}
                 >
-                  <option value="admin">Choice data </option>
-                  <option value="data">Sensor</option>
-                  <option value="user">User</option>
-                  <option value="warning">Premonition</option>
+                  <option value="admin">Chọn mục </option>
+                  <option value="data">Cảm biến </option>
+                  <option value="volume">Dung tich bom</option>
+                  <option value="user">Người dùng</option>
+                  <option value="warning">Cảnh báo</option>
                 </select>
               </label>
 
@@ -434,42 +415,11 @@ const History = () => {
               <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhà vườn
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Ngày
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Thời gian
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      CO2
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhiệt độ Đất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Độ ẩm Đất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Nhiệt độ Không Khí
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Độ ẩm Không Khí
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      EC
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Áp suất
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Lưu lượng
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Bồn đầy
-                    </th>
+                    {Display.data.map((item) => (
+                      <th scope="col" class="px-6 py-3 text-center">
+                        {item}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="">
@@ -500,24 +450,11 @@ const History = () => {
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
                 <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Họ và Tên
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Tên đăng nhập
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Số điện thoại
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Email
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Phân Quyền
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-center">
-                      Lần cuối đăng nhập
-                    </th>
+                    {Display.user.map((item) => (
+                      <th scope="col" class="px-6 py-3 text-center">
+                        {item}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="rounded-b-2xl ">
@@ -540,21 +477,11 @@ const History = () => {
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
                 <tr>
-                  <th scope="col" class="px-6 py-3 text-center">
-                    STT
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-center">
-                    Ngày
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-center">
-                    Thời gian
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-center">
-                    Thông báo
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-center">
-                    Mức độ
-                  </th>
+                  {Display.warning.map((item) => (
+                    <th scope="col" class="px-6 py-3 text-center">
+                      {item}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -568,6 +495,20 @@ const History = () => {
                   </tr>
                 ))}
               </tbody>
+            </table>
+          )}
+          {DataList === "volume" && (
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+                <tr>
+                  {Display.volume.map((item) => (
+                    <th scope="col" class="px-6 py-3 text-center">
+                      {item}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody></tbody>
             </table>
           )}
         </div>

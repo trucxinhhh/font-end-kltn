@@ -69,6 +69,7 @@ const Draft = () => {
   const [totals, setTotals] = useState({});
   // Change display in mobile view
   const [Display, setDisplay] = useState("1");
+  const [DisplayChangeMode, setDisplayChangeMode] = useState(false);
   // Dialog status
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   //pump status
@@ -114,8 +115,10 @@ const Draft = () => {
   const [cycleSample, setCycleSample] = useState(
     localStorage.getItem("cycleSample")
   );
-  const today = new Date().toISOString().slice(0, 10);
-
+  const today1 = new Date();
+  const offset = 7; // GMT+7
+  const vietnamTime = new Date(today1.getTime() + offset * 60 * 60 * 1000);
+  const today = vietnamTime.toISOString().slice(0, 10);
   const getLastSevenDays = () => {
     const dates = [];
 
@@ -382,6 +385,7 @@ const Draft = () => {
     }
     if (mode == "schedule" && data["mode"] != "") {
       link = url_api + "schedule";
+      // link = url_api + "test";
       // console.log("form schedule", data);
     }
 
@@ -507,6 +511,19 @@ const Draft = () => {
       );
       // console.log(url_api + "schedule/" + index);
       notifySuccess(response.status);
+      const todayA = new Date().toISOString().slice(0, 10);
+      const responseA = await axios.get(
+        `${url_api}api/schedule/0?start=${todayA}&end=${todayA}`,
+        {
+          headers: {
+            Authorization: access_token,
+            accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      const dt = responseA.data;
+      setDataSchedule(dt);
     } else {
       notifyError("Permission Denied!");
     }

@@ -31,40 +31,6 @@ const Layout = () => {
 
   const ws = useRef(null);
 
-  useEffect(() => {
-    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
-    // console.log("event.data", data);
-    ws.current.onmessage = (event) => {
-      // const data = JSON.parse(event.data);
-      console.log("event.data", data);
-      setMessages((prevMessages) => [...prevMessages, event.data]);
-
-      if (!data.motor && !data.data && !data.schedule && !data.err) {
-        console.log("hong coa di het chon");
-      } else if (data.data && !data.motor && !data.schedule && !data.err) {
-        loadData();
-      } else if (data.schedule && !data.motor && !data.data && !data.err) {
-        GetSchedule();
-        // } else if (data.err && !data.motor && !data.data && !data.schedule) {
-        //   notifyError(data.err.message);
-      } else if (data.motor) {
-        const { mode, motor } = data.motor;
-        localStorage.setItem("isChecked", JSON.stringify(mode));
-        localStorage.setItem("pump1Status", JSON.stringify(motor));
-        DataMotor.push(data.motor);
-      }
-    };
-
-    return () => {
-      ws.current.close();
-    };
-  }, []);
-
-  //time
-  const [currentTime, setCurrentTime] = useState(
-    new Date().toLocaleTimeString()
-  );
-
   //notìy
   const location = useLocation();
   const [FlagNotify, setFlagNotify] = useState(false);
@@ -94,8 +60,13 @@ const Layout = () => {
   const [newStage, setnewnewStage] = useState([]);
 
   // data for volume draw chart
-  const today = new Date().toISOString().slice(0, 10);
+  // const today = new Date().toISOString().slice(0, 10);
+  const today1 = new Date();
+  const offset = 7; // GMT+7
+  const vietnamTime = new Date(today1.getTime() + offset * 60 * 60 * 1000);
+  const today = vietnamTime.toISOString().slice(0, 10);
 
+  // console.log(vietnamTime.toISOString()); // In dạng ISO
   // backgroud change on select
   const [HomeOnClick, setHomeOnClick] = useState(false);
   const [ManagementOnClick, setManagement] = useState(false);
@@ -139,6 +110,44 @@ const Layout = () => {
     window.location.href = url_local;
   };
 
+  useEffect(() => {
+    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
+    // console.log("event.data", data);
+    ws.current.onmessage = (event) => {
+      // console.log("event.data", data);
+      setMessages((prevMessages) => [...prevMessages, event.data]);
+      const data = JSON.parse(event.data);
+      console.log("event.data", data);
+      if (!data.motor && !data.data && !data.schedule && !data.err) {
+        console.log("hong coa di het chon");
+      } else if (data.data && !data.motor && !data.schedule && !data.err) {
+        loadData();
+
+        // setAllData(AllData.push(data.data));
+        // console.log("ok1");
+        // localStorage.setItem("dataSensor", JSON.stringify(AllData));
+        // console.log("ok2");
+      } else if (data.schedule && !data.motor && !data.data && !data.err) {
+        GetSchedule();
+        // } else if (data.err && !data.motor && !data.data && !data.schedule) {
+        //   notifyError(data.err.message);
+      } else if (data.motor) {
+        const { mode, motor } = data.motor;
+        localStorage.setItem("isChecked", JSON.stringify(mode));
+        localStorage.setItem("pump1Status", JSON.stringify(motor));
+        DataMotor.push(data.motor);
+      }
+    };
+
+    return () => {
+      ws.current.close();
+    };
+  }, []);
+
+  //time
+  const [currentTime, setCurrentTime] = useState(
+    new Date().toLocaleTimeString()
+  );
   //set status navigate bar
   const ToggleListSettings = async () => {
     setDisplay((prevDisplay) => (prevDisplay === "1" ? "0" : "1"));
@@ -206,8 +215,8 @@ const Layout = () => {
     localStorage.setItem("TotalHour", JSON.stringify(TotalHour));
   };
   // get data all
-  // async function loadData() {
-  const loadData = async () => {
+  async function loadData() {
+    // const loadData = async () => {
     //get data sensor
     const response = await axios.get(url_data + "api/data/30", {
       headers: {
@@ -217,7 +226,7 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-
+    console.log("last data", dt1.slice(-1));
     setAllData(dt1);
 
     //get volume
@@ -261,15 +270,24 @@ const Layout = () => {
       var val = dt1.slice(-1)[0][listSensorData[i]];
       const checkMAX = listSensorData[i] + "_MAX";
       const checkMIN = listSensorData[i] + "_MIN";
-      if (DataMap[checkMIN] > val || val > DataMap[checkMAX]) {
+      // console.log(
+      //   "val:",
+      //   val,
+      //   "checkMAX:",
+      //   DataMap[checkMAX],
+      //   "checkMIN:",
+      //   DataMap[checkMIN]
+      // );
+      if (DataMap[checkMIN] >= val || val > DataMap[checkMAX]) {
         if (FlagNotify && displayNotify == 2) {
           setCount(count + 1);
-          console.log(count);
+          console.log("count", count);
           if (count == TimeDelays) {
             setFlagNotify(false);
             setCount(0);
           }
         } else {
+          console.log("displayNotify: ", displayNotify);
           setDisplayNotify(displayNotify + 1);
           notify(`Warning ${listSensorData[i]} over threshold`);
           if (displayNotify == 2) {
@@ -279,7 +297,8 @@ const Layout = () => {
         }
       }
     }
-  };
+  }
+
   // post and resize avatar
   const handleImageClick = () => {
     document.getElementById("fileInput").click();
@@ -401,7 +420,7 @@ const Layout = () => {
   };
   const GetSchedule = async () => {
     const response = await axios.get(
-      `${url_data}api/schedule/0?start=${today}&end=${today}`,
+      `${url_api}api/schedule/0?start=${today}&end=${today}`,
       {
         headers: {
           Authorization: access_token,
@@ -801,7 +820,7 @@ const Layout = () => {
                           </span>
                         </div>
                       </Link>
-                      <Link to="/about-us">
+                      {/* <Link to="/about-us">
                         <div
                           className={`p-1 inline-flex items-center w-full text-lg rounded-xl  ${
                             DocumentOnClick
@@ -839,7 +858,7 @@ const Layout = () => {
                             Hướng dẫn sử dụng
                           </span>
                         </div>
-                      </Link>
+                      </Link> */}
                       <div
                         className="p-1 ml-1 inline-flex items-center w-full text-lg text-[#091057]  font-bold "
                         onClick={() => goOut()}
@@ -1132,7 +1151,7 @@ const Layout = () => {
                     </span>
                   </Link>
 
-                  <Link
+                  {/* <Link
                     className="inline-flex items-center w-full text-lg text-white font-bold transition-colors duration-150 cursor-pointer hover:text-[#FDFFAB]"
                     to="/about-us"
                     onClick={() => {
@@ -1158,7 +1177,7 @@ const Layout = () => {
                     <span className="ml-4 mt-1 freeman-regular  text-2xl justify-center items-center">
                       Hướng dẫn sử dụng
                     </span>
-                  </Link>
+                  </Link> */}
                   {/* Logout */}
 
                   <a

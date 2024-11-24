@@ -102,7 +102,10 @@ function App() {
     new URL(`/src/assets/icon/${name}.jpg`, import.meta.url).href;
   };
   // lấy ngày giờ
-  let today = new Date().toLocaleDateString();
+  const today1 = new Date();
+  const offset = 7; // GMT+7
+  const vietnamTime = new Date(today1.getTime() + offset * 60 * 60 * 1000);
+  const today = vietnamTime.toISOString().slice(0, 10);
 
   const [dt1, setDT1] = useState(
     JSON.parse(localStorage.getItem("dataSensor"))
