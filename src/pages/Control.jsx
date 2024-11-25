@@ -481,6 +481,7 @@ const Draft = () => {
 
   const hiddenDialog = async () => {
     setIsDialogOpen(false);
+    setFlagDeleteSchedule(false);
   };
 
   useEffect(() => {
