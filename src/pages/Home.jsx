@@ -50,6 +50,7 @@ const DashBoard = [
   "AirTemp",
   "Full",
 ];
+const testFull = true;
 const Unit = {
   CO2: "ppm",
   Humi: "% (Đất)",
@@ -162,11 +163,12 @@ function App() {
 
     switch (name) {
       case "motor":
-      case "Full":
-        677;
+        // case "Full":
         const data = dt2.slice(-1)[0]?.[name];
         return data ? "ON" : "OFF";
-
+      case "Full":
+        const data1 = dt1.slice(-1)[0]?.[name];
+        return data1 ? "ON" : "OFF";
       case "CO2":
       case "Humi":
       case "Pressure":
@@ -356,8 +358,8 @@ function App() {
       setDataVol(JSON.parse(localStorage.getItem("dataVol")));
       setTotalHour(JSON.parse(localStorage.getItem("TotalHour")));
       // console.log(dt1);
-      setRecentMotor(dt2.slice(-30));
-      setRecentData(dt1.slice(-30));
+      setRecentMotor(dt2.slice(-200));
+      setRecentData(dt1.slice(-200));
     }, 1000);
     return () => clearInterval(interval); // Clear interval on component unmount
   });

@@ -512,9 +512,9 @@ const Draft = () => {
       );
       // console.log(url_api + "schedule/" + index);
       notifySuccess(response.status);
-      const todayA = new Date().toISOString().slice(0, 10);
+      // const todayA = new Date().toISOString().slice(0, 10);
       const responseA = await axios.get(
-        `${url_api}api/schedule/0?start=${todayA}&end=${todayA}`,
+        `${url_api}filter_tasks?date=${today}`,
         {
           headers: {
             Authorization: access_token,
@@ -524,6 +524,8 @@ const Draft = () => {
         }
       );
       const dt = responseA.data;
+      console.log("delete", dt);
+      localStorage.setItem("dataSchedule", JSON.stringify(dt));
       setDataSchedule(dt);
     } else {
       notifyError("Permission Denied!");

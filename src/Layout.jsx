@@ -60,13 +60,11 @@ const Layout = () => {
   const [newStage, setnewnewStage] = useState([]);
 
   // data for volume draw chart
-  // const today = new Date().toISOString().slice(0, 10);
   const today1 = new Date();
   const offset = 7; // GMT+7
   const vietnamTime = new Date(today1.getTime() + offset * 60 * 60 * 1000);
   const today = vietnamTime.toISOString().slice(0, 10);
 
-  // console.log(vietnamTime.toISOString()); // In dạng ISO
   // backgroud change on select
   const [HomeOnClick, setHomeOnClick] = useState(false);
   const [ManagementOnClick, setManagement] = useState(false);
@@ -218,7 +216,7 @@ const Layout = () => {
   async function loadData() {
     // const loadData = async () => {
     //get data sensor
-    const response = await axios.get(url_data + "api/data/30", {
+    const response = await axios.get(url_data + "api/data/100", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -230,7 +228,7 @@ const Layout = () => {
     setAllData(dt1);
 
     //get volume
-    const responseVol = await axios.get(url_data + "api/volume/30", {
+    const responseVol = await axios.get(url_data + "api/volume/100", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -419,16 +417,13 @@ const Layout = () => {
     setModeControl(response.data[0]["mode"]);
   };
   const GetSchedule = async () => {
-    const response = await axios.get(
-      `${url_api}api/schedule/0?start=${today}&end=${today}`,
-      {
-        headers: {
-          Authorization: access_token,
-          accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
+    const response = await axios.get(`${url_api}filter_tasks?date=${today}`, {
+      headers: {
+        Authorization: access_token,
+        accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
     const dt = response.data;
     setDataSchedule(dt);
   };
