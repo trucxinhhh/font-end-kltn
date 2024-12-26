@@ -8,7 +8,7 @@ import axios from "./pages/checkToken.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { url_data, url_api, url_local } from "./Provider.jsx";
+import { url_data, url_api, url_local, url_ws } from "./Provider.jsx";
 import { DataMap } from "./pages/include/DefaultData.jsx";
 import {
   notifySuccess,
@@ -16,9 +16,9 @@ import {
   notifyError,
   notifyWarning,
 } from "./pages/include/notifications.jsx";
-const TimeToSpam = 5; //seconds
+const TimeToSpam = 1  ; //seconds
 const TimeDelaysNotify = 10; //min
-const TimeSpamLoadData = TimeToSpam * 1000;
+const TimeSpamLoadData =  1000;
 const TimeDelays = (60 * TimeDelaysNotify) / TimeToSpam;
 const Layout = () => {
   const [AllData, setAllData] = useState([]);
@@ -107,33 +107,68 @@ const Layout = () => {
     localStorage.clear();
     window.location.href = url_local;
   };
+  const Notify_nef= async() => {
+    var listSensorData = ["CO2", "Humi", "Temp"];
+      for (var i = 0; i < listSensorData.length; i++) {
+        var val = AllData.slice(-1)[0][listSensorData[i]];
+        const checkMAX = listSensorData[i] + "_MAX";
+        const checkMIN = listSensorData[i] + "_MIN";
 
+        if (DataMap[checkMIN] >= val || val > DataMap[checkMAX]) {
+          if (FlagNotify ) {//&& displayNotify == 2
+            setCount(count + 1);
+            // console.log("count", count);
+            if (count == TimeDelays) {
+              setDisplayNotify(0);
+              setFlagNotify(false);
+              setCount(0);
+            }
+          } else {
+           
+            // setDisplayNotify(displayNotify + 1);
+            notify(`Warning ${listSensorData[i]} over threshold`);
+            // if (displayNotify == 2) {
+             
+              setFlagNotify(true);
+            // }
+          }
+        }
+      }
+  }
   useEffect(() => {
-    ws.current = new WebSocket("ws://34.126.91.225:1506/data");
+
+    ws.current = new WebSocket(url_ws);
     // console.log("event.data", data);
     ws.current.onmessage = (event) => {
-      // console.log("event.data", data);
       setMessages((prevMessages) => [...prevMessages, event.data]);
       const data = JSON.parse(event.data);
       console.log("event.data", data);
+
       if (!data.motor && !data.data && !data.schedule && !data.err) {
         console.log("hong coa di het chon");
       } else if (data.data && !data.motor && !data.schedule && !data.err) {
-        loadData();
+      
+        let Data =JSON.parse(localStorage.getItem("dataSensor"));
+      
+        let DataRmFirst= Data.splice(1, 50);
+        console.log("fnc la cqq di", DataRmFirst);
+        console.log("data la cqq di", data.data);
+        DataRmFirst.push(data.data);
+        localStorage.setItem("dataSensor", JSON.stringify(DataRmFirst));
 
-        // setAllData(AllData.push(data.data));
-        // console.log("ok1");
-        // localStorage.setItem("dataSensor", JSON.stringify(AllData));
-        // console.log("ok2");
       } else if (data.schedule && !data.motor && !data.data && !data.err) {
         GetSchedule();
         // } else if (data.err && !data.motor && !data.data && !data.schedule) {
         //   notifyError(data.err.message);
       } else if (data.motor) {
         const { mode, motor } = data.motor;
+        console.log("STt" ,mode,motor);
+        let newMotor =JSON.parse(localStorage.getItem("dataMotor"));
+        let MotorRmFirst= newMotor.splice(1, 50);
+        MotorRmFirst.push(data.motor);
+        localStorage.setItem("dataMotor", JSON.stringify(MotorRmFirst));
         localStorage.setItem("isChecked", JSON.stringify(mode));
         localStorage.setItem("pump1Status", JSON.stringify(motor));
-        DataMotor.push(data.motor);
       }
     };
 
@@ -216,7 +251,7 @@ const Layout = () => {
   async function loadData() {
     // const loadData = async () => {
     //get data sensor
-    const response = await axios.get(url_data + "api/data/100", {
+    const response = await axios.get(url_data + "api/data/50", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -224,11 +259,11 @@ const Layout = () => {
       },
     });
     const dt1 = response.data;
-    console.log("last data", dt1.slice(-1));
+ 
     setAllData(dt1);
 
     //get volume
-    const responseVol = await axios.get(url_data + "api/volume/100", {
+    const responseVol = await axios.get(url_data + "api/volume/50", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -246,7 +281,7 @@ const Layout = () => {
       JSON.stringify(dataVol.slice(-1)[0]["total"])
     );
 
-    const responseMotor = await axios.get(url_data + "api/motor/30", {
+    const responseMotor = await axios.get(url_data + "api/motor/50", {
       headers: {
         Authorization: access_token,
         accept: "application/json",
@@ -263,38 +298,31 @@ const Layout = () => {
       );
     }
 
-    var listSensorData = ["CO2", "Humi", "Temp"];
-    for (var i = 0; i < listSensorData.length; i++) {
-      var val = dt1.slice(-1)[0][listSensorData[i]];
-      const checkMAX = listSensorData[i] + "_MAX";
-      const checkMIN = listSensorData[i] + "_MIN";
-      // console.log(
-      //   "val:",
-      //   val,
-      //   "checkMAX:",
-      //   DataMap[checkMAX],
-      //   "checkMIN:",
-      //   DataMap[checkMIN]
-      // );
-      if (DataMap[checkMIN] >= val || val > DataMap[checkMAX]) {
-        if (FlagNotify && displayNotify == 2) {
-          setCount(count + 1);
-          console.log("count", count);
-          if (count == TimeDelays) {
-            setFlagNotify(false);
-            setCount(0);
-          }
-        } else {
-          console.log("displayNotify: ", displayNotify);
-          setDisplayNotify(displayNotify + 1);
-          notify(`Warning ${listSensorData[i]} over threshold`);
-          if (displayNotify == 2) {
-            setDisplayNotify(0);
-            setFlagNotify(true);
-          }
-        }
-      }
-    }
+    // var listSensorData = ["CO2", "Humi", "Temp"];
+    // for (var i = 0; i < listSensorData.length; i++) {
+    //   var val = dt1.slice(-1)[0][listSensorData[i]];
+    //   const checkMAX = listSensorData[i] + "_MAX";
+    //   const checkMIN = listSensorData[i] + "_MIN";
+
+    //   if (DataMap[checkMIN] >= val || val > DataMap[checkMAX]) {
+    //     if (FlagNotify && displayNotify == 2) {
+    //       setCount(count + 1);
+    //       console.log("count", count);
+    //       if (count == TimeDelays) {
+    //         setFlagNotify(false);
+    //         setCount(0);
+    //       }
+    //     } else {
+    //       console.log("displayNotify: ", displayNotify);
+    //       setDisplayNotify(displayNotify + 1);
+    //       notify(`Warning ${listSensorData[i]} over threshold`);
+    //       if (displayNotify == 2) {
+    //         setDisplayNotify(0);
+    //         setFlagNotify(true);
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   // post and resize avatar
@@ -463,8 +491,6 @@ const Layout = () => {
   }, [ModeControl]);
   useEffect(() => {
     localStorage.setItem("dataSensor", JSON.stringify(AllData));
-    // console.log("update sensor success");
-    // console.log(JSON.parse(localStorage.getItem("dataSensor")));
   }, [AllData]);
   useEffect(() => {
     localStorage.setItem("dataMotor", JSON.stringify(DataMotor));
@@ -476,8 +502,9 @@ const Layout = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
+       Notify_nef();
     }, 1000);
-
+   
     return () => clearInterval(interval);
   });
 

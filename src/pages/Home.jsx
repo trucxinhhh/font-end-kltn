@@ -55,7 +55,7 @@ const Unit = {
   CO2: "ppm",
   Humi: "% (Đất)",
   Temp: "°C (Đất)",
-  flow: "m³/s",
+  flow: "m³/min",
   EC: "µS/cm",
   Waterpumped: "m³",
   Salt: "ppm",
@@ -112,7 +112,7 @@ function App() {
     JSON.parse(localStorage.getItem("dataSensor"))
   );
   const [dt2, setDT2] = useState(JSON.parse(localStorage.getItem("dataMotor")));
-
+// console.log("dt2 HOME" ,dt2.slice(-1));
   const [dataVol, setDataVol] = useState(
     JSON.parse(localStorage.getItem("dataVol"))
   );
@@ -165,6 +165,7 @@ function App() {
       case "motor":
         // case "Full":
         const data = dt2.slice(-1)[0]?.[name];
+        // console.log
         return data ? "ON" : "OFF";
       case "Full":
         const data1 = dt1.slice(-1)[0]?.[name];
@@ -345,6 +346,7 @@ function App() {
     localStorage.setItem("advices", JSON.stringify(adviceSentences));
   }
   //điều khiển icon status
+
   const stt_Project = Math.floor(Math.random() * 100);
   useEffect(() => {
     getPredict();
@@ -357,7 +359,7 @@ function App() {
       setDT2(JSON.parse(localStorage.getItem("dataMotor")));
       setDataVol(JSON.parse(localStorage.getItem("dataVol")));
       setTotalHour(JSON.parse(localStorage.getItem("TotalHour")));
-      // console.log(dt1);
+
       setRecentMotor(dt2.slice(-200));
       setRecentData(dt1.slice(-200));
     }, 1000);

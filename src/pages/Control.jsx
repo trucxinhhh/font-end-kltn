@@ -57,6 +57,7 @@ const Draft = () => {
   const [isChecked, setIsChecked] = useState(
     JSON.parse(localStorage.getItem("isChecked"))
   );
+  // const [isChecked, setIsChecked] = useState("schedule");
   // console.log("mode CT", JSON.parse(localStorage.getItem("isChecked")));
   const [selectedMode, setSelectedMode] = useState(null);
   const [StatusSwitchMode, setStatusSwitchMode] = useState();
@@ -420,7 +421,8 @@ const Draft = () => {
       setPumpSend(JSON.parse(localStorage.getItem("pump1Status")));
       setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setVolumeDayMotor1(JSON.parse(localStorage.getItem("TotalVolume")));
-      setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
+      // NHO BAT LAI CAI NAY NHA
+      // setIsChecked(JSON.parse(localStorage.getItem("isChecked")));
       setDataSchedule(JSON.parse(localStorage.getItem("dataSchedule")));
       // console.log("CONTROL", JSON.parse(localStorage.getItem("dataSchedule")));
       calculateTotals();
@@ -1130,7 +1132,7 @@ const Draft = () => {
                     {/* AUTO MODE */}
                     <div className="mt-1 ">
                       <p className="text-gray-600 mb-2">
-                        Máy bơm sẽ bật khi ngưỡng nhiệt độ thấp hơn
+                        Máy bơm sẽ bật khi ngưỡng độ ẩm thấp hơn
                         <span className="ml-2 font-bold text-red-500">
                           {startThreshold}%
                         </span>
@@ -1166,7 +1168,7 @@ const Draft = () => {
                     </div>
                     <div className=" ">
                       <p className="text-gray-600 mb-2">
-                        Máy bơm sẽ tắt khi ngưỡng nhiệt độ cao hơn
+                        Máy bơm sẽ tắt khi ngưỡng độ ẩm cao hơn
                         <span className="ml-3 font-bold text-blue-500">
                           {stopThreshold}%
                         </span>

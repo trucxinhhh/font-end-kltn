@@ -71,19 +71,7 @@ export const auto = (
     <strong>Ngưỡng độ ẩm cao: </strong>Khi độ ẩm đất đạt hoặc vượt quá ngưỡng
     này, máy bơm sẽ tắt để tránh tình trạng đất quá ẩm, gây hại cho cây
     <br />
-    <strong>Cách thao tác:</strong>
-    <br />
-    {/* <strong>1. Mốc thời gian bật và tắt</strong> được thiết lập theo định dạng
-    HH:MM.
-    <br />
-    <strong>2. Đặt thời gian bật </strong> tại khung rỗng đầu tiên
-    <br />
-    <strong>3. Đặt thời gian tắt </strong> tại khung rỗng thứ hai
-    <br />
-    <strong>4. Cập nhập khung giờ </strong> bằng cách nhấn vào nút "Thêm" và
-    nhập mật khẩu để xác nhận.
-    <br />
-    <strong>5. Chờ vài giây</strong> để cập nhật khung giờ. */}
+
   </>
 );
 

@@ -3,6 +3,7 @@ TẠO SSH CHO MÁY
 ssh-keygen // Tạo ssh
 
 ssh-keygen -t rsa -f C:\Users\trucd\.ssh\id_rsa -C truc -b 2048 // tạo ssh dùng gg
+ssh-keygen -t rsa // ssh ubuntu
 ---
 
 TẠO MÔI TRƯỜNG ẢO
