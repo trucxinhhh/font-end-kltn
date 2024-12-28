@@ -20,7 +20,7 @@ const Display = {
     "Lưu lượng",
     "Bồn đầy",
   ],
-  volume: ["STT", "Ngày", "Thời gian", "Dung tích"],
+  volume: ["STT", "Ngày", "Thời gian", "Dung tích", "Tổng dung tích"],
   user: [
     "Họ và Tên",
     "Tên đăng nhập",
@@ -35,6 +35,7 @@ const Display = {
 const History = () => {
   const [data1, setData] = useState([]);
   const [DataList, setDataList] = useState("data");
+   const [DataVol, setDataVol] = useState([]);
   const master = localStorage.getItem("username");
   // Lấy token
   const token = localStorage.getItem("token");
@@ -67,6 +68,15 @@ const History = () => {
         const dt1 = response.data;
 
         setData(dt1);
+        const responseVol = await axios.get(url_data + "api/volume/50", {
+        headers: {
+          Authorization: access_token,
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }); 
+        const dataVol = responseVol.data;
+       setDataVol(dataVol);
       }
       loadData();
     }
@@ -188,9 +198,9 @@ const History = () => {
                 >
                   <option value="admin">Chọn mục </option>
                   <option value="data">Cảm biến </option>
-                  <option value="volume">Motor</option>
+                  <option value="volume">Dung tích</option>
                   <option value="user">Người dùng</option>
-                  <option value="warning">Cảnh báo</option>
+               
                 </select>
               </label>
               <div className="flex p-1 ml-2 w-7/12 items-center justify-center ">
@@ -344,7 +354,24 @@ const History = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody></tbody>
+                  <tbody>
+                  {DataVol.map((item) => (
+                    <tr
+                      key={item._id}
+                      className={`bg-white dark:bg-gray-800 ${
+                        item.level === "Alarm"
+                          ? "text-red-500 font-bold"
+                          : "text-black"
+                      }`}
+                    >
+                      <td class="px-6 py-4 text-center">{item._id}</td>
+                      <td class="px-6 py-4 text-center">{item.date}</td>
+                      <td class="px-6 py-4 text-center">{item.time}</td>
+                      <td class="px-6 py-4 text-center">{item.volume}</td>
+                      <td class="px-6 py-4 text-center">{item.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
             </table>
           )}
         </div>
@@ -365,7 +392,6 @@ const History = () => {
                   <option value="data">Cảm biến </option>
                   <option value="volume">Dung tich bom</option>
                   <option value="user">Người dùng</option>
-                  <option value="warning">Cảnh báo</option>
                 </select>
               </label>
 

@@ -237,7 +237,8 @@ const Layout = () => {
     const filteredData = data.filter((item) => item.date === today);
     filteredData.filter((item) => {
       const hour = parseInt(item.time.split(":")[0], 10) - 1; // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
-      const data = item.volume;
+      const data = (item.volume)/1000;
+      console.log("chia vol",data)
       itemsByHour[hour].push(data);
     });
 
@@ -272,7 +273,7 @@ const Layout = () => {
     });
     const dataVol = responseVol.data;
 
-    setDataVol(dataVol.slice(-1)[0]["total"]);
+    setDataVol(dataVol.slice(-1)[0]["total"]/1000);
 
     filteVolume(dataVol);
     localStorage.setItem("volume", JSON.stringify(dataVol));

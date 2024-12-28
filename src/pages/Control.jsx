@@ -142,7 +142,7 @@ const Draft = () => {
         ? Math.max(...filteredData.map((item) => item.total))
         : 0;
 
-    return maxTotal;
+    return maxTotal/1000;
   };
 
   const calculateTotals = async () => {
@@ -150,6 +150,7 @@ const Draft = () => {
     for (const date of dateList) {
       totalsObj[date] = await filteVolume(date, dataVol);
     }
+    // console.log("asd", totalsObj)
     setTotals(totalsObj); // Update state with totals
   };
   const data2 = {
@@ -343,7 +344,7 @@ const Draft = () => {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     });
-
+    // console.log("responseVol",responseVol)
     setDataVol(responseVol.data);
   };
 
