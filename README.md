@@ -97,7 +97,7 @@ cp -r /path/to/source/directory /path/to/destination/directory
 
 CAP QUYEN CHO USER TUY CHINH
 sudo chown -R tai:truc /home/truc/font-end-kltn
-
+chmod 777 font-end-kltn/   # cho tất cả mn có all quyền
 WEB SEND API
 https://sabuhish.github.io/fastapi-mail/
 

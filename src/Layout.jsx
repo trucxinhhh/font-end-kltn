@@ -142,17 +142,17 @@ const Layout = () => {
     ws.current.onmessage = (event) => {
       setMessages((prevMessages) => [...prevMessages, event.data]);
       const data = JSON.parse(event.data);
-      console.log("event.data", data);
+      // console.log("event.data", data);
 
       if (!data.motor && !data.data && !data.schedule && !data.err) {
-        console.log("hong coa di het chon");
+        // console.log("hong coa di het chon");
       } else if (data.data && !data.motor && !data.schedule && !data.err) {
       
         let Data =JSON.parse(localStorage.getItem("dataSensor"));
       
         let DataRmFirst= Data.splice(1, 50);
-        console.log("fnc la cqq di", DataRmFirst);
-        console.log("data la cqq di", data.data);
+        // console.log("fnc la cqq di", DataRmFirst);
+        // console.log("data la cqq di", data.data);
         DataRmFirst.push(data.data);
         localStorage.setItem("dataSensor", JSON.stringify(DataRmFirst));
 
@@ -162,7 +162,7 @@ const Layout = () => {
         //   notifyError(data.err.message);
       } else if (data.motor) {
         const { mode, motor } = data.motor;
-        console.log("STt" ,mode,motor);
+        // console.log("STt" ,mode,motor);
         let newMotor =JSON.parse(localStorage.getItem("dataMotor"));
         let MotorRmFirst= newMotor.splice(1, 50);
         MotorRmFirst.push(data.motor);
@@ -238,7 +238,7 @@ const Layout = () => {
     filteredData.filter((item) => {
       const hour = parseInt(item.time.split(":")[0], 10) - 1; // Tách và chuyển phần giờ từ chuỗi 'time' thành số nguyên
       const data = (item.volume)/1000;
-      console.log("chia vol",data)
+      // console.log("chia vol",data)
       itemsByHour[hour].push(data);
     });
 
@@ -250,6 +250,7 @@ const Layout = () => {
   };
   // get data all
   async function loadData() {
+     console.log("spam ac")
     // const loadData = async () => {
     //get data sensor
     const response = await axios.get(url_data + "api/data/50", {
@@ -298,32 +299,6 @@ const Layout = () => {
         JSON.stringify(dt2.slice(-1)[0]["motor"])
       );
     }
-
-    // var listSensorData = ["CO2", "Humi", "Temp"];
-    // for (var i = 0; i < listSensorData.length; i++) {
-    //   var val = dt1.slice(-1)[0][listSensorData[i]];
-    //   const checkMAX = listSensorData[i] + "_MAX";
-    //   const checkMIN = listSensorData[i] + "_MIN";
-
-    //   if (DataMap[checkMIN] >= val || val > DataMap[checkMAX]) {
-    //     if (FlagNotify && displayNotify == 2) {
-    //       setCount(count + 1);
-    //       console.log("count", count);
-    //       if (count == TimeDelays) {
-    //         setFlagNotify(false);
-    //         setCount(0);
-    //       }
-    //     } else {
-    //       console.log("displayNotify: ", displayNotify);
-    //       setDisplayNotify(displayNotify + 1);
-    //       notify(`Warning ${listSensorData[i]} over threshold`);
-    //       if (displayNotify == 2) {
-    //         setDisplayNotify(0);
-    //         setFlagNotify(true);
-    //       }
-    //     }
-    //   }
-    // }
   }
 
   // post and resize avatar
