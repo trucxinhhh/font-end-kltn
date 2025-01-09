@@ -68,7 +68,7 @@ const History = () => {
         const dt1 = response.data;
 
         setData(dt1);
-        const responseVol = await axios.get(url_data + "api/volume/50", {
+        const responseVol = await axios.get(url_data + "api/volume/30", {
         headers: {
           Authorization: access_token,
           accept: "application/json",
@@ -80,7 +80,7 @@ const History = () => {
       }
       loadData();
     }
-  }, [data1, Flag]);
+  }, [DataList, Flag]);
   //apply button
   const DateFil = async () => {
     setFlag(false);
@@ -113,7 +113,8 @@ const History = () => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      console.log("filter", response.data);
+      console.log("1", response.data);
+      setDataVol(response.data);
       if (response.data.length == 0) {
         notifyError("Data is null. Please try again!");
       } else {
@@ -283,9 +284,9 @@ const History = () => {
             </div>
           )}
           {DataList === "user" && (
-            <div className="relative h-4/5  overflow-x-auto  rounded-3xl mt-3">
-              <table class="w-full text-sm text-left rtl:text-right text-gray-500 rounded-3xl dark:text-gray-400">
-                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+              <div className="relative h-4/5 overflow-x-auto rounded-3xl mt-3">
+              <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                   <tr>
                     {Display.user.map((item) => (
                       <th scope="col" class="px-6 py-3 text-center">
@@ -344,8 +345,9 @@ const History = () => {
             </div>
           )}
           {DataList === "volume" && (
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0">
+             <div className="relative h-4/5 overflow-x-auto rounded-3xl mt-3">
+              <table class="w-full h-46 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400 bg-lime-300 sticky top-0 ">
                 <tr>
                   {Display.volume.map((item) => (
                     <th scope="col" class="px-6 py-3 text-center">
@@ -373,6 +375,7 @@ const History = () => {
                   ))}
                 </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>
@@ -534,7 +537,24 @@ const History = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody></tbody>
+               <tbody>
+                  {DataVol.map((item) => (
+                    <tr
+                      key={item._id}
+                      className={`bg-white dark:bg-gray-800 ${
+                        item.level === "Alarm"
+                          ? "text-red-500 font-bold"
+                          : "text-black"
+                      }`}
+                    >
+                      <td class="px-6 py-4 text-center">{item._id}</td>
+                      <td class="px-6 py-4 text-center">{item.date}</td>
+                      <td class="px-6 py-4 text-center">{item.time}</td>
+                      <td class="px-6 py-4 text-center">{item.volume}</td>
+                      <td class="px-6 py-4 text-center">{item.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
             </table>
           )}
         </div>

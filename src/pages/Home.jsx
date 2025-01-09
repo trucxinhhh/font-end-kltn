@@ -375,7 +375,7 @@ function App() {
           <div className="p-4 w-full md:w-1/2">
             {/*----------Status Project ----------*/}
 
-            <div className="flex left-6 ">
+                    <div className="flex left-6 ">
               {/* <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
                 <p className="mt-1 text-xs font-bold">{today}</p>
                 <p className="mt-2 text-xs font-bold">{currentTime}</p>
@@ -492,6 +492,7 @@ function App() {
                   : null}
               </div>
             </div>
+
             {/*--------End Status Project --------*/}
 
             {/* ---------- Sensor Table ----------*/}
@@ -574,92 +575,7 @@ function App() {
                 }}
               />
             </div>
-            <div className="flex left-6 ">
-              {/* <div className=" flex flex-col  items-center h- w-1/5 p-2 shadow-xl bg-[#03AED2] text-white rounded-md mr-2 ">
-                <p className="mt-1 text-xs font-bold">{today}</p>
-                <p className="mt-2 text-xs font-bold">{currentTime}</p>
-              </div> */}
-              {/* <div className="flex flex-col items-center  w-1/3 p-2  shadow-xl bg-[#03AED2] text-white rounded-md mr-2">
-                <p className=" text-xl font-bold">Status Project</p>
-                <div className="flex flex-nowrap">
-                  <div
-                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
-                      stt_Project
-                    )}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                      <path d="M9 10h-.01" />
-                      <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                      <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                    </svg>
-                  </div>
-                  <div
-                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
-                      stt_Project
-                    )}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M9 10l.01 0" />
-                      <path d="M15 10l.01 0" />
-                      <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                    </svg>
-                  </div>
-
-                  <div
-                    className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
-                      stt_Project
-                    )}`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="34"
-                      height="34"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                      <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                      <path d="M8 9l2 2" />
-                      <path d="M10 9l-2 2" />
-                      <path d="M14 9l2 2" />
-                      <path d="M16 9l-2 2" />
-                    </svg>
-                  </div>
-                </div>
-              </div> */}
-            </div>
+    
             {/*--------End Status Project --------*/}
 
             {/* ---------- Sensor Table ----------*/}
@@ -724,117 +640,12 @@ function App() {
                   />
                 </div>
               </div>
-              {/*----------Status Project ----------*/}
-              {/* <div className="flex left-1 h-28 w-full  p-2">
-                <div className=" flex flex-col  items-center h-full w-4/6 p-2 shadow-xl bg-[#65B741] text-white rounded-md mr-2 ">
-                  <h3 className="mt-2 text-2xl font-bold">{today}</h3>
-                  <h3 className="mt-2 text-2xl font-bold">{currentTime}</h3>
-                </div>
-                <div className="flex flex-col items-center h-full  w-4/6 p-2  shadow-xl bg-[#65B741] text-white rounded-md mr-2">
-                  <h3 className="text-xl font-bold">Status Project</h3>
-                  <div className="flex flex-nowrap">
-                    <div
-                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${HappyColor(
-                        stt_Project
-                      )}`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-wink-2"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
-                        <path d="M9 10h-.01" />
-                        <path d="M14.5 15a3.5 3.5 0 0 1 -5 0" />
-                        <path d="M15.5 8.5l-1.5 1.5l1.5 1.5" />
-                      </svg>
-                    </div>
-                    <div
-                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${SadColor(
-                        stt_Project
-                      )}`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M9 10l.01 0" />
-                        <path d="M15 10l.01 0" />
-                        <path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" />
-                      </svg>
-                    </div>
-
-                    <div
-                      className={`flex  px-2 py-1 w-14 text-sm font-semibold ${WarningColor(
-                        stt_Project
-                      )}`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="54"
-                        height="54"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad-dizzy"
-                      >
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                        <path d="M14.5 16.05a3.5 3.5 0 0 0 -5 0" />
-                        <path d="M8 9l2 2" />
-                        <path d="M10 9l-2 2" />
-                        <path d="M14 9l2 2" />
-                        <path d="M16 9l-2 2" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+           
 
               {/*--------End Status Project --------*/}
               {/*----------Recomment Box ----------*/}
               <div className="mt-4  h-auto  flex left-1">
-                {/* <div className=" flex flex-col   w-full p-2 shadow-xl bg-opacity-75 bg-white rounded-3xl mr-2 ">
-                  <p className="text-gray-600 font-bold text-center text-xl">
-                    Quy trình chăm sóc
-                  </p>
-                  <p className="text-red-600 font-bold text-lg text-left">
-                    DAY {Predict["days"]}
-                  </p>
-                  {ciuspe
-                    ? JSON.parse(localStorage.getItem("advices")).map(
-                        (sentence, index) => (
-                          <p
-                            className="ml-4 font-bold text-[#3C3D37]"
-                            key={index}
-                          >
-                            {sentence.trim()}.
-                          </p>
-                        )
-                      )
-                    : null}
-                </div> */}
+              
                 <div className=" flex flex-col  items-center h- w-1/5 p-4 shadow-xl bg-[#ffffff] text-white rounded-md  ">
                   <p className=" text-red-600 font-bold text-xs text-center">
                     Ngày trồng
@@ -885,28 +696,7 @@ function App() {
             </div>
           </div>
         ) : Display == "chart" ? (
-          // <div className="">
-          //   <div className=" h-screen w-full rounded-r-2xl rounded-l-2xl p-4">
-          //     <div className="p-2  bg-white rounded-r-2xl rounded-l-2xl">
-          //       {DashBoard.map((item, index) => (
-          //         <div
-          //           className="mt-4"
-          //           key={index}
-          //           style={{ marginBottom: "20px" }}
-          //         >
-          //           {item === "Waterpumped" ? (
-          //             <Bar data={data2} options={optionsBar} />
-          //           ) : (
-          //             <Line
-          //               data={chartData("#f15bb5", item)}
-          //               options={options(item)}
-          //             />
-          //           )}
-          //         </div>
-          //       ))}
-          //     </div>
-          //   </div>
-          // </div>
+        
           <div className="flex flex-col items-center h-screen overflow-y-auto bg-gray-100 p-2">
             <div className="w-full max-w-sm rounded-2xl bg-white p-2 shadow-lg">
               {DashBoard.map((item, index) => (
@@ -951,20 +741,8 @@ function App() {
                   </button>
                 ))}
               </div>
-              <br></br>
-              <br></br>
-              <br></br>
-              {/* <div className="p-2 mt-20 bg-white rounded-r-2xl rounded-l-2xl">
-                {selector == "Waterpumped" ? (
-                  // <div>0</div>
-                  <Bar data={data2} options={optionsBar} />
-                ) : (
-                  <Line
-                    data={chartData("#f15bb5", selector)}
-                    options={options(selector)}
-                  />
-                )}
-              </div> */}
+          
+            
             </div>
           </div>
         )}

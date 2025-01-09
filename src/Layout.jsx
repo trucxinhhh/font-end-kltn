@@ -95,8 +95,12 @@ const Layout = () => {
 
   // open Dialog to change information project
   const openDialog = (mode) => {
+    if (Role == "admin") {
     setMode(mode);
     setIsDialogOpen(true);
+    } else {
+      notifyError("Permission Denied!");
+    }
   };
 
   const closeDialog = async () => {

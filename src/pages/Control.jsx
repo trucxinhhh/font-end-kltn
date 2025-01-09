@@ -515,6 +515,7 @@ const Draft = () => {
       );
       // console.log(url_api + "schedule/" + index);
       notifySuccess(response.status);
+      setFlagDeleteSchedule(false);
       // const todayA = new Date().toISOString().slice(0, 10);
       const responseA = await axios.get(
         `${url_api}filter_tasks?date=${today}`,
