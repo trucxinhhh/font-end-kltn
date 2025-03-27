@@ -42,7 +42,7 @@ B3: Tạo project
 
 - yarn create vite // tạo folder
 - <tên Project> -> React -> JavaScript
-- cd test
+- cd <tên Project>
 - yarn install
 - yarn dev
 
