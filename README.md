@@ -82,7 +82,7 @@ B5: Cai Thuw vien ho tro React
 - npm install react-icons
 - npm install @fontsource/pacifico
 - npm install socket.io
-
+- npm install react-toastify
 B6: Cai thu vien ho tro Server
 pip install "passlib[bcrypt]"
 pip install pyjwt
