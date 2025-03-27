@@ -33,8 +33,8 @@ https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubunt
 
 B2: Cài YARN
 
-sudo npm install --global yarn
-yarn --version
+- sudo npm install --global yarn
+- yarn --version
 
 https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
 
