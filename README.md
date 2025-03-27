@@ -43,13 +43,13 @@ B3: Tạo project
 - yarn create vite // tạo folder
 - <tên Project> -> React -> JavaScript
 - cd test
-  yarn install
-  yarn dev
+- yarn install
+- yarn dev
 
 B4: Cài Tailwind
 
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+- npm install -D tailwindcss postcss autoprefixer
+- npx tailwindcss init -p
 
 sửa file tailwind.config.js
 /** @type {import('tailwindcss').Config} \*/
@@ -72,16 +72,16 @@ sửa file index.css
 xóa file App.css
 
 B5: Cai Thuw vien ho tro React
-npm i -D react-router-dom@latest
-npm i react-chartjs-2 chart.js
-npm install @headlessui/react
-npm install axios
-npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core
-npm install @material-tailwind/react
-npm i react-phone-input-2
-npm install react-icons
-npm install @fontsource/pacifico
-npm install socket.io
+- npm i -D react-router-dom@latest
+- npm i react-chartjs-2 chart.js
+- npm install @headlessui/react
+- npm install axios
+- npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core
+- npm install @material-tailwind/react
+- npm i react-phone-input-2
+- npm install react-icons
+- npm install @fontsource/pacifico
+- npm install socket.io
 
 B6: Cai thu vien ho tro Server
 pip install "passlib[bcrypt]"
@@ -93,7 +93,7 @@ pip install pyexcel pyexcel-xlsx
 ---
 
 COPY
-cp -r /path/to/source/directory /path/to/destination/directory
+- cp -r /path/to/source/directory /path/to/destination/directory
 
 CAP QUYEN CHO USER TUY CHINH
 sudo chown -R tai:truc /home/truc/font-end-kltn
