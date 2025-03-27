@@ -19,12 +19,12 @@ SET UP MÔI TRƯỜNG SỬ DỤNG REACT
 
 B1: Cài node js version 18
 
-cd ~
-curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
-nano nodesource_setup.sh
-sudo bash nodesource_setup.sh
-sudo apt install nodejs
-node -v
+- cd ~
+- curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh
+- nano nodesource_setup.sh
+- sudo bash nodesource_setup.sh
+- sudo apt install nodejs
+- node -v
 
 //remove npm
 sudo apt-get purge --auto-remove nodejs
